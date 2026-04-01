@@ -2,7 +2,7 @@
 </script>
 
 <template>
-    <img src="/public/logo.png" alt="logo">
+    <img src="/public/logo-192x192.png" alt="logo">
     <form action="/login" method="post">
         <legend>Login</legend>
 
@@ -22,8 +22,7 @@
 <style scoped>
 img {
     display: block;
-    margin: 60px auto 0 auto;
-    width: 35%;
+    margin: 0 auto;
 }
 form {
     display: flex;
