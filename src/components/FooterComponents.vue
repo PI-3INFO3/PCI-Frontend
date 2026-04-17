@@ -42,6 +42,8 @@
           </span>
         </li>
       </ul>
+
+      <button class="fab">+</button>
     </nav>
   </footer>
 </template>
