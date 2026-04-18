@@ -1,12 +1,19 @@
+        <script setup>
+        import { ref } from 'vue'
+        
+        const abriMenu = ref(false)
+        const ativo = ref('menu') 
+        </script>
 <template>
-  <footer class="navbar">
+  <footer>
+    <div class="navbar">
     <nav>
       <ul>
         <li>
           <span
             class="btn"
             :class="{ active: ativo === 'menu' }"
-            @click="ativo = 'menu'"
+            @click="abriMenu = true "
           >
             <ion-icon name="menu"></ion-icon>
           </span>
@@ -42,17 +49,22 @@
           </span>
         </li>
       </ul>
+      <div 
+      v-if="abriMenu"
+    class="overlay"
+    @click="abriMenu = false"></div>
 
+    <aside :class="['sidebar', {open: abriMenu}]">
+<h2>Menu</h2>
+
+
+</aside>
       <button class="fab">+</button>
     </nav>
+    </div>
   </footer>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-
-const ativo = ref('menu') 
-</script>
 
 <style>
 </style>
