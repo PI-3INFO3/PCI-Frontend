@@ -64,7 +64,7 @@ function proximaEtapa() {
       <input v-model="confirmarSenha" type="password" placeholder="Confirmar senha" required>
     </div>
 
-    <button type="submit">Próxima etapa</button>
+    <button type="submit">Cadastrar?</button>
   </form>
 </template>
 <script setup>

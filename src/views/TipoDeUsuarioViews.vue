@@ -8,8 +8,8 @@ const selecionado = ref(null)
 const erro = ref(false)
 
 const opcoes = [
+    { nome: 'Pessoal', icon: 'person-outline' },
   { nome: 'Educacional', icon: 'school-outline' },
-  { nome: 'Pessoais', icon: 'person-outline' },
   { nome: 'Profissional', icon: 'briefcase-outline' }
 ]
 
@@ -37,9 +37,8 @@ function proximaEtapa() {
 
     <div class="select-box">
 
-      <div class="select">
-        Qual é seu tipo de usuário
-      </div>
+       <div class="select">
+Sua conta é:      </div>
 
       <div class="select-opcoes">
         <ul>
@@ -62,7 +61,7 @@ function proximaEtapa() {
     </div>
 
     <button type="submit" :disabled="!selecionado">
-      Próxima etapa
+      Próxima etapa?
     </button>
 
   </form>
@@ -89,6 +88,9 @@ img {
 }
 
 .select {
+    font-weight: 800
+    ;
+    font-size: 25px;
   padding: 12px;
   border: 2px solid #FF5700;
   border-radius: 40px;
@@ -98,6 +100,7 @@ img {
 }
 
 .select-opcoes {
+
   padding: 20px;
   border: 2px solid #FF5700;
   border-radius: 25px;
@@ -106,7 +109,8 @@ img {
 }
 
 .select-opcoes ul li {
-  list-style: none;
+    font-weight: 800;
+    list-style: none;
   margin-bottom: 15px;
 
   display: flex;
