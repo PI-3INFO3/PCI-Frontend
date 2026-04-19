@@ -1,59 +1,72 @@
 <script setup>
-import { ref } from 'vue';
-const ativo = ref('up');
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+const ativo = ref('')
+
+const nome = ref('')
+const email = ref('')
+const senha = ref('')
+const confirmarSenha = ref('')
+
+function proximaEtapa() {
+  if (!nome.value || !email.value || !senha.value || !confirmarSenha.value) {
+    alert('Preencha todos os campos')
+    return
+  }
+
+  if (senha.value !== confirmarSenha.value) {
+    alert('As senhas não coincidem')
+    return
+  }
+
+  router.push('/')
+}
 </script>
+
 <template>
   <img src="/public/logo-96x96.png" alt="logo">
 
-  <form>
+  <form @submit.prevent="proximaEtapa">
     <legend><span>Cadastre-se</span></legend>
 
     <div class="input-box"
-    :class="{active: ativo === 'Nome'}"
-    @click=" ativo = 'Nome'"
+      :class="{active: ativo === 'Nome'}"
+      @click="ativo = 'Nome'"
     >
       <ion-icon name="person-outline"></ion-icon>
-      <input type="text" placeholder="Nome" required>
+      <input v-model="nome" type="text" placeholder="Nome" required>
     </div>
 
     <div class="input-box"
-    
-    :class="{active: ativo === 'Nome de usuário'}"
-    @click=" ativo = 'Nome de usuário'"
+      :class="{active: ativo === 'Email'}"
+      @click="ativo = 'Email'"
     >
-      <ion-icon name="person-circle-outline"></ion-icon>
-      <input type="text" placeholder="Nome de usuário" required>
-    </div>
-
-    <div class="input-box"
-    
-    :class="{active: ativo === 'Email'}"
-    @click=" ativo = 'Email'">
       <ion-icon name="mail-outline"></ion-icon>
-      <input type="email" placeholder="Email" required>
+      <input v-model="email" type="email" placeholder="Email" required>
     </div>
 
     <div class="input-box"
-    
-    :class="{active: ativo === 'Senha'}"
-    @click=" ativo = 'Senha'">
+      :class="{active: ativo === 'Senha'}"
+      @click="ativo = 'Senha'"
+    >
       <ion-icon name="lock-closed-outline"></ion-icon>
-      <input type="password" placeholder="Senha" required>
+      <input v-model="senha" type="password" placeholder="Senha" required>
     </div>
 
     <div class="input-box"
-    
-    :class="{active: ativo === 'Confirmar senha'}"
-    @click=" ativo = 'Confirmar senha'"
+      :class="{active: ativo === 'Confirmar'}"
+      @click="ativo = 'Confirmar'"
     >
       <ion-icon name="eye-off-outline"></ion-icon>
-      <input type="password" placeholder="Confirmar senha" required>
+      <input v-model="confirmarSenha" type="password" placeholder="Confirmar senha" required>
     </div>
-    <button type="submit">Cadastrar?</button>
-</form>
-</template>
 
+    <button type="submit">Próxima etapa</button>
+  </form>
+</template>
 <script setup>
 </script>
 
@@ -64,7 +77,7 @@ const ativo = ref('up');
   box-sizing: border-box;
 }
 
-img {
+img{
   display: block;
   margin: 20px auto;
   margin-top: -5px;
