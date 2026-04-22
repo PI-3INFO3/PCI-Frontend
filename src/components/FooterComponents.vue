@@ -55,8 +55,8 @@
     @click="abriMenu = false"></div>
 
     <aside :class="['sidebar', {open: abriMenu}]">
-<h2>Menu</h2>
-
+      <h2>Menu </h2>
+      
 
 </aside>
       <button class="fab">+</button>
