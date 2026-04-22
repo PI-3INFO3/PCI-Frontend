@@ -27,7 +27,7 @@ function proximaEtapa() {
 </script>
 
 <template>
-  <img src="/public/logo-96x96.png" alt="logo">
+  <img src="/icons/logo-96x96.png" alt="logo">
 
   <form @submit.prevent="proximaEtapa">
     <legend><span>Cadastre-se</span></legend>

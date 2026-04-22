@@ -31,7 +31,7 @@ function proximaEtapa() {
 </script>
 
 <template>
-  <img src="/logo-96x96.png" alt="logo">
+  <img src="/icons/logo-96x96.png" alt="logo">
 
   <form @submit.prevent="proximaEtapa">
 
