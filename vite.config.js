@@ -44,8 +44,8 @@ export default defineConfig({
               },
             },
           },
-          /*{
-            urlPattern: /^https:\/\/api\.exemplo\.com\/./i,
+          {
+            urlPattern: /^https:\/\/127\.0\.0\.1:8000\/api\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
@@ -58,7 +58,7 @@ export default defineConfig({
               },
               networkTimeoutSeconds: 10,
             },
-          },*/
+          },
         ],
       },
       manifest: {
