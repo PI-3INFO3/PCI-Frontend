@@ -8,7 +8,7 @@ const selecionado = ref(null)
 const erro = ref(false)
 
 const opcoes = [
-    { nome: 'Pessoal', icon: 'person-outline' },
+  { nome: 'Pessoal', icon: 'person-outline' },
   { nome: 'Educacional', icon: 'school-outline' },
   { nome: 'Profissional', icon: 'briefcase-outline' }
 ]
@@ -24,9 +24,15 @@ function proximaEtapa() {
     return
   }
 
+  const mapTipos = {
+    'Pessoal': 'personal',
+    'Educacional': 'educational',
+    'Profissional': 'professional'
+  }
 
-    router.push('/Cadastro')
-
+  sessionStorage.setItem('user_type', mapTipos[selecionado.value])
+  
+  router.push('/Cadastro')
 }
 </script>
 
@@ -37,19 +43,16 @@ function proximaEtapa() {
 
     <div class="select-box">
 
-       <div class="select">
-Sua conta é:      </div>
+      <div class="select">
+        Sua conta é: </div>
 
       <div class="select-opcoes">
         <ul>
-          <li 
-            v-for="op in opcoes" 
-            :key="op.nome"
-            @click="selecionar(op.nome)"
-            :class="{ ativo: selecionado === op.nome }"
-          >
-            <ion-icon :name="op.icon"></ion-icon>
-            {{ op.nome }}
+          <li v-for="opcao in opcoes" 
+            :key="opcao.nome" @click="selecionar(opcao.nome)"
+            :class="{ ativo: selecionado === opcao.nome }">
+            <ion-icon :name="opcao.icon"></ion-icon>
+            {{ opcao.nome }}
           </li>
         </ul>
       </div>
@@ -61,15 +64,15 @@ Sua conta é:      </div>
     </div>
 
     <button type="submit" :disabled="!selecionado">
-      Próxima etapa?
+      Próxima etapa
     </button>
 
   </form>
 </template>
 
 <style scoped>
-*{
-  margin:0;
+* {
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
@@ -77,9 +80,8 @@ Sua conta é:      </div>
 img {
   display: block;
   margin: 20px auto;
-  filter:  
-    drop-shadow(0 6px 1px rgba(0,0,0,0.10))
-    drop-shadow(0 0 4px rgba(0,0,0,0.1));
+  filter:
+    drop-shadow(0 6px 1px rgba(0, 0, 0, 0.10)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
 }
 
 .select-box {
@@ -88,9 +90,8 @@ img {
 }
 
 .select {
-    font-weight: 800
-    ;
-    font-size: 25px;
+  font-weight: 800;
+  font-size: 25px;
   padding: 12px;
   border: 2px solid #FF5700;
   border-radius: 40px;
@@ -105,12 +106,12 @@ img {
   border: 2px solid #FF5700;
   border-radius: 25px;
   background: #fff;
-  box-shadow: 0 6px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 .select-opcoes ul li {
-    font-weight: 800;
-    list-style: none;
+  font-weight: 800;
+  list-style: none;
   margin-bottom: 15px;
 
   display: flex;

@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const ativo = ref('')
 
@@ -11,7 +13,7 @@ const email = ref('')
 const senha = ref('')
 const confirmarSenha = ref('')
 
-function proximaEtapa() {
+async function proximaEtapa() {
   if (!nome.value || !email.value || !senha.value || !confirmarSenha.value) {
     alert('Preencha todos os campos')
     return
@@ -22,7 +24,26 @@ function proximaEtapa() {
     return
   }
 
-  router.push('/')
+  const tipoUsuario = sessionStorage.getItem('user_type')
+
+  if (!tipoUsuario) {
+    alert('Erro: tipo de usuário não selecionado')
+    return
+  }
+
+  await authStore.register({
+    name: nome.value,
+    email: email.value,
+    password: senha.value,
+    user_type: tipoUsuario
+  })
+
+  if (!authStore.error){
+      router.push('/')
+  } else {
+    alert(authStore.error)
+  }
+
 }
 </script>
 
@@ -64,7 +85,7 @@ function proximaEtapa() {
       <input v-model="confirmarSenha" type="password" placeholder="Confirmar senha" required>
     </div>
 
-    <button type="submit">Cadastrar?</button>
+    <button type="submit">Cadastrar</button>
   </form>
 </template>
 <script setup>

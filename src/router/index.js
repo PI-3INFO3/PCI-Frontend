@@ -5,6 +5,7 @@ const routes = [
     path: '/Cadastro',
     name: 'Cadastro',
     component: () => import('../views/CadastroViews.vue'),
+    props: true
   },
   {
     path: '/',

@@ -48,11 +48,11 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    async function register(email, name, password, user_type) {
+    async function register(data) {
         loading.value = true;
         error.value = null;
         try{
-            const response = await authApi.register({ email, name, password, user_type });
+            const response = await authApi.register(data);
             user.value = response.data.user;
             token.value = response.data.token;
             localStorage.setItem('token', token.value);
