@@ -43,6 +43,11 @@ input {
     border-color: #FF5700;
     border: 2px solid #FF5700;
     font-size: 15px;
+    transition: transform .3s ease;
+}
+input:focus{ 
+transform: scale(1.1);
+box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
 }
 button {
     padding: 5.5px 90px 5.5px 90px;
@@ -51,6 +56,11 @@ button {
     border: none;
     color: white;
     font-size: 20px;
+    transition: transform .3s ease;
+}
+button:active {
+    background-color: #FF4500;
+    transform: scale(1.05);
 }
 p {
    display: flex;
