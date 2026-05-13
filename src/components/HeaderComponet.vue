@@ -1,6 +1,5 @@
 <template>
   <header class="header">
-    <!-- Logo soul. -->
     <div class="logo">
       <img 
         src="/soul.png"      
@@ -9,7 +8,6 @@
       >
     </div>
 
-    <!-- Barra de pesquisa com ícone -->
     <div class="search-container">
       <div class="search-wrapper">
         <ion-icon name="search-outline" class="search-icon"></ion-icon>
@@ -21,7 +19,6 @@
       </div>
     </div>
 
-    <!-- 4 botões ovais -->
     <div class="oval-buttons">
       <div class="oval"></div>
       <div class="oval"></div>
@@ -46,7 +43,7 @@
   width: auto;
 }
 
-/* Barra de pesquisa */
+
 .search-container {
   margin-bottom: 16px;
 }
@@ -72,7 +69,7 @@
   height: 42px;
   border: 2px solid #FF6B00;
   border-radius: 30px;
-  padding-left: 50px;        /* espaço maior para o ícone */
+  padding-left: 50px;        
   padding-right: 16px;
   background-color: transparent;
   font-size: 15px;
@@ -80,7 +77,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
 }
 
-/* Botões ovais */
+
 .oval-buttons {
   display: flex;
   gap: 10px;

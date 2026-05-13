@@ -2,7 +2,6 @@
   <div>
     <HeaderComponent />
     <main class="main-content">
-      <!-- Aqui vão os cards dos templates -->
     </main>
     <FooterComponents />
   </div>
