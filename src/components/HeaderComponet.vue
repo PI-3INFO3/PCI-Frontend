@@ -31,7 +31,8 @@
 <style scoped>
 .header {
   padding: 16px 16px 12px 16px;
-  background-color: #f8f8f8;
+  background: transparent
+;
 }
 
 .logo {
@@ -60,8 +61,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;          
-  color: #000;            
-    z-index: 2;
+  color: #000;
 }
 
 .search-bar {
@@ -94,7 +94,7 @@
   width: 78px;
   height: 34px;
   margin-top: 30px;
-  background-color: white;
+  background-color: transparent;
   border: 2px solid #FF6B00;
   border-radius: 9999px;
 }
