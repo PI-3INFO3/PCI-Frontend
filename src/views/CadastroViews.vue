@@ -15,19 +15,24 @@ const confirmarSenha = ref('')
 const mostrarSenha = ref(false)
 const mostrarConfirmarSenha = ref(false)
 
-// Toast
 const mensagem = ref('')
 const tipoMensagem = ref('sucesso')
 const mostrarMensagem = ref(false)
 
-function exibirMensagem(texto, tipo = 'sucesso', duracao = 9000) {
+const cadastroSucesso = ref(false)
+
+function exibirMensagem(texto, tipo = 'sucesso') {
   mensagem.value = texto
   tipoMensagem.value = tipo
   mostrarMensagem.value = true
+}
 
-  setTimeout(() => {
-    mostrarMensagem.value = false
-  }, duracao)
+function fecharToast() {
+  mostrarMensagem.value = false
+
+  if (cadastroSucesso.value) {
+    router.push('/')
+  }
 }
 
 async function proximaEtapa() {
@@ -55,10 +60,11 @@ async function proximaEtapa() {
   })
 
   if (!authStore.error) {
-    exibirMensagem('Cadastro realizado com sucesso!', 'sucesso', 9000)
-    setTimeout(() => router.push('/'), 9000)
+    cadastroSucesso.value = true
+    exibirMensagem('Cadastro realizado com sucesso!', 'sucesso')
   } else {
-    alert(authStore.error)
+    cadastroSucesso.value = false
+    exibirMensagem(authStore.error, 'erro')
   }
 }
 </script>
@@ -66,65 +72,63 @@ async function proximaEtapa() {
 <template>
   <img src="/icons/logo-96x96.png" alt="logo">
 
-<!-- Toast no topo com botão de fechar -->
-<div v-if="mostrarMensagem" :class="['toast', tipoMensagem]">
-  <span>{{ mensagem }}</span>
-  <button class="fechar-toast" @click="mostrarMensagem = false">×</button>
-</div>
- <form @submit.prevent="proximaEtapa">
-  <legend><span>Cadastre-se</span></legend>
 
-
-  <!-- Campos de input -->
-  <div class="input-box" :class="{active: ativo === 'Nome'}" @click="ativo = 'Nome'">
-    <ion-icon name="person-outline"></ion-icon>
-    <input v-model="nome" type="text" placeholder="Nome" required>
+  <div 
+    v-if="mostrarMensagem" 
+    :class="['toast', tipoMensagem]"
+  >
+    <span class="msg">{{ mensagem }}</span>
+    <button class="fechar-toast" @click="fecharToast">×</button>
   </div>
 
-  <div class="input-box" :class="{active: ativo === 'Email'}" @click="ativo = 'Email'">
-    <ion-icon name="mail-outline"></ion-icon>
-    <input v-model="email" type="email" placeholder="Email" required>
-  </div>
+  <form @submit.prevent="proximaEtapa">
+    <legend><span>Cadastre-se</span></legend>
 
-  <div class="input-box" :class="{active: ativo === 'Senha'}" @click="ativo = 'Senha'">
-    <ion-icon
-      :name="mostrarSenha ? 'lock-open-outline' : 'lock-closed-outline'"
-      class="icon-senha"
-      @click.stop="mostrarSenha = !mostrarSenha"
-    ></ion-icon>
-    <input v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha" required>
-  </div>
+  
+    <div class="input-box" :class="{active: ativo === 'Nome'}" @click="ativo = 'Nome'">
+      <ion-icon name="person-outline"></ion-icon>
+      <input v-model="nome" type="text" placeholder="Nome" required>
+    </div>
 
-  <div class="input-box" :class="{active: ativo === 'Confirmar'}" @click="ativo = 'Confirmar'">
-    <ion-icon
-      :name="mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'"
-      class="icon-olho"
-      @click.stop="mostrarConfirmarSenha = !mostrarConfirmarSenha"
-    ></ion-icon>
-    <input v-model="confirmarSenha" :type="mostrarConfirmarSenha ? 'text' : 'password'" placeholder="Confirmar senha" required>
-  </div>
+    <div class="input-box" :class="{active: ativo === 'Email'}" @click="ativo = 'Email'">
+      <ion-icon name="mail-outline"></ion-icon>
+      <input v-model="email" type="email" placeholder="Email" required>
+    </div>
 
-  <button type="submit">Cadastrar</button>
+    <div class="input-box" :class="{active: ativo === 'Senha'}" @click="ativo = 'Senha'">
+      <ion-icon
+        :name="mostrarSenha ? 'lock-open-outline' : 'lock-closed-outline'"
+        class="icon-senha"
+        @click.stop="mostrarSenha = !mostrarSenha"
+      ></ion-icon>
+      <input v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha" required>
+    </div>
 
-</form>
+    <div class="input-box" :class="{active: ativo === 'Confirmar'}" @click="ativo = 'Confirmar'">
+      <ion-icon
+        :name="mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'"
+        class="icon-olho"
+        @click.stop="mostrarConfirmarSenha = !mostrarConfirmarSenha"
+      ></ion-icon>
+      <input v-model="confirmarSenha" :type="mostrarConfirmarSenha ? 'text' : 'password'" placeholder="Confirmar senha" required>
+    </div>
+
+    <button class="cdt" type="submit">Cadastrar</button>
+  </form>
 </template>
-<script setup>
-</script>
 
 <style scoped>
-*{
-  margin:0;
+* {
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-img{
+img {
   display: block;
   margin: 20px auto;
   margin-top: -5px;
- filter:  
- drop-shadow(0 6px 1px rgba(0,0,0,0.10))
-drop-shadow(0 0 4px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 6px 1px rgba(0,0,0,0.10)) drop-shadow(0 0 4px rgba(0,0,0,0.1));
 }
 
 form {
@@ -139,59 +143,91 @@ legend {
   font-weight: 800;
   color: #FF5700;
 }
-span{
-    border: none;
-    border: transparent;
-    text-shadow: 0px 5px 5px rgba(0,0,0,.30);
+
+span {
+  border: none;
+  text-shadow: 0px 5px 5px rgba(0,0,0,.30);
 }
-.icon-senha, .icon-olho{
+
+.icon-senha, .icon-olho {
   position: absolute;
   left: 15px;
-  right: 15px;
-  top:50%;
+  top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   font-size: 18px;
   font-weight: 700;
+  z-index: 10;
 }
-  .toast {
+
+.toast {
   position: fixed;
-  top: -60px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 15px 35px;
+  
+  width: 300px;            
+  min-height: 60px;        
+  padding: 0 10px;         
   border-radius: 10px;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 18px;
   color: #000;
-  background: #e3e3e3;
-  border: 1px solid #FF5700;
+  background: #fff;
+  border: 2px solid #FF5700;
+  
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
   align-items: center;
+  text-align: left;
   z-index: 9999;
-  animation: slideInOut 0.5s infinite;
+  user-select: none;
+  
+  
+  animation: 
+    descer 0.5s ease-out forwards,
+    movi 1s ease-in-out infinite 0.5s;
 }
 
 .toast.erro {
   background-color: #dc3545;
   color: #fff;
+  border: 1px solid #dc3545;
 }
+
 .fechar-toast {
   background: transparent;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   cursor: pointer;
   margin-left: 15px;
+  color: inherit;
 }
 
-@keyframes slideInOut {
-  0% { top: -60px; opacity: 0; }
-  10% { top: 20px; opacity: 1; }
-  90% { top: 20px; opacity: 1; }
-  100% { top: -60px; opacity: 0; }
+@keyframes descer {
+  0% {
+    top: -120px; 
+    opacity: 0;
+  }
+  100% {
+    top: 20px; 
+    opacity: 1;
+  }
 }
+
+@keyframes movi {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(.95);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
 .input-box {
   position: relative;
   width: 260px;
@@ -199,18 +235,16 @@ span{
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
   transition: transform .3s ease;
 }
-.input-box.active{ 
-transform: scale(1.1);
-box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+
+.input-box.active { 
+  transform: scale(1.1);
 }
 
 .input-box input {
   width: 100%;
   padding: 12px 20px 12px 45px;
-
   border-radius: 40px;
   border: 2px solid #FF5700;
-
   font-size: 14px;
   outline: none;
 }
@@ -220,12 +254,11 @@ box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-
   font-size: 18px;
   color: #000;
 }
 
-button {
+.cdt {
   padding: 10px 80px;
   border-radius: 40px;
   background-color: #FF5700;
@@ -233,10 +266,10 @@ button {
   color: white;
   font-size: 18px;
   cursor: pointer;
-  transition:  transform 10s ease-in-out;
-
+  transition: transform 0.2s ease;
 }
-button:active{
-transform: scale(1.1);
+
+.cdt:active {
+  transform: scale(1.1);
 }
 </style>
