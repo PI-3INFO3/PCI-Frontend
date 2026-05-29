@@ -2,7 +2,7 @@
   <header class="header">
     <div class="logo">
       <img 
-        src="/soul.png"      
+        src="/logo-48x48.png"      
         alt="soul." 
         class="logo-img"
       >
@@ -19,40 +19,31 @@
       </div>
     </div>
 
-    <div class="oval-buttons">
-      <div class="oval"></div>
-      <div class="oval"></div>
-      <div class="oval"></div>
-      <div class="oval"></div>
-    </div>
   </header>
 </template>
 
 <style scoped>
 .header {
   padding: 16px 16px 12px 16px;
-  background-color: #f8f8f8;
 }
 
 .logo {
   margin-bottom: 16px;
-}
-
-.logo-img {
-  height: 34px;
-  width: auto;
-}
-
-
-.search-container {
+}.search-container {
   margin-bottom: 16px;
+  display: flex;            
+  justify-content: center;   
+  width: 100%;
+  transition: transform 0.2s ease-in-out; }
+
+.search-container:focus-within {
+  transform: scale(1.05);  
 }
 
 .search-wrapper {
   position: relative;
-  width: 90%;
-  margin-left: 20px;
-}
+  width: 90%;               }
+
 
 .search-icon {
   position: absolute;
@@ -61,7 +52,6 @@
   transform: translateY(-50%);
   font-size: 20px;          
   color: #000;            
-    z-index: 2;
 }
 
 .search-bar {
@@ -77,25 +67,20 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
 }
 
+.search-bar:focus{
+  animation: mudarSombra 1s ease-in-out;
+}
+@keyframes mudarSombra {
+  0% {
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.8);
+    border-color: #FF6B00;
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 107, 0, 1);
+  }
+  100% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.10);
+  }
+}
 
-.oval-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
-  margin-left: 20px;
-}
-.oval:active{
-  transform: scale(.88);
-  opacity: .8;
-}
-
-.oval {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
-  width: 78px;
-  height: 34px;
-  margin-top: 30px;
-  background-color: white;
-  border: 2px solid #FF6B00;
-  border-radius: 9999px;
-}
 </style>
