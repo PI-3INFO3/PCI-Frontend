@@ -8,12 +8,16 @@ const routes = [
     props: true
   },
   {
-    path: '/',
+    path: '/Tipo-de-usuario',
     name: 'Tipo de usuario',
     component: () => import('../views/TipoDeUsuarioViews.vue'),
   },
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('../views/HomeViews.vue'),
+  },
 ];
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
