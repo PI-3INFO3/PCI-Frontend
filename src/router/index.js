@@ -2,6 +2,17 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
+    path: '/Cadastro',
+    name: 'Cadastro',
+    component: () => import('../views/CadastroViews.vue'),
+    props: true
+  },
+  {
+    path: '/Tipo-de-usuario',
+    name: 'Tipo de usuario',
+    component: () => import('../views/TipoDeUsuarioViews.vue'),
+  },
+  {
     path: '/',
     name: 'Home',
     component: () => import('../views/HomeViews.vue'),
