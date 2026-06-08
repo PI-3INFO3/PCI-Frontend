@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const nome = ref('')
-const email = ref('')
+const nome = ref(localStorage.getItem('nomeUsuario') || 'Anderson Ramos Silva Anjo')
+const email = ref(localStorage.getItem('emailUsuario') || 'Anderrsonrsanjo@gmail.com')
 const senha = ref('')
 const confirmarSenha = ref('')
 const tipoUsuario = ref('Pessoal')
@@ -14,6 +14,7 @@ const tema = ref('Claro')
 const fotoPerfil = ref(localStorage.getItem('fotoPerfil') || '')
 
 const expandido = ref(false)
+const visualizadorAberto = ref(false) 
 const inputFoto = ref(null)
 
 onMounted(() => {
@@ -37,33 +38,77 @@ function trocarFoto(event) {
 
     const reader = new FileReader()
     reader.onload = () => {
-        fotoPerfil.value = reader.result
-        localStorage.setItem('fotoPerfil', reader.result)
+        const img = new Image()
+        img.src = reader.result
+        img.onload = () => {
+            const canvas = document.createElement('canvas')
+            const ctx = canvas.getContext('2d')
+
+            const tamanhoAlvo = 600
+            canvas.width = tamanhoAlvo
+            canvas.height = tamanhoAlvo
+
+            ctx.imageSmoothingEnabled = true
+            ctx.imageSmoothingQuality = 'high'
+            ctx.drawImage(img, 0, 0, tamanhoAlvo, tamanhoAlvo)
+
+            const imagemAltaQualidade = canvas.toDataURL('image/jpeg', 0.95)
+
+            fotoPerfil.value = imagemAltaQualidade
+            localStorage.setItem('fotoPerfil', imagemAltaQualidade)
+        }
     }
     reader.readAsDataURL(arquivo)
 }
 
 function alternarExpansao() {
     expandido.value = !expandido.value
+    gerenciadorScroll()
+}
 
-    if (expandido.value) {
+function abrirVisualizadorFoto() {
+    if (!fotoPerfil.value) return
+    visualizadorAberto.value = true
+    gerenciadorScroll()
+}
+
+function fecharVisualizadorFoto() {
+    visualizadorAberto.value = false
+    gerenciadorScroll()
+}
+
+function gerenciadorScroll() {
+    if (expandido.value || visualizadorAberto.value) {
         document.body.style.overflow = 'hidden'
     } else {
         document.body.style.overflow = ''
     }
 }
 
-// function abrirPerfil() {
-//     router.push('/perfil').catch(() => {
-//         console.log('Rota /perfil não configurada no seu router')
-//     })
-// }
+function salvarAlteracoes() {
+    if (senha.value || confirmarSenha.value) {
+        if (senha.value !== confirmarSenha.value) {
+            alert('As senhas não coincidem!')
+            return
+        }
+        localStorage.setItem('senhaUsuario', senha.value)
+    }
 
-// function abrirConfiguracoes() {
-//     router.push('/configuracoes').catch(() => {
-//         console.log('Rota /configuracoes não configurada')
-//     })
-// }
+    localStorage.setItem('nomeUsuario', nome.value)
+    localStorage.setItem('emailUsuario', email.value)
+
+    senha.value = ''
+    confirmarSenha.value = ''
+    alternarExpansao()
+}
+
+function abrirPerfil() {
+    router.push('/perfil').catch(() => { })
+}
+
+function abrirConfiguracoes() {
+    router.push('/configuracoes').catch(() => { })
+}
 
 function trocarTema() {
     if (tema.value === 'Claro') {
@@ -77,10 +122,9 @@ function trocarTema() {
 }
 
 function sairConta() {
-    const confirmar = confirm('Deseja realmente sair da conta?')
-    if (confirmar) {
+    if (confirm('Deseja realmente sair da conta?')) {
         localStorage.clear()
-        // router.push('/login')
+        router.push('/login')
     }
 }
 </script>
@@ -90,10 +134,12 @@ function sairConta() {
 
         <div class="conta">
             <h1>Conta</h1>
+
             <div class="user-card" @click="abrirPerfil">
-                <div class="foto-container">
+                <div class="foto-container" @click.stop="abrirVisualizadorFoto">
                     <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil">
                     <ion-icon v-else class="foto-icon" name="person-circle-outline"></ion-icon>
+
                     <button type="button" class="btn-mais" @click.stop="acionarInputFoto">+</button>
                     <input ref="inputFoto" type="file" accept="image/*" @change="trocarFoto" hidden>
                 </div>
@@ -102,6 +148,7 @@ function sairConta() {
                     <span class="nome">{{ nome }}</span>
                     <span class="email">{{ email }}</span>
                 </div>
+
                 <div class="arrow-trigger" @click.stop="alternarExpansao">
                     <ion-icon class="arrow"
                         :name="expandido ? 'caret-down-outline' : 'caret-forward-outline'"></ion-icon>
@@ -122,7 +169,6 @@ function sairConta() {
                     </div>
                     <ion-icon name="chevron-forward-outline"></ion-icon>
                 </li>
-
                 <li @click="trocarTema">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="sunny-outline"></ion-icon>
@@ -130,7 +176,6 @@ function sairConta() {
                     </div>
                     <span class="tema">{{ tema }}</span>
                 </li>
-
                 <li class="sair" @click="sairConta">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="log-out-outline"></ion-icon>
@@ -140,7 +185,6 @@ function sairConta() {
             </ul>
         </div>
 
-      
         <Transition name="deslizar">
             <div v-if="expandido" class="painel-expandido">
 
@@ -151,7 +195,7 @@ function sairConta() {
 
                 <div class="conteudo-painel">
 
-                    <div class="foto-container grande">
+                    <div class="foto-container grande" @click.stop="abrirVisualizadorFoto">
                         <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil">
                         <ion-icon v-else class="foto-icon" name="person-circle-outline"></ion-icon>
                         <button type="button" class="btn-mais" @click.stop="acionarInputFoto">+</button>
@@ -186,13 +230,27 @@ function sairConta() {
                         </button>
                     </div>
 
-                    <button class="btn-confirmar" type="button" @click="alternarExpansao">
+                    <button class="btn-confirmar" type="button" @click="salvarAlteracoes">
                         Confirmar?
                     </button>
-
                 </div>
             </div>
         </Transition>
+
+        <Transition name="fade">
+            <div v-if="visualizadorAberto" class="modal-overlay" @click="fecharVisualizadorFoto">
+                <button class="modal-close" @click.stop="fecharVisualizadorFoto">✕</button>
+
+                <div class="modal-body" @click.stop>
+                    <div class="card-image-modal">
+                        <div class="blur-bg" :style="{ backgroundImage: `url(${fotoPerfil})` }"></div>
+                        <img :src="fotoPerfil" :alt="nome">
+                    </div>
+                    <p class="modal-title">{{ nome }}</p>
+                </div>
+            </div>
+        </Transition>
+
     </div>
 </template>
 
@@ -236,6 +294,7 @@ function sairConta() {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .foto-container img {
@@ -244,6 +303,9 @@ function sairConta() {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #ff6b00;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
 }
 
 .foto-icon {
@@ -287,7 +349,7 @@ function sairConta() {
 }
 
 .nome {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
@@ -348,7 +410,6 @@ li {
     color: red;
 }
 
-/* Estilos da Parte 2 (Painel da Imagem) */
 .painel-expandido {
     position: fixed;
     top: 0;
@@ -356,7 +417,7 @@ li {
     width: 100vw;
     height: 100vh;
     background-color: #e6e6e6;
-    z-index: 9999;
+    z-index: 9998;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -394,6 +455,10 @@ li {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     overflow-y: auto;
     scrollbar-width: none;
+}
+
+.conteudo-painel::-webkit-scrollbar {
+    display: none;
 }
 
 .foto-container.grande img,
@@ -487,6 +552,60 @@ li {
     margin-top: auto;
 }
 
+
+.modal-close {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background: transparent;
+    z-index: 999;
+    border: none;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.modal-body {
+    position: fixed;top: 0; left: 0; width: 100%; height: 100%;background: rgba(15, 20, 42, 0.95);
+}
+
+.blur-bg {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background-size: cover;
+    background-position: center;
+    
+    filter: blur(10px) opacity(.19);
+    z-index: -1;
+}
+
+.card-image-modal img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    z-index: 2;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.modal-title {
+    margin: 0;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
 .deslizar-enter-active,
 .deslizar-leave-active {
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -495,5 +614,15 @@ li {
 .deslizar-enter-from,
 .deslizar-leave-to {
     transform: translateY(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
