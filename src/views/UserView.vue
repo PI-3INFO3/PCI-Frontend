@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const nome = ref(localStorage.getItem('nomeUsuario') || 'Anderson Ramos Silva Anjo')
-const email = ref(localStorage.getItem('emailUsuario') || 'Anderrsonrsanjo@gmail.com')
+const nome = ref(localStorage.getItem('nomeUsuario') || 'Nome de usuário')
+const email = ref(localStorage.getItem('emailUsuario') || 'Usuário@gmail.com')
 const senha = ref('')
 const confirmarSenha = ref('')
 const tipoUsuario = ref('Pessoal')
@@ -102,13 +102,9 @@ function salvarAlteracoes() {
     alternarExpansao()
 }
 
-function abrirPerfil() {
-    router.push('/perfil').catch(() => { })
-}
-
-function abrirConfiguracoes() {
-    router.push('/configuracoes').catch(() => { })
-}
+// function abrirConfiguracoes() {
+//     router.push('/configuracoes').catch(() => { })
+// }
 
 function trocarTema() {
     if (tema.value === 'Claro') {
@@ -135,7 +131,7 @@ function sairConta() {
         <div class="conta">
             <h1>Conta</h1>
 
-            <div class="user-card" @click="abrirPerfil">
+            <div class="user-card">
                 <div class="foto-container" @click.stop="abrirVisualizadorFoto">
                     <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil">
                     <ion-icon v-else class="foto-icon" name="person-circle-outline"></ion-icon>
@@ -370,6 +366,10 @@ function sairConta() {
     cursor: pointer;
     box-shadow: 5px 4px 10px rgba(0, 0, 0, .18);
     font-weight: 600;
+    transition: .2s;
+}
+.adicionar:active{
+    transform: translateY(2px);
 }
 
 .opcoes {
@@ -416,7 +416,7 @@ li {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #e6e6e6;
+    background-color: white;
     z-index: 9998;
     padding: 20px;
     display: flex;
@@ -444,7 +444,7 @@ li {
 }
 
 .conteudo-painel {
-    background-color: #dedede;
+    background-color: #f2f2f2;
     border: 1px solid #b5b5b5;
     border-radius: 16px;
     flex: 1;
@@ -469,11 +469,11 @@ li {
 }
 
 .legenda-foto {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     margin-top: 8px;
     margin-bottom: 20px;
-    color: #333;
+    color: black;
 }
 
 .campo-input {
@@ -481,17 +481,18 @@ li {
     max-width: 280px;
     background: white;
     border-radius: 25px;
-    padding: 8px 16px;
+    padding: 10px 17px;
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
+    transition: .2s;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
+}
 .campo-input ion-icon {
-    font-size: 18px;
-    color: #333;
+    font-size: 20px;
+    color: black;
 }
 
 .campo-input input {
