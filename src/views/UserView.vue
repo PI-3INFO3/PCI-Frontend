@@ -559,6 +559,7 @@ li {
     background: transparent;
     z-index: 999;
     border: none;
+    color: #fff;
     font-size: 24px;
     font-weight: 900;
     cursor: pointer;
@@ -578,7 +579,7 @@ li {
     background-size: cover;
     background-position: center;
     
-    filter: blur(10px) opacity(.19);
+    filter: blur(10px) opacity(.15);
     z-index: -1;
 }
 
@@ -600,7 +601,7 @@ li {
     margin-top: 20px;
     font-size: 18px;
     font-weight: 700;
-    color: #000;
+    color: #fff;
     text-align: center;
     font-family: system-ui, -apple-system, sans-serif;
 }
