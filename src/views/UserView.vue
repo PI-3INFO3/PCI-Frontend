@@ -257,7 +257,6 @@ function sairConta() {
 }
 
 .pagina {
-    padding: 16px;
     min-height: 100vh;
     background-color: white;
 }
@@ -345,7 +344,7 @@ function sairConta() {
 }
 
 .nome {
-    font-size: 13px;
+    font-size: 17px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
@@ -353,7 +352,7 @@ function sairConta() {
 }
 
 .email {
-    font-size: 12px;
+    font-size: 15px;
     color: #666;
 }
 
@@ -418,7 +417,7 @@ li {
     height: 100vh;
     background-color: white;
     z-index: 9998;
-    padding: 20px;
+    padding: 5px 20px;
     display: flex;
     flex-direction: column;
 }
@@ -428,7 +427,6 @@ li {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 10px;
 }
 
 .topo-painel h2 {
