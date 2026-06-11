@@ -1,17 +1,30 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
-const username = ref('')
-const password = ref('')
+const router = useRouter();
+const authStore = useAuthStore();
+
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const errorMessage = ref('');
 const rememberMe = ref(false)
 
-const handleLogin = () => {
-
-  console.log('Dados:', { 
-    username: username.value, 
-    password: password.value, 
-    remember: rememberMe.value 
-  })
+async function handleLogin() {
+  loading.value = true;
+  errorMessage.value = '';
+  try {
+    await authStore.login(email.value, password.value);
+    router.push('/');
+  } catch (err) {
+    errorMessage.value =
+      err.response?.data?.detail ??
+      'Erro ao entrar. Verifique suas credenciais.';
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -24,11 +37,12 @@ const handleLogin = () => {
 
       <div class="input-group">
         <input 
-          type="text" 
-          id="username" 
-          v-model="username" 
-          placeholder="Usuário" 
-          required 
+          id="email"
+          v-model="email"
+          type="email"
+          placeholder="seu@email.com"
+          required
+          autocomplete="email"
         >
       </div>
 
@@ -39,6 +53,7 @@ const handleLogin = () => {
           v-model="password" 
           placeholder="Senha" 
           required
+          autocomplete="current-password"
         >
       </div>
 
@@ -47,7 +62,9 @@ const handleLogin = () => {
         Lembre de mim
       </label>
       
-      <button type="submit">Entrar</button>
+      <button type="submit" :disabled="loading">
+        {{ loading ? 'Entrando...' : 'Entrar' }}
+      </button>
     </form>
     
     <p>Não tem conta? <a href="/register">Clique aqui</a></p>
@@ -86,7 +103,7 @@ h2 {
   justify-content: center;
 }
 
-input[type="text"],
+input[type="email"],
 input[type="password"] {
   width: 80%;
   padding: 10px 45px; 
