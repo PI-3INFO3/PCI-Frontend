@@ -1,6 +1,7 @@
 import apiClient from "./config";
 
 const authApi = {
+    
     register(data) {
         return apiClient.post('/registro/', data);
     },
@@ -13,7 +14,7 @@ const authApi = {
     },
 
     me() {
-        return apiClient.get('/users/me/');
+        return apiClient.get('/usuarios/me/');
     },
 };
 

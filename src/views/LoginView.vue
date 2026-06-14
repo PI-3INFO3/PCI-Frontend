@@ -17,6 +17,8 @@ async function handleLogin() {
   errorMessage.value = '';
   try {
     await authStore.login(email.value, password.value);
+    await authStore.fetchUser();
+
     router.push('/');
   } catch (err) {
     errorMessage.value =

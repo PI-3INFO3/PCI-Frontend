@@ -6,10 +6,11 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref(null);
     const loading = ref(false);
     const error = ref(null);
+
     const accessToken = ref(localStorage.getItem('access_token'));
     const refreshToken = ref(localStorage.getItem('refresh_token'));
 
-    const isAuthenticated = computed(() => !!user.value);
+    const isAuthenticated = computed(() => !!accessToken.value);
 
     async function login(email, password) {
         loading.value = true;
@@ -18,11 +19,13 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const { data } = await authApi.login(email, password);
 
-            accessToken.value = data.access_token;
-            refreshToken.value = data.refresh_token;
+            const { access, refresh } = data;
 
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('refresh_token', data.refresh_token);
+            accessToken.value = access;
+            refreshToken.value = refresh;
+
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
 
 
 
@@ -35,6 +38,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     function logout() {
+        user.value = null;
         accessToken.value = null;
         refreshToken.value = null;
         localStorage.removeItem('access_token');
@@ -42,11 +46,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     async function fetchUser() {
-        if (!token.value) return;
+        if (!accessToken.value) return;
         loading.value = true;
         error.value = null;
         try {
-            const response = await authApi.me(token.value);
+            const response = await authApi.me();
             user.value = response.data;
         } catch (err) {
             error.value = 'Erro ao carregar usuário.';
@@ -57,7 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    async function register(formata) {
+    async function register(data) {
         loading.value = true;
         error.value = null;
 
