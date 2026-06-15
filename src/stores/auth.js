@@ -77,6 +77,25 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    async function updateUser(payload) {
+        const { data } = await authApi.updateMe(payload);
+        user.value = data;
+    }
+
+    async function uploadPhoto(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const { data } = await authApi.uploadImage(formData);
+
+        await updateUser({
+            profile_photo: data.id
+        });
+
+        await fetchUser();
+        return authApi.uploadImage(file)
+    }
+
     return {
         user,
         accessToken,
@@ -88,5 +107,7 @@ export const useAuthStore = defineStore('auth', () => {
         logout,
         fetchUser,
         register,
+        updateUser,
+        uploadPhoto,
     };
 });

@@ -1,64 +1,71 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const auth = useAuthStore()
 
-const nome = ref(localStorage.getItem('nomeUsuario') || 'Nome de usuário')
-const email = ref(localStorage.getItem('emailUsuario') || 'Usuário@gmail.com')
 const senha = ref('')
 const confirmarSenha = ref('')
-const tipoUsuario = ref('Pessoal')
 
 const tema = ref('Claro')
-const fotoPerfil = ref(localStorage.getItem('fotoPerfil') || '')
 
 const expandido = ref(false)
 const visualizadorAberto = ref(false) 
 const inputFoto = ref(null)
 
-onMounted(() => {
-    const fotoSalva = localStorage.getItem('fotoPerfil')
-    if (fotoSalva) fotoPerfil.value = fotoSalva
+onMounted(async () => {
+    await auth.fetchUser()
 
-    const temaSalvo = localStorage.getItem('tema')
+        const temaSalvo = localStorage.getItem('tema')
     if (temaSalvo) {
         tema.value = temaSalvo
         document.body.classList.toggle('dark', temaSalvo === 'Escuro')
     }
 })
 
+const nome = computed({
+    get: () => auth.user?.name || '',
+    set: (value) => {
+        auth.user.name = value
+    }
+})
+
+const email = computed(() => auth.user?.email || '')
+
+const tipoUsuario = computed(() =>
+    auth.user?.user_type || 'personal'
+)
+
+const fotoPerfil = computed(() =>
+    auth.user?.profile_photo?.file || ''
+)
+
 function acionarInputFoto() {
-    inputFoto.value.click()
+    inputFoto.value?.click()
 }
 
-function trocarFoto(event) {
-    const arquivo = event.target.files[0]
-    if (!arquivo) return
+async function trocarFoto(event) {
+    const file = event.target.files[0]
+    if (!file) return
+    await auth.uploadPhoto(file)
 
-    const reader = new FileReader()
-    reader.onload = () => {
-        const img = new Image()
-        img.src = reader.result
-        img.onload = () => {
-            const canvas = document.createElement('canvas')
-            const ctx = canvas.getContext('2d')
+    try {
+        const response = await auth.uploadPhoto(file)
 
-            const tamanhoAlvo = 600
-            canvas.width = tamanhoAlvo
-            canvas.height = tamanhoAlvo
+        const attachment_key = response.data.attachment_key
 
-            ctx.imageSmoothingEnabled = true
-            ctx.imageSmoothingQuality = 'high'
-            ctx.drawImage(img, 0, 0, tamanhoAlvo, tamanhoAlvo)
+        await auth.updateUser({
+            profile_photo: attachment_key
+        })
 
-            const imagemAltaQualidade = canvas.toDataURL('image/jpeg', 0.95)
+        await auth.fetchUser()
 
-            fotoPerfil.value = imagemAltaQualidade
-            localStorage.setItem('fotoPerfil', imagemAltaQualidade)
-        }
+    } catch (err) {
+        console.error(err)
+        alert('Erro ao atualizar foto')
     }
-    reader.readAsDataURL(arquivo)
 }
 
 function alternarExpansao() {
@@ -78,28 +85,35 @@ function fecharVisualizadorFoto() {
 }
 
 function gerenciadorScroll() {
-    if (expandido.value || visualizadorAberto.value) {
-        document.body.style.overflow = 'hidden'
-    } else {
-        document.body.style.overflow = ''
-    }
+    document.body.style.overflow =
+        expandido.value || visualizadorAberto.value ? 'hidden' : ''
 }
 
-function salvarAlteracoes() {
+async function salvarAlteracoes() {
     if (senha.value || confirmarSenha.value) {
         if (senha.value !== confirmarSenha.value) {
             alert('As senhas não coincidem!')
             return
         }
-        localStorage.setItem('senhaUsuario', senha.value)
     }
 
-    localStorage.setItem('nomeUsuario', nome.value)
-    localStorage.setItem('emailUsuario', email.value)
+    try {
+        await auth.updateUser({
+            name: auth.user.name,
+            user_type: auth.user.user_type,
+            password: senha.value || undefined
+        })
 
-    senha.value = ''
-    confirmarSenha.value = ''
-    alternarExpansao()
+        senha.value = ''
+        confirmarSenha.value = ''
+        expandido.value = false
+
+        await auth.fetchUser()
+
+    } catch (err) {
+        alert('Erro ao atualizar usuário')
+        console.error(err)
+    }
 }
 
 // function abrirConfiguracoes() {
@@ -119,7 +133,7 @@ function trocarTema() {
 
 function sairConta() {
     if (confirm('Deseja realmente sair da conta?')) {
-        localStorage.clear()
+        auth.logout()
         router.push('/login')
     }
 }
