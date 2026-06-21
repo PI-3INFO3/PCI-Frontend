@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "canvas": "^3.2.3",
+    "fabric": "^7.4.0",
     "vue": "^3.5.30",
     "vue-router": "^4.6.4"
   },
