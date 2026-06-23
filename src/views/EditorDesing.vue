@@ -15,8 +15,8 @@ const templateTitulo = route.query.titulo || 'Design'
 const inicializarCanvas = () => {
   if (!canvasRef.value || !imgUrl) return
 
-  const larguraDisponivel = Math.min(window.innerWidth - 40, 750)
-  const alturaDisponivel = larguraDisponivel * 1.3
+  const larguraDisponivel = Math.min(window.innerWidth - 2, 450)
+  const alturaDisponivel = larguraDisponivel * 1.5
 
   fabricCanvas = new fabric.Canvas(canvasRef.value, {
     width: larguraDisponivel,
@@ -130,8 +130,7 @@ const exeportadorDesing = () => {
 
   const dataURL = fabricCanvas.toDataURL({
     format: 'png',
-    quality: 1
-  })
+    quality: 1  })
 
   const link = document.createElement('a')
   link.download = `editado-${templateTitulo}.png`
@@ -167,19 +166,19 @@ onBeforeUnmount(() => {
 
     <footer class="editor-footer">
       <button class="tool-btn" @click="adicionarTexto">
-        <span>✏️</span> Texto
+        <span>Texto</span> 
       </button>
       
-      <button class="tool-btn" @click="adicionarImagemPronta('https://r2.dev')">
-        <span>🖼️</span> Sticker 1
+      <!-- <button class="tool-btn" @click="adicionarImagemPronta('https://r2.dev')">
+        <span>Sticker 1</span> 
       </button>
 
       <button class="tool-btn" @click="adicionarImagemPronta('https://gstatic.com')">
-        <span>⭐</span> Estrela
-      </button>
+        <span>Estrela</span> 
+      </button> -->
 
       <button class="tool-btn btn-deletar" @click="deletarSelecionado">
-        <span>🗑️</span> Apagar
+        <span>Apagar</span> 
       </button>
     </footer>
   </div>
@@ -218,7 +217,7 @@ onBeforeUnmount(() => {
 .btn-exportar { background-color: #FF5700; color: white; }
 
 .canvas-area {
-  flex: 1;
+  flex: 2;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -228,20 +227,20 @@ onBeforeUnmount(() => {
   overflow: auto;
   scrollbar-width: none;
 }
-
+/* 
 .canvas-container {
   background-color: #ffffff;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   overflow: hidden;
   display: flex;
-}
+} */
 
 .editor-footer {
   display: flex;
   justify-content: center;
   gap: 24px;
-  padding: 16px;
+  padding: 10px;
   background-color: #1e293b;
   border-top: 1px solid #334155;
 }
@@ -250,7 +249,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   background: none;
   border: none;
   color: #ffff;
@@ -258,6 +257,6 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: color 0.2s;
 }
-.tool-btn span { font-size: 22px; }
+.tool-btn span { font-size: 19px; }
 .tool-btn:focus { color: #FF5700; }
 </style>

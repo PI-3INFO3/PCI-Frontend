@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -233,7 +232,7 @@ button.active {
 }
 
 .card {
-  flex: 0 0 calc((100% - 40px) / 2);
+  flex: 0 0 calc((100% - 0px) / 2);
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
@@ -266,13 +265,15 @@ button.active {
   flex: 1 1 auto;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 300px) {
   .fileira-horizontal {
     gap: 12px;
   }
+
   .card {
     flex: 0 0 calc((100% - 16px) / 1.2);
   }
+
   .grid-vertical {
     grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
     gap: 16px;
@@ -347,46 +348,59 @@ button.active {
 
 .card-content {
 
-padding: 14px 12px;
-text-align: left;
-background: #ffffff;
-}
-.card-titulo {
-font-size: 14px;
-font-weight: 600;
-color: #334155;
-margin: 0;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-.card.skeleton {
-cursor: default;
-pointer-events: none;
-}
-.skeleton-image {
-width: 100%;
-height: 220px;
-background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-background-size: 200% 100%;
-animation: pulse-loading 1.5s infinite linear;
-}
-.skeleton-text {
-width: 70%;
-height: 14px;
-margin: 15px 12px;
-background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-background-size: 200% 100%;
-animation: pulse-loading 1.5s infinite linear;
-border-radius: 4px;
-}
-@keyframes pulse-loading {
-0% {
-background-position: 200% 0;
-}
-100% {
-background-position: -200% 0;
-}
+  padding: 14px 12px;
+  text-align: left;
+  background: #ffffff;
 }
 
+
+.card-titulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+.card.skeleton {
+  cursor: default;
+  pointer-events: none;
+}
+
+
+
+
+.skeleton-image {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: pulse-loading 1.5s infinite linear;
+}
+
+
+
+.skeleton-text {
+  width: 70%;
+  height: 14px;
+  margin: 15px 12px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: pulse-loading 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+@keyframes pulse-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
 </style>
