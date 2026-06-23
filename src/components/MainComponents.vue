@@ -1,4 +1,3 @@
-Aqui está o código do seu MainComponents.vue totalmente limpo. Todos os comentários em JavaScript, marcações de texto explicativas e anotações internas foram removidos:
 
 <script setup>
 import { ref, computed } from 'vue'
