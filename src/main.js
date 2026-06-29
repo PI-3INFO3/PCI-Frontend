@@ -9,7 +9,5 @@ import { defineCustomElements } from 'ionicons/loader'
 const app = createApp(App);
 app.use(createPinia());
 app.use(router);
-
 defineCustomElements(window)
-
 app.mount('#app');

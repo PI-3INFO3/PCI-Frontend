@@ -29,7 +29,7 @@ const authApi = {
         formData.append('description', description)
     }
 
-    return apiClient.post('/media/images', formData, {
+    return apiClient.post('/media/images/', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

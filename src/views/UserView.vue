@@ -39,9 +39,8 @@ const tipoUsuario = computed(() =>
 )
 
 const fotoPerfil = computed(() =>
-    auth.user?.profile_photo?.file || ''
+    auth.user?.profile_photo?.url || ''
 )
-
 function acionarInputFoto() {
     inputFoto.value?.click()
 }
@@ -49,25 +48,21 @@ function acionarInputFoto() {
 async function trocarFoto(event) {
     const file = event.target.files[0]
     if (!file) return
-    await auth.uploadPhoto(file)
 
     try {
         const response = await auth.uploadPhoto(file)
-
         const attachment_key = response.data.attachment_key
 
         await auth.updateUser({
-            profile_photo: attachment_key
+            profile_photo_attachment_key: attachment_key
         })
 
         await auth.fetchUser()
-
     } catch (err) {
         console.error(err)
         alert('Erro ao atualizar foto')
     }
 }
-
 function alternarExpansao() {
     expandido.value = !expandido.value
     gerenciadorScroll()
@@ -219,7 +214,7 @@ function sairConta() {
 
                     <div class="campo-input">
                         <ion-icon name="mail-outline"></ion-icon>
-                        <input type="email" v-model="email">
+                        <input type="email" :value="email" disabled>
                     </div>
 
                     <div class="campo-input">
