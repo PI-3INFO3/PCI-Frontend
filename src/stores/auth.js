@@ -6,18 +6,29 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref(null);
     const loading = ref(false);
     const error = ref(null);
-    const token = ref(localStorage.getItem('token') || null);
 
-    const isAuthenticated = computed(() => !!user.value);
+    const accessToken = ref(localStorage.getItem('access_token'));
+    const refreshToken = ref(localStorage.getItem('refresh_token'));
+
+    const isAuthenticated = computed(() => !!accessToken.value);
 
     async function login(email, password) {
         loading.value = true;
         error.value = null;
+
         try {
-            const response = await authApi.login({ email, password });
-            user.value = response.data.user;
-            token.value = response.data.token;
-            localStorage.setItem('token', token.value);
+            const { data } = await authApi.login(email, password);
+
+            const { access, refresh } = data;
+
+            accessToken.value = access;
+            refreshToken.value = refresh;
+
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+
+
+
         } catch (err) {
             error.value = 'Erro ao fazer login.';
             console.error(err);
@@ -26,18 +37,20 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    async function logout() {
+    function logout() {
         user.value = null;
-        token.value = null
-        localStorage.removeItem('token');
+        accessToken.value = null;
+        refreshToken.value = null;
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
     }
 
     async function fetchUser() {
-        if (!token.value) return;
+        if (!accessToken.value) return;
         loading.value = true;
         error.value = null;
         try {
-            const response = await authApi.me(token.value);
+            const response = await authApi.me();
             user.value = response.data;
         } catch (err) {
             error.value = 'Erro ao carregar usuário.';
@@ -51,11 +64,11 @@ export const useAuthStore = defineStore('auth', () => {
     async function register(data) {
         loading.value = true;
         error.value = null;
+
         try{
-            const response = await authApi.register(data);
-            user.value = response.data.user;
-            token.value = response.data.token;
-            localStorage.setItem('token', token.value);
+            await authApi.register(data);
+
+            await login(data.email, data.password);
         }catch (err) {
             error.value = 'Erro ao criar usuário.';
             console.error(err);
@@ -66,7 +79,8 @@ export const useAuthStore = defineStore('auth', () => {
 
     return {
         user,
-        token,
+        accessToken,
+        refreshToken,
         loading,
         error,
         isAuthenticated,
