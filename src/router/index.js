@@ -6,6 +6,22 @@ const routes = [
     name: 'login',
     component: () => import('../views/LoginView.vue'),
   },
+  {
+    path: '/Cadastro',
+    name: 'Cadastro',
+    component: () => import('../views/CadastroViews.vue'),
+    props: true
+  },
+  {
+    path: '/Tipo-de-usuario',
+    name: 'Tipo de usuario',
+    component: () => import('../views/TipoDeUsuarioViews.vue'),
+  },
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('../views/HomeViews.vue'),
+  },
 ];
 
 const router = createRouter({
