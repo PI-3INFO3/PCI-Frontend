@@ -65,16 +65,25 @@ export const useAuthStore = defineStore('auth', () => {
         loading.value = true;
         error.value = null;
 
-        try{
+        try {
             await authApi.register(data);
 
             await login(data.email, data.password);
-        }catch (err) {
+        } catch (err) {
             error.value = 'Erro ao criar usuário.';
             console.error(err);
         } finally {
             loading.value = false;
         }
+    }
+
+    async function updateUser(payload) {
+        const { data } = await authApi.updateMe(payload);
+        user.value = data;
+    }
+
+    async function uploadPhoto(file) {
+        return authApi.uploadImage(file);
     }
 
     return {
@@ -88,5 +97,7 @@ export const useAuthStore = defineStore('auth', () => {
         logout,
         fetchUser,
         register,
+        updateUser,
+        uploadPhoto,
     };
 });

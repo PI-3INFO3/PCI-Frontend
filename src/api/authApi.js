@@ -1,7 +1,6 @@
 import apiClient from "./config";
 
 const authApi = {
-
     register(data) {
         return apiClient.post('/registro/', data);
     },
@@ -15,6 +14,25 @@ const authApi = {
 
     me() {
         return apiClient.get('/usuarios/me/');
+    },
+
+    updateMe(data) {
+        return apiClient.patch('/usuarios/me/', data);
+    },
+
+    uploadImage(file, description = '') {
+    const formData = new FormData()
+
+    formData.append('file', file)
+    if (description) {
+        formData.append('description', description)
+    }
+
+    return apiClient.post('/media/images/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
     },
 };
 
