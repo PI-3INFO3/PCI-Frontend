@@ -1,13 +1,12 @@
 import apiClient from "./config";
 
 const authApi = {
-    
     register(data) {
         return apiClient.post('/registro/', data);
     },
 
     login(email, password) {
-        return apiClient.post('/token/', {
+        return apiClient.post('/auth/token/', {
             email,
             password,
         })
