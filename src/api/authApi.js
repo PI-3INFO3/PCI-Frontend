@@ -6,7 +6,7 @@ const authApi = {
     },
 
     login(email, password) {
-        return apiClient.post('/auth/token/', {
+        return apiClient.post('/token/', {
             email,
             password,
         })
