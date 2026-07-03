@@ -1,4 +1,5 @@
 <script setup>
+
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -19,8 +20,13 @@ const categorias = [
 const filtroSelecionado = ref('Todos')
 
 const todosModelos = [
-  { id: 1, titulo: 'Cabeçalho 10', categoria: 'Comunicação', img: '/cabeçalho-10 -by MaxAI.jpeg' },
-  { id: 2, titulo: 'Cartaz Dia do Bombeiro', categoria: 'Cartaz', img: '/Cartaz dia do Bombeiro.jpg' },
+  { id: 1,  titulo: 'Cabeçalho 10', 
+    categoria: 'Comunicação', 
+    img: '/cabeçalho-10 -by MaxAI.jpeg', 
+  },
+
+  { id: 2, titulo: 'Cartaz Dia do Bombeiro', categoria: 'Cartaz', img: '/Cartaz dia do Bombeiro.jpg',
+   },
   { id: 3, titulo: 'Cartaz Opção 2', categoria: 'Cartaz', img: '/Cartaz opção 2.jpg' },
   { id: 4, titulo: 'Cartaz Rudolph PPR-14', categoria: 'Cartaz', img: '/Cartaz_A4_Rudolph_PPR-14 -by MaxAI.jpeg' },
   { id: 5, titulo: 'Comunicação Dia Julino 15', categoria: 'Comunicação', img: '/Comunicação Dia Julino-15 -by MaxAI.jpeg' },
@@ -75,15 +81,13 @@ const rolarFileira = (idDoElemento, direcao) => {
   }
 }
 
-const abrirEditor = (modelo) => {
-  router.push({
-    path: '/EditorDesing',
-    query: {
-      img: modelo.img,
-      titulo: modelo.titulo,
-      formato: modelo.img.split('.').pop().toLowerCase()
-    }
-  })
+const abrirEditor = (modelo) => {router.push({
+  path: '/EditorDesing',
+  query: {
+    template: JSON.stringify(modelo.template),
+    titulo: modelo.titulo
+  }
+})
 }
 </script>
 
