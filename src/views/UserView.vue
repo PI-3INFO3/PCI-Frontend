@@ -63,6 +63,7 @@ async function trocarFoto(event) {
         alert('Erro ao atualizar foto')
     }
 }
+
 function alternarExpansao() {
     expandido.value = !expandido.value
     gerenciadorScroll()
@@ -282,13 +283,14 @@ function sairConta() {
 }
 
 .user-card {
-    width: 100%;
+    width: 98%;
+    margin-left: 3px;
     display: flex;
     align-items: center;
     background: white;
     border: 2px solid #8a8888;
     border-radius: 12px;
-    padding: 12px;
+    padding: 11px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
     cursor: pointer;
 }
