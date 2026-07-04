@@ -37,9 +37,10 @@ function proximaEtapa() {
 </script>
 
 <template>
-  <img src="/icons/logo-96x96.png" alt="logo">
+ <div class="pagina-tipo">
+ <img src="/icons/logo-96x96.png" alt="logo">
 
-  <form @submit.prevent="proximaEtapa">
+  <form  @submit.prevent="proximaEtapa">
 
     <div class="select-box">
 
@@ -68,6 +69,8 @@ function proximaEtapa() {
     </button>
 
   </form>
+  </div>
+ 
 </template>
 
 <style scoped>
@@ -77,6 +80,12 @@ function proximaEtapa() {
   box-sizing: border-box;
 }
 
+.pagina-tipo{
+  min-height: 100vh;
+  background-color: #fff;
+  color: #000;
+  padding-top: 20px;
+}
 img {
   display: block;
   margin: 20px auto;

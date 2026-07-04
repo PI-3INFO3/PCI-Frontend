@@ -7,11 +7,16 @@ const router = useRouter()
 function irParaPerfeil(){
   router.push('/user')
 }
+function inicio(){
+    router.push('/')
+
+}
 </script>
 <template>
   <header class="header">
     <div class="logo">
-      <img src="/logo-48x48.png" alt="soul." class="logo-img">
+      <img src="/logo-48x48.png" alt="soul." class="logo-img"
+      @click.stop="inicio">
     
     <div class="user-card">
       <div class="foto-container" >
@@ -37,6 +42,7 @@ function irParaPerfeil(){
 <style scoped>
 .header {
   padding: 16px 16px 12px 16px;
+  background-color: var(--cor-fundo);
 }
 
 .logo {
@@ -69,7 +75,7 @@ function irParaPerfeil(){
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
-  color: #000;
+  color: var(--cor-texto);
 }
 
 
@@ -90,7 +96,7 @@ function irParaPerfeil(){
 
 .foto-icon {
   font-size: 50px;
-  color: #666;
+  color: var(--cor-texto-secundario);
 }
 
 .btn-mais {
@@ -120,6 +126,7 @@ function irParaPerfeil(){
   padding-left: 50px;
   padding-right: 16px;
   background-color: transparent;
+  color: var(--cor-texto);
   font-size: 15px;
   outline: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);

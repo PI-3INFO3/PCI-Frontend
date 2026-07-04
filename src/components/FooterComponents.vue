@@ -2,7 +2,7 @@
         import { ref } from 'vue'
         
         const abriMenu = ref(false)
-        const ativo = ref('menu') 
+        const ativo = ref('folder') 
         </script>
 <template>
   <footer>
@@ -55,7 +55,9 @@
     @click="abriMenu = false"></div>
 
     <aside :class="['sidebar', {open: abriMenu}]">
-      <h2>Menu </h2>
+      
+      <img src="/logo-72x72.png" alt="soul." class="logo-img"
+      >
       
 
 </aside>
@@ -67,4 +69,11 @@
 
 
 <style>
+.logo-img{
+  margin-right: 80px;
+}
+.sidebar h2 {
+  color: var(--cor-texto);
+  margin-bottom: 15px;
+}
 </style>

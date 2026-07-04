@@ -28,11 +28,15 @@ async function handleLogin() {
     loading.value = false;
   }
 }
+
+function irParaCadastro() {
+  router.push('/TipoDeUsuario')
+}
 </script>
 
 <template>
   <div class="login-container">
-    <img src="/logo-144x144.png" alt="Logo">
+    <img src="/logo-96x96.png" alt="Logo">
     
     <form @submit.prevent="handleLogin">
       <h2>Login</h2>
@@ -69,7 +73,7 @@ async function handleLogin() {
       </button>
     </form>
     
-    <p>Não tem conta? <a href="/register">Clique aqui</a></p>
+    <p>Não tem conta? <a @click.stop="irParaCadastro">Clique aqui</a></p>
   </div>
 </template>
 
@@ -78,6 +82,9 @@ async function handleLogin() {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
+  min-height: 100vh;
+  background-color: #fff;
+  color: #000;
 }
 
 img {
@@ -114,7 +121,7 @@ input[type="password"] {
   font-size: 15px;
   outline: none;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
-  
+  background-color: transparent;
   transition: transform .2s ease, border-color .2s ease;
 }
 

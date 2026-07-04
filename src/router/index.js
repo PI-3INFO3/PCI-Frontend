@@ -18,7 +18,7 @@ const routes = [
     props: true
   },
   {
-    path: '/Tipo-de-usuario',
+    path: '/Tipodeusuario',
     name: 'Tipo de usuario',
     component: () => import('../views/TipoDeUsuarioViews.vue'),
   },

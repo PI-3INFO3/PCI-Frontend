@@ -15,16 +15,19 @@ const expandido = ref(false)
 const visualizadorAberto = ref(false) 
 const inputFoto = ref(null)
 
+function inicio() {
+    router.push("/")
+}
+
 onMounted(async () => {
     await auth.fetchUser()
 
-        const temaSalvo = localStorage.getItem('tema')
+    const temaSalvo = localStorage.getItem('tema')
     if (temaSalvo) {
         tema.value = temaSalvo
         document.body.classList.toggle('dark', temaSalvo === 'Escuro')
     }
 })
-
 const nome = computed({
     get: () => auth.user?.name || '',
     set: (value) => {
@@ -143,7 +146,9 @@ function sairConta() {
 
             <div class="user-card">
                 <div class="foto-container" @click.stop="abrirVisualizadorFoto">
-                    <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil">
+                    <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil"
+                    
+                    >
                     <ion-icon v-else class="foto-icon" name="person-circle-outline"></ion-icon>
 
                     <button type="button" class="btn-mais" @click.stop="acionarInputFoto">+</button>
@@ -173,19 +178,26 @@ function sairConta() {
                         <ion-icon class="icon" name="settings-outline"></ion-icon>
                         Configurações
                     </div>
-                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                    <ion-icon class='tema-conf' name="chevron-forward-outline"></ion-icon>
                 </li>
                 <li @click="trocarTema">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="sunny-outline"></ion-icon>
                         Tema
                     </div>
-                    <span class="tema">{{ tema }}</span>
+                    <span class="tema-conf">{{ tema }}</span>
                 </li>
                 <li class="sair" @click="sairConta">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="log-out-outline"></ion-icon>
                         Sair da conta
+                    </div>
+                </li>
+                
+                <li class="voltar" @click="inicio">
+                    <div class="lado-esquerdo">
+                        <ion-icon class="icon" name="caret-back-outline"></ion-icon>
+                        Voltar para o inicio
                     </div>
                 </li>
             </ul>
@@ -196,7 +208,7 @@ function sairConta() {
 
                 <div class="topo-painel">
                     <h2>Conta</h2>
-                    <ion-icon class="arrow-down" name="chevron-down-outline" @click="alternarExpansao"></ion-icon>
+                    <ion-icon class="arrow-down" name="caret-down-outline" @click="alternarExpansao"></ion-icon>
                 </div>
 
                 <div class="conteudo-painel">
@@ -259,7 +271,6 @@ function sairConta() {
 
     </div>
 </template>
-
 <style scoped>
 * {
     -webkit-tap-highlight-color: transparent;
@@ -268,7 +279,8 @@ function sairConta() {
 
 .pagina {
     min-height: 100vh;
-    background-color: white;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
 }
 
 .conta {
@@ -278,6 +290,7 @@ function sairConta() {
 }
 
 .conta h1 {
+    margin-left: 24px;
     font-size: 32px;
     font-weight: 700;
 }
@@ -287,8 +300,8 @@ function sairConta() {
     margin-left: 3px;
     display: flex;
     align-items: center;
-    background: white;
-    border: 2px solid #8a8888;
+    background: var(--cor-card);
+    border: 2px solid var(--cor-borda);
     border-radius: 12px;
     padding: 11px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
@@ -316,7 +329,7 @@ function sairConta() {
 
 .foto-icon {
     font-size: 50px;
-    color: #666;
+    color: var(--cor-texto-secundario);
 }
 
 .btn-mais {
@@ -364,13 +377,14 @@ function sairConta() {
 
 .email {
     font-size: 15px;
-    color: #666;
+    color: var(--cor-texto-secundario);
 }
 
 .adicionar {
     padding: 8px 15px;
     background-color: transparent;
-    border: 2px solid #8a8888;
+    color: var(--cor-texto);
+    border: 2px solid var(--cor-borda);
     border-radius: 10px;
     margin: 0 35px;
     cursor: pointer;
@@ -400,6 +414,7 @@ li {
     font-size: 18px;
     display: flex;
     align-items: center;
+    color: var(--cor-texto);
 }
 
 .icon {
@@ -408,12 +423,17 @@ li {
 }
 
 .lado-esquerdo {
+    
     display: flex;
     align-items: center;
+    
+    margin-left: 24px;
 }
 
-.tema {
+.tema-conf {
     font-size: 14px;
+    margin-right: 24px;
+    color: var(--cor-texto-secundario);
 }
 
 .sair {
@@ -426,7 +446,7 @@ li {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: white;
+    background-color: var(--cor-fundo);
     z-index: 9998;
     padding: 5px 20px;
     display: flex;
@@ -443,18 +463,18 @@ li {
 .topo-painel h2 {
     font-size: 28px;
     font-weight: 700;
-    color: #000;
+    color: var(--cor-texto);
 }
 
 .arrow-down {
     font-size: 24px;
     cursor: pointer;
-    color: #000;
+    color: var(--cor-texto);
 }
 
 .conteudo-painel {
-    background-color: #f2f2f2;
-    border: 1px solid #b5b5b5;
+    background-color: var(--cor-fundo-secundaria);
+    border: 1px solid var(--cor-borda);
     border-radius: 16px;
     flex: 1;
     display: flex;
@@ -482,13 +502,13 @@ li {
     font-weight: 600;
     margin-top: 8px;
     margin-bottom: 20px;
-    color: black;
+    color: var(--cor-texto);
 }
 
 .campo-input {
     width: 100%;
     max-width: 280px;
-    background: white;
+    background: var(--cor-card);
     border-radius: 25px;
     padding: 10px 17px;
     display: flex;
@@ -497,11 +517,10 @@ li {
     margin-bottom: 15px;
     transition: .2s;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.1);
-
 }
 .campo-input ion-icon {
     font-size: 20px;
-    color: black;
+    color: var(--cor-texto);
 }
 
 .campo-input input {
@@ -510,12 +529,12 @@ li {
     width: 100%;
     font-size: 12px;
     font-weight: 600;
-    color: #333;
+    color: var(--cor-texto);
     outline: none;
 }
 
 .card-tipo-usuario {
-    background: white;
+    background: var(--cor-card);
     border-radius: 16px;
     width: 100%;
     max-width: 280px;
@@ -530,6 +549,7 @@ li {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 10px;
+    color: var(--cor-texto);
 }
 
 .btn-tipo {
@@ -562,7 +582,6 @@ li {
     margin-top: auto;
 }
 
-
 .modal-close {
     position: absolute;
     top: 50px;
@@ -589,7 +608,6 @@ li {
     bottom: -10px;
     background-size: cover;
     background-position: center;
-    
     filter: blur(10px) opacity(.15);
     z-index: -1;
 }
