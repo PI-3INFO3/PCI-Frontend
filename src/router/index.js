@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
 const routes = [
   {
     path: '/user',
     name: 'user',
-    component: () => import('../views/UserView.vue')
+    component: () => import('../views/UserView.vue'),
   },
   {
     path: '/login',
@@ -12,19 +13,18 @@ const routes = [
     component: () => import('../views/LoginView.vue'),
   },
   {
-    path: '/Cadastro',
-    name: 'Cadastro',
+    path: '/cadastro',
+    name: 'cadastro',
     component: () => import('../views/CadastroViews.vue'),
-    props: true
   },
   {
-    path: '/Tipodeusuario',
-    name: 'Tipo de usuario',
+    path: '/tipodeusuario',
+    name: 'tipodeusuario',
     component: () => import('../views/TipoDeUsuarioViews.vue'),
   },
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: () => import('../views/HomeViews.vue'),
   },
 ];
@@ -32,6 +32,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to) => {
+  const authStore = useAuthStore();
+
+  if (to.name !== 'login' && !authStore.isAuthenticated) {
+    return { name: 'login' };
+  }
 });
 
 export default router;

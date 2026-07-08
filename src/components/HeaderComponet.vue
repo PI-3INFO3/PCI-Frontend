@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter()
 
-function irParaPerfeil(){
+function irParaPerfil(){
   router.push('/user')
 }
 function inicio(){
@@ -21,7 +21,7 @@ function inicio(){
     <div class="user-card">
       <div class="foto-container" >
 
-        <ion-icon class="foto-icon" name="person-circle-outline"  @click.stop="irParaPerfeil"></ion-icon>
+        <ion-icon class="foto-icon" name="person-circle-outline"  @click.stop="irParaPerfil"></ion-icon>
 
           </div>
 
@@ -76,11 +76,6 @@ function inicio(){
   transform: translateY(-50%);
   font-size: 20px;
   color: var(--cor-texto);
-}
-
-
-.foto-container {
- 
 }
 
 .foto-container img {
