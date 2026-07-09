@@ -12,6 +12,11 @@ registerSW({
     }
   },
 });
+const temaSalvo = localStorage.getItem('tema')
+if(temaSalvo === 'Escuro'){
+  document.body.classList.add('dark')
+}
+
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia';

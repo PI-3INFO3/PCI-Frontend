@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import ToastNotification from '../components/ToastNotifification.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -19,8 +20,6 @@ const mensagem = ref('')
 const tipoMensagem = ref('sucesso')
 const mostrarMensagem = ref(false)
 
-const cadastroSucesso = ref(false)
-
 function exibirMensagem(texto, tipo = 'sucesso') {
   mensagem.value = texto
   tipoMensagem.value = tipo
@@ -29,10 +28,6 @@ function exibirMensagem(texto, tipo = 'sucesso') {
 
 function fecharToast() {
   mostrarMensagem.value = false
-
-  if (cadastroSucesso.value) {
-    router.push('/')
-  }
 }
 
 async function proximaEtapa() {
@@ -60,27 +55,25 @@ async function proximaEtapa() {
   })
 
   if (!authStore.error) {
-    cadastroSucesso.value = true
     exibirMensagem('Cadastro realizado com sucesso!', 'sucesso')
+    setTimeout(() => {
+      router.push('/')
+    }, 1500)
   } else {
-    cadastroSucesso.value = false
     exibirMensagem(authStore.error, 'erro')
   }
 }
 </script>
 
 <template>
+  <div class="pagina-tipo">
   <img src="/icons/logo-96x96.png" alt="logo">
-
-
-  <div 
-    v-if="mostrarMensagem" 
-    :class="['toast', tipoMensagem]"
-  >
-    <span class="msg">{{ mensagem }}</span>
-    <button class="fechar-toast" @click="fecharToast">×</button>
-  </div>
-
+  <ToastNotification 
+    :mensagem="mensagem" 
+    :tipo="tipoMensagem" 
+    :mostrar="mostrarMensagem"
+    @fechar="fecharToast"
+  />
   <form @submit.prevent="proximaEtapa">
     <legend><span>Cadastre-se</span></legend>
 
@@ -115,6 +108,7 @@ async function proximaEtapa() {
 
     <button class="cdt" type="submit">Cadastrar</button>
   </form>
+</div>
 </template>
 
 <style scoped>
@@ -122,8 +116,15 @@ async function proximaEtapa() {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
 }
 
+.pagina-tipo{
+  min-height: 100vh;
+  background-color: #fff;
+  color: #000;
+  padding-top: 20px;
+}
 img {
   display: block;
   margin: 20px auto;
