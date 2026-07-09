@@ -115,10 +115,6 @@ async function salvarAlteracoes() {
     }
 }
 
-// function abrirConfiguracoes() {
-//     router.push('/configuracoes').catch(() => { })
-// }
-
 function trocarTema() {
     if (tema.value === 'Claro') {
         tema.value = 'Escuro'
