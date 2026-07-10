@@ -575,7 +575,7 @@ li {
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(255, 81, 0, 0.3);
     cursor: pointer;
-    margin-top: auto;
+    margin: 6vw;
 }
 
 .modal-close {
