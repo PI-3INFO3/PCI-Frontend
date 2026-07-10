@@ -30,7 +30,7 @@ async function handleLogin() {
 }
 
 function irParaCadastro() {
-  router.push('/TipoDeUsuario')
+  router.push('/tipo-de-usuario')
 }
 </script>
 
