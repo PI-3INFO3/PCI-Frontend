@@ -2,7 +2,7 @@
         import { ref } from 'vue'
         
         const abriMenu = ref(false)
-        const ativo = ref('folder') 
+        const ativo = ref('grid') 
         </script>
 <template>
   <footer>
