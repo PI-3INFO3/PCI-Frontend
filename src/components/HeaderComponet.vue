@@ -1,15 +1,21 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const auth = useAuthStore()
 
-function irParaPerfil(){
+const fotoPerfil = computed(() =>
+  auth.user?.profile_photo?.url || ''
+)
+
+function irParaPerfil() {
   router.push('/user')
 }
-function inicio(){
-    router.push('/')
 
+function inicio() {
+  router.push('/')
 }
 </script>
 <template>
@@ -19,11 +25,19 @@ function inicio(){
       @click.stop="inicio">
     
     <div class="user-card">
-      <div class="foto-container" >
+      <div class="foto-container" @click.stop="irParaPerfil">
+      <img
+      v-if="fotoPerfil"
+      :src="fotoPerfil"
+      alt="Foto do usuário"
+      />
 
-        <ion-icon class="foto-icon" name="person-circle-outline"  @click.stop="irParaPerfil"></ion-icon>
-
-          </div>
+  <ion-icon
+    v-else
+    class="foto-icon"
+    name="person-circle-outline">
+  </ion-icon>
+</div>
 
       </div>
     </div>

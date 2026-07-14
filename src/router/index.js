@@ -18,7 +18,7 @@ const routes = [
     component: () => import('../views/CadastroViews.vue'),
   },
   {
-    path: '/tipodeusuario',
+    path: '/tipo-de-usuario',
     name: 'tipodeusuario',
     component: () => import('../views/TipoDeUsuarioViews.vue'),
   },
@@ -34,12 +34,14 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
-  const authStore = useAuthStore();
+const rotasPublicas = ['login', 'cadastro', 'tipodeusuario']
 
-  if (to.name !== 'login' && !authStore.isAuthenticated) {
-    return { name: 'login' };
-  }
+router.beforeEach((to) => {
+    const authStore = useAuthStore();
+
+    if (!rotasPublicas.includes(to.name) && !authStore.isAuthenticated) {
+        return { name: 'login' };
+    }
 });
 
 export default router;
