@@ -23,6 +23,22 @@ const routes = [
     component: () => import('../views/TipoDeUsuarioViews.vue'),
   },
   {
+    path: '/amigos',
+    name: 'amigos',
+    component: () => import('../views/ListaAmigos.vue'),
+  },
+  {
+    path: '/buscar-amigos',
+    name: 'buscar-amigos',
+    component: () => import('../views/BuscaAmigos.vue'),
+  },
+  {
+    path: '/chat/:outroUsuarioId',
+    name: 'chat',
+    component: () => import('../views/Chat.vue'),
+    props: true,
+  },
+  {
     path: '/',
     name: 'home',
     component: () => import('../views/HomeViews.vue'),

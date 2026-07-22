@@ -1,79 +1,122 @@
-        <script setup>
-        import { ref } from 'vue'
-        
-        const abriMenu = ref(false)
-        const ativo = ref('grid') 
-        </script>
+<script setup>
+import { ref } from 'vue'
+
+const abriMenu = ref(false)
+const ativo = ref('grid')
+
+function fecharMenu() {
+  abriMenu.value = false
+}
+</script>
+
 <template>
+  <div class="overlay" v-if="abriMenu" @click="fecharMenu"></div>
+
+  <aside :class="['sidebar', { open: abriMenu }]">
+    <img src="/logo-72x72.png" alt="soul." class="logo-img" />
+
+    <ul class="sidebar-menu">
+      <li>
+        <div class="sidebar-link">
+          <ion-icon name="grid-outline"></ion-icon>
+          <span>Meus projetos</span>
+        </div>
+      </li>
+      <li>
+        <div class="sidebar-link">
+          <ion-icon name="bookmark-outline"></ion-icon>
+          <span>Projetos em andamento</span>
+        </div>
+      </li>
+      <li>
+        <div class="sidebar-link">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <span>Notificação</span>
+        </div>
+      </li>
+      <li>
+        <router-link to="/amigos" class="sidebar-link" @click="fecharMenu">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <span>Chat</span>
+        </router-link>
+      </li>
+    </ul>
+  </aside>
+
   <footer>
     <div class="navbar">
-    <nav>
-      <ul>
-        <li>
-          <span
-            class="btn"
-            :class="{ active: ativo === 'menu' }"
-            @click="abriMenu = true "
-          >
-            <ion-icon name="menu"></ion-icon>
-          </span>
-        </li>
-
-        <li>
-          <span
-            class="btn"
-            :class="{ active: ativo === 'star' }"
-            @click="ativo = 'star'"
-          >
-            <ion-icon name="star-outline"></ion-icon>
-          </span>
-        </li>
-
-        <li>
-          <span
-            class="btn"
-            :class="{ active: ativo === 'folder' }"
-            @click="ativo = 'folder'"
-          >
-            <ion-icon name="folder-open-outline"></ion-icon>
-          </span>
-        </li>
-
-        <li>
-          <span
-            class="btn"
-            :class="{ active: ativo === 'grid' }"
-            @click="ativo = 'grid'"
-          >
-            <ion-icon name="grid-outline"></ion-icon>
-          </span>
-        </li>
-      </ul>
-      <div 
-      v-if="abriMenu"
-    class="overlay"
-    @click="abriMenu = false"></div>
-
-    <aside :class="['sidebar', {open: abriMenu}]">
-      
-      <img src="/logo-72x72.png" alt="soul." class="logo-img"
-      >
-      
-
-</aside>
-      <button class="fab">+</button>
-    </nav>
+      <nav>
+        <ul>
+          <li>
+            <span class="btn" :class="{ active: ativo === 'menu' }" @click="abriMenu = true">
+              <ion-icon name="menu"></ion-icon>
+            </span>
+          </li>
+          <li>
+            <span class="btn" :class="{ active: ativo === 'star' }" @click="ativo = 'star'">
+              <ion-icon name="star-outline"></ion-icon>
+            </span>
+          </li>
+          <li>
+            <span class="btn" :class="{ active: ativo === 'folder' }" @click="ativo = 'folder'">
+              <ion-icon name="folder-open-outline"></ion-icon>
+            </span>
+          </li>
+          <li>
+            <span class="btn" :class="{ active: ativo === 'grid' }" @click="ativo = 'grid'">
+              <ion-icon name="grid-outline"></ion-icon>
+            </span>
+          </li>
+        </ul>
+        <button class="fab">+</button>
+      </nav>
     </div>
   </footer>
 </template>
 
-
-<style>
+<style scoped>
 .logo-img{
-  margin-right: 80px;
+  margin-right: 140px;
+  margin-bottom: 50px;
 }
 .sidebar h2 {
   color: var(--cor-texto);
   margin-bottom: 15px;
+}
+
+.sidebar-logo{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 30px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #FF7500;
+}
+.sidebar-logo ion-icon{
+  font-size: 18px;
+}
+
+.sidebar-menu{
+  list-style: none;
+  border: none;
+}
+
+.sidebar-link{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: var(--cor-texto);
+}
+
+.sidebar-link ion-icon{
+  font-size: 22px;
+  color: #FF7500;
+  flex-shrink: 0;
+}
+.sidebar-link:active{
+  font-size: 18px;
 }
 </style>
