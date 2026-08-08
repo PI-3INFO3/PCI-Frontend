@@ -159,11 +159,12 @@ justify-content: center;
   background: rgba(0,0,0,0.4);
   z-index: 5;
 }
-.sidebar{position: fixed;
+.sidebar{
+  position: fixed;
   top: 0;
   left: 0;
   border-right: 2px solid #FF7500;
-  width: 220px;
+  width: 245px;
   height: 100%;
   background: var(--cor-fundo-secundaria);
   padding: 20px;
@@ -183,7 +184,6 @@ justify-content: center;
 .sidebar li{
   padding: 15px 0;
   font-size: 18px;
-  border-bottom: 1px solid var(--cor-borda);
   cursor: pointer;
   color: var(--cor-texto);
 }

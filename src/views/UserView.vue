@@ -168,14 +168,14 @@ function sairConta() {
         </div>
 
         <div class="opcoes">
-            <ul>
-                <li @click="abrirConfiguracoes">
+             <ul>
+            <!--    <li @click="abrirConfiguracoes">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="settings-outline"></ion-icon>
                         Configurações
                     </div>
                     <ion-icon class='tema-conf' name="chevron-forward-outline"></ion-icon>
-                </li>
+                </li> -->
                 <li @click="trocarTema">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="sunny-outline"></ion-icon>
@@ -442,6 +442,7 @@ li {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height:100dvh;
     background-color: var(--cor-fundo);
     z-index: 9998;
     padding: 5px 20px;
@@ -473,6 +474,7 @@ li {
     border: 1px solid var(--cor-borda);
     border-radius: 16px;
     flex: 1;
+    min-height:0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -575,7 +577,13 @@ li {
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(255, 81, 0, 0.3);
     cursor: pointer;
+<<<<<<< HEAD
     margin: 6vw;
+=======
+    margin-top: 20px;
+    flex-shrink:0;
+    
+>>>>>>> FEAT-Routes
 }
 
 .modal-close {
