@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useChat } from '@/composables/useChat'
 import { useAuthStore } from '@/stores/auth'
+import usuariosApi from '@/api/usuariosApi'
 import ChatSkeleton from '@/components/skeleton/ChatSkeleton.vue'
 
 const props = defineProps({
@@ -14,9 +15,14 @@ const meuId = computed(() => auth.user?.id)
 const { mensagens, enviarMensagem, deletarMensagem, iniciarAtualizacaoAutomatica } = useChat(props.outroUsuarioId)
 const textoMensagem = ref('')
 const carregando = ref(true)
+const outroUsuario = ref(null)
 
 onMounted(async () => {
-  await iniciarAtualizacaoAutomatica()
+  const [respostaUsuario] = await Promise.all([
+    usuariosApi.obterPorId(props.outroUsuarioId),
+    iniciarAtualizacaoAutomatica(),
+  ])
+  outroUsuario.value = respostaUsuario.data
   carregando.value = false
 })
 
@@ -35,6 +41,19 @@ async function apagar(mensagem) {
 
 <template>
   <div class="chat-container">
+    <div v-if="outroUsuario" class="chat-topo">
+      <img
+        v-if="outroUsuario.profile_photo"
+        :src="outroUsuario.profile_photo.url"
+        alt=""
+        class="chat-topo-avatar"
+      />
+      <div v-else class="chat-topo-avatar chat-topo-avatar-vazio">
+        {{ (outroUsuario.name || outroUsuario.email || '?').charAt(0).toUpperCase() }}
+      </div>
+      <span class="chat-topo-nome">{{ outroUsuario.name || outroUsuario.email }}</span>
+    </div>
+
     <ChatSkeleton v-if="carregando" />
 
     <div v-else class="chat-mensagens">
@@ -62,14 +81,47 @@ async function apagar(mensagem) {
   </div>
 </template>
 
-
 <style scoped>
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   padding: 12px;
+  box-sizing: border-box;
 }
+
+.chat-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.chat-topo-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.chat-topo-avatar-vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-fundo-secundaria);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
+  font-size: 15px;
+  font-weight: 600;
+}
+.chat-topo-nome {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
 .chat-mensagens {
   flex: 1;
   overflow-y: auto;
