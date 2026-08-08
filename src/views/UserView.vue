@@ -577,13 +577,7 @@ li {
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(255, 81, 0, 0.3);
     cursor: pointer;
-<<<<<<< HEAD
     margin: 6vw;
-=======
-    margin-top: 20px;
-    flex-shrink:0;
-    
->>>>>>> FEAT-Routes
 }
 
 .modal-close {
