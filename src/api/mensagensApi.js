@@ -7,7 +7,12 @@ const mensagensApi = {
 
     enviar(destinatarioId, content) {
         return apiClient.post('/menssagens/', { destinatario_id: destinatarioId, content });
+   
     },
+
+    delete(id){
+        return apiClient.delete(`/menssagens/${id}/`)
+    }
 };
 
 export default mensagensApi;

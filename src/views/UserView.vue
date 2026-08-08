@@ -168,14 +168,14 @@ function sairConta() {
         </div>
 
         <div class="opcoes">
-            <ul>
-                <li @click="abrirConfiguracoes">
+             <ul>
+            <!--    <li @click="abrirConfiguracoes">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="settings-outline"></ion-icon>
                         Configurações
                     </div>
                     <ion-icon class='tema-conf' name="chevron-forward-outline"></ion-icon>
-                </li>
+                </li> -->
                 <li @click="trocarTema">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="sunny-outline"></ion-icon>

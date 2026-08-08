@@ -22,6 +22,10 @@ export function useChat(outroUsuarioId) {
       enviando.value = false
     }
   }
+  async function deletarMensagem(id) {
+    await mensagensApi.deletar(id)
+    await carregarMensagens()
+  }
 
   function iniciarAtualizacaoAutomatica() {
     carregarMensagens()
@@ -32,5 +36,5 @@ export function useChat(outroUsuarioId) {
     if (intervalo) clearInterval(intervalo)
   })
 
-  return { mensagens, enviando, carregarMensagens, enviarMensagem, iniciarAtualizacaoAutomatica }
+  return { mensagens, enviando, carregarMensagens, enviarMensagem, iniciarAtualizacaoAutomatica,deletarMensagem }
 }

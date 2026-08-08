@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAmigos } from '@/composables/useAmigos'
 import { useAuthStore } from '@/stores/auth'
@@ -8,12 +8,33 @@ const router = useRouter()
 const auth = useAuthStore()
 const meuId = computed(() => auth.user?.id)
 
-const { amigos, pendentes, carregarAmigos, carregarPendentes, aceitarPedido, recusarPedido } = useAmigos()
+const { amigos, resultadosBusca, carregarAmigos, buscarPessoas, enviarPedido } = useAmigos()
+const termo = ref('')
+const enviados = ref(new Set())
+
+let debounceTimer = null
 
 onMounted(() => {
   carregarAmigos()
-  carregarPendentes()
 })
+
+watch(termo, (novoValor) => {
+  clearTimeout(debounceTimer)
+
+  if (!novoValor.trim()) {
+    resultadosBusca.value = []
+    return
+  }
+
+  debounceTimer = setTimeout(() => {
+    buscarPessoas(novoValor)
+  }, 400)
+})
+
+async function adicionar(usuario) {
+  await enviarPedido(usuario.id)
+  enviados.value.add(usuario.id)
+}
 
 function outroUsuario(amizade) {
   return amizade.remetente.id === meuId.value ? amizade.destinatario : amizade.remetente
@@ -29,23 +50,45 @@ function abrirConversa(amizade) {
   <div class="lista-container">
     <div class="lista-topo">
       <h2>Conversas</h2>
-      <button class="btn-buscar" @click="router.push({ name: 'buscar-amigos' })">
-        <ion-icon name="person-add-outline"></ion-icon>
-      </button>
     </div>
 
-    <section v-if="pendentes.length" class="secao-pendentes">
-      <h3>Pedidos pendentes</h3>
-      <div v-for="pedido in pendentes" :key="pedido.id" class="item-pendente">
-        <span>{{ pedido.remetente.name || pedido.remetente.email }}</span>
-        <div class="acoes-pendente">
-          <button class="btn-aceitar" @click="aceitarPedido(pedido.id)">Aceitar</button>
-          <button class="btn-recusar" @click="recusarPedido(pedido.id)">Recusar</button>
+    <input
+      v-model="termo"
+      type="text"
+      placeholder="Buscar por nome ou email"
+      class="busca-input"
+    />
+
+    <!-- Resultados da busca (só aparece enquanto tem termo digitado) -->
+    <section v-if="termo.trim()" class="secao-busca">
+      <h3 v-if="!resultadosBusca.length">Nenhum resultado</h3>
+      <div v-for="usuario in resultadosBusca" :key="usuario.id" class="busca-item">
+        <div class="busca-info">
+          <img
+            v-if="usuario.profile_photo"
+            :src="usuario.profile_photo.url"
+            alt=""
+            class="avatar"
+          />
+          <div v-else class="avatar avatar-vazio">
+            {{ (usuario.name || usuario.email || '?').charAt(0).toUpperCase() }}
+          </div>
+          <span>{{ usuario.name || usuario.email }}</span>
         </div>
+
+        <button
+          v-if="!enviados.has(usuario.id)"
+          @click="adicionar(usuario)"
+          class="btn-adicionar"
+        >
+          Adicionar
+        </button>
+        <span v-else class="pedido-enviado">Pedido enviado</span>
       </div>
     </section>
 
-    <section class="secao-amigos">
+    <!-- Lista de amigos (só aparece quando não tem busca ativa) -->
+    <section v-else class="secao-amigos">
       <h3 v-if="!amigos.length">Nenhum amigo ainda</h3>
       <div
         v-for="amizade in amigos"
@@ -53,7 +96,18 @@ function abrirConversa(amizade) {
         class="item-amigo"
         @click="abrirConversa(amizade)"
       >
-        {{ outroUsuario(amizade).name || outroUsuario(amizade).email }}
+        <div class="busca-info">
+          <img
+            v-if="outroUsuario(amizade).profile_photo"
+            :src="outroUsuario(amizade).profile_photo.url"
+            alt=""
+            class="avatar"
+          />
+          <div v-else class="avatar avatar-vazio">
+            {{ (outroUsuario(amizade).name || outroUsuario(amizade).email || '?').charAt(0).toUpperCase() }}
+          </div>
+          <span>{{ outroUsuario(amizade).name || outroUsuario(amizade).email }}</span>
+        </div>
       </div>
     </section>
   </div>
@@ -67,33 +121,57 @@ function abrirConversa(amizade) {
   align-items: center;
   margin-bottom: 16px;
 }
-.btn-buscar {
-  background: #FF7500;
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  color: #fff;
-  font-size: 18px;
+.busca-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-fundo-secundaria);
+  color: var(--cor-texto);
+  margin-bottom: 16px;
 }
 h3 { color: var(--cor-texto-secundario); font-size: 13px; margin: 12px 0 6px; text-transform: uppercase; }
-.item-pendente, .item-amigo {
+
+.busca-item, .item-amigo {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid var(--cor-borda);
-  cursor: pointer;
   color: var(--cor-texto);
 }
-.acoes-pendente { display: flex; gap: 6px; }
-.btn-aceitar, .btn-recusar {
+.item-amigo { cursor: pointer; }
+
+.busca-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.avatar-vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-fundo-secundaria);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-adicionar {
+  background: #FF7500;
+  color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 13px;
+  padding: 6px 12px;
   cursor: pointer;
 }
-.btn-aceitar { background: #FF7500; color: #fff; }
-.btn-recusar { background: transparent; border: 1px solid var(--cor-borda); color: var(--cor-texto-secundario); }
+.pedido-enviado { color: var(--cor-texto-secundario); font-size: 13px; }
 </style>

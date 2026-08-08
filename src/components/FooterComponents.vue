@@ -29,10 +29,11 @@ function fecharMenu() {
         </div>
       </li>
       <li>
-        <div class="sidebar-link">
+         <router-link to="/notificacoes" class="sidebar-link" @click="fecharMenu">
+         
           <ion-icon name="notifications-outline"></ion-icon>
           <span>Notificação</span>
-        </div>
+         </router-link>
       </li>
       <li>
         <router-link to="/amigos" class="sidebar-link" @click="fecharMenu">
