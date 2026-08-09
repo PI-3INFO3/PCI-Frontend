@@ -1,5 +1,5 @@
 <script setup>
-import SkeletonBox from './SkeletonBox.vue'
+import skeletonBox from './SkeletonBox.vue';
 </script>
 
 <template>
