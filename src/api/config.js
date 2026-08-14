@@ -1,24 +1,46 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://pci.class.fabricadesoftware.ifc.edu.br/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api/';
+
+// Para pegar/salvar token, respeitando onde ele foi guardado
+function getToken(key) {
+  return localStorage.getItem(key) ?? sessionStorage.getItem(key);
+}
+
+function setTokens(access, refresh, remember) {
+  // Garante que não fica duplicado nos dois storages
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  sessionStorage.removeItem('access_token');
+  sessionStorage.removeItem('refresh_token');
+
+  const storage = remember ? localStorage : sessionStorage;
+  storage.setItem('access_token', access);
+  storage.setItem('refresh_token', refresh);
+}
+
+function clearTokens() {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  sessionStorage.removeItem('access_token');
+  sessionStorage.removeItem('refresh_token');
+}
 
 const apiClient = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Injeta o access token em todas as requisições
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+  const token = getToken('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Em caso de 401, tenta renovar o token e reenviar a requisição original
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -29,26 +51,29 @@ apiClient.interceptors.response.use(
       !original.url?.includes('/token')
     ) {
       original._retry = true;
-      const refreshToken = localStorage.getItem('refresh_token');
+      const refreshToken = getToken('refresh_token');
       if (refreshToken) {
         try {
-          const { data } = await axios.post(`${BASE_URL}/token/refresh/`, {
-            refresh_token: refreshToken,
+          // Descobre em qual storage o refresh estava, pra manter consistência
+          const remember = !!localStorage.getItem('refresh_token');
+
+          const { data } = await axios.post(`${BASE_URL}token/refresh/`, {
+            refresh: refreshToken, // atenção: o simplejwt espera "refresh", não "refresh_token"
           });
-          localStorage.setItem('access_token', data.access_token);
-          localStorage.setItem('refresh_token', data.refresh_token);
-          original.headers.Authorization = `Bearer ${data.access_token}`;
+
+          setTokens(data.access, refreshToken, remember);
+          original.headers.Authorization = `Bearer ${data.access}`;
           return apiClient(original);
         } catch {
           // refresh falhou — segue para o logout
         }
       }
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      clearTokens();
       window.location.href = '/login';
     }
     return Promise.reject(error);
   },
 );
 
+export { setTokens, clearTokens, getToken };
 export default apiClient;
