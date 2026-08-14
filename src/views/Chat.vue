@@ -18,6 +18,10 @@ const carregando = ref(true)
 const outroUsuario = ref(null)
 
 onMounted(async () => {
+if(!auth.user){
+await auth.fetchUser()
+}
+
   const [respostaUsuario] = await Promise.all([
     usuariosApi.obterPorId(props.outroUsuarioId),
     iniciarAtualizacaoAutomatica(),
@@ -75,7 +79,7 @@ async function apagar(mensagem) {
     <div class="chat-input-area">
       <input v-model="textoMensagem" @keyup.enter="enviar" type="text" placeholder="Mensagem" class="chat-input" />
       <button @click="enviar" class="chat-enviar">
-        <ion-icon name="send-outline"></ion-icon>
+        <ion-icon name="send"></ion-icon>
       </button>
     </div>
   </div>
@@ -89,14 +93,14 @@ async function apagar(mensagem) {
   height: 100dvh;
   padding: 12px;
   box-sizing: border-box;
+  scrollbar-width: none;
 }
 
 .chat-topo {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  padding-bottom: 11px;
   border-bottom: 1px solid var(--cor-borda);
 }
 .chat-topo-avatar {
@@ -142,6 +146,9 @@ async function apagar(mensagem) {
   padding: 8px 12px;
   border-radius: 12px;
   font-size: 14px;
+
+  overflow-wrap:break-word ;
+  word-break:break-word ;
 }
 .balao-minha {
   background: rgba(255, 117, 0, 0.15);

@@ -73,11 +73,16 @@ function irParaCadastro() {
       </button>
     </form>
     
-    <p>Não tem conta? <a @click.stop="irParaCadastro">Clique aqui</a></p>
+    <p >Não tem conta? <a @click.stop="irParaCadastro" class="pointer" >Clique aqui</a></p>
   </div>
 </template>
 
 <style scoped>
+
+.pointer{
+  cursor: pointer;
+}
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;

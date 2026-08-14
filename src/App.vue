@@ -6,11 +6,18 @@ import AppSkeleton from './components/skeleton/AppSkeleton.vue'
 const carregando = ref(true)
 const router = useRouter()
 
+const rotasSemEsqueleto = ['login','cadastro','tipodeusuario','chat']
+
 onMounted(async () => {
   const inicio = Date.now()
-
   await router.isReady()
 
+  const rotaAtual = router.currentRoute.value.name
+  if(rotasSemEsqueleto.includes(rotaAtual)){
+    carregando.value = false
+    return
+
+  }
   const minimoVisivel = 600
   const decorrido = Date.now() - inicio
   const espera = Math.max(0, minimoVisivel - decorrido)
