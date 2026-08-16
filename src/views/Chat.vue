@@ -100,8 +100,9 @@ async function apagar(mensagem) {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 11px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 12px;
 }
 .chat-topo-avatar {
   width: 40px;

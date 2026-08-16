@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useAmigos } from '@/composables/useAmigos'
 import NotificacoesSkeleton from '@/components/skeleton/NotificacoesSkeleton.vue'
+import FooterComponents from '../components/FooterComponents.vue'
 
 const { pendentes, carregarPendentes, aceitarPedido, recusarPedido } = useAmigos()
 const carregando = ref(true)
@@ -34,6 +35,8 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+
+  <FooterComponents />
 </template>
 
 <style scoped>

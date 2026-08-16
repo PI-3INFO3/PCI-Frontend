@@ -2,14 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useLoadingStore } from '../stores/loading.js';
 import HomeViews from '../views/HomeViews.vue';
-import LoginView from '../views/LoginView.vue'
 import UserView from '../views/UserView.vue';
 import CadastroViews from '../views/CadastroViews.vue'
 import TipoDeUsuarioViews from '../views/TipoDeUsuarioViews.vue'
 import Chat from '../views/Chat.vue'
 import ListaAmigos from '../views/ListaAmigos.vue'
 import Notificacoes from '../views/Notificacoes.vue'
-
+import Favoritos from '../views/Favoritos.vue';
+import Designs from '../views/Designs.vue';
+import LoginView from '../views/LoginView.vue'
+import MeusProjetos from '../views/MeusProjetos.vue';
 const routes = [
   {
     path: '/user',
@@ -47,6 +49,23 @@ const routes = [
     name: 'notificacoes',
     component: Notificacoes
   },
+ {
+    path: '/meus-projetos',
+    name: 'meusprojetos',
+    component: MeusProjetos
+  },
+  {
+  path:'/favoritos',
+  name: 'favoritos',
+  component: Favoritos
+  },
+  {
+  path:'/designs',
+  name: 'designs',
+  component: Designs
+  },
+  
+  
   {
     path: '/',
     name: 'home',

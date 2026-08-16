@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAmigos } from '@/composables/useAmigos'
 import { useAuthStore } from '@/stores/auth'
+import FooterComponents from '../components/FooterComponents.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -111,6 +112,8 @@ function abrirConversa(amizade) {
       </div>
     </section>
   </div>
+
+  <footer-components />
 </template>
 
 <style scoped>

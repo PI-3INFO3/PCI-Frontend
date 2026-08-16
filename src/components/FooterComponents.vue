@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const abriMenu = ref(false)
-const ativo = ref('grid')
 
 function fecharMenu() {
   abriMenu.value = false
@@ -15,13 +16,12 @@ function fecharMenu() {
   <aside :class="['sidebar', { open: abriMenu }]">
     <img src="/logo-72x72.png" alt="soul." class="logo-img" />
 
-    <ul class="sidebar-menu">
-      <li>
-        <div class="sidebar-link">
-          <ion-icon name="grid-outline"></ion-icon>
-          <span>Meus projetos</span>
-        </div>
-      </li>
+    <ul class="sidebar-menu"><li>
+  <router-link to="/meus-projetos" class="sidebar-link" @click="fecharMenu">
+    <ion-icon name="grid-outline"></ion-icon>
+    <span>Meus projetos</span>
+  </router-link>
+</li>
       <li>
         <div class="sidebar-link">
           <ion-icon name="bookmark-outline"></ion-icon>
@@ -29,11 +29,10 @@ function fecharMenu() {
         </div>
       </li>
       <li>
-         <router-link to="/notificacoes" class="sidebar-link" @click="fecharMenu">
-         
+        <router-link to="/notificacoes" class="sidebar-link" @click="fecharMenu">
           <ion-icon name="notifications-outline"></ion-icon>
           <span>Notificação</span>
-         </router-link>
+        </router-link>
       </li>
       <li>
         <router-link to="/amigos" class="sidebar-link" @click="fecharMenu">
@@ -44,29 +43,30 @@ function fecharMenu() {
     </ul>
   </aside>
 
+
   <footer>
     <div class="navbar">
       <nav>
         <ul>
           <li>
-            <span class="btn" :class="{ active: ativo === 'menu' }" @click="abriMenu = true">
+            <span class="btn" @click="abriMenu = true">
               <ion-icon name="menu"></ion-icon>
             </span>
           </li>
           <li>
-            <span class="btn" :class="{ active: ativo === 'star' }" @click="ativo = 'star'">
+            <router-link to="/favoritos" class="btn" :class="{ active: route.name === 'favoritos' }">
               <ion-icon name="star-outline"></ion-icon>
-            </span>
+            </router-link>
           </li>
           <li>
-            <span class="btn" :class="{ active: ativo === 'folder' }" @click="ativo = 'folder'">
+            <router-link to="/designs" class="btn" :class="{ active: route.name === 'designs' }">
               <ion-icon name="folder-open-outline"></ion-icon>
-            </span>
+            </router-link>
           </li>
           <li>
-            <span class="btn" :class="{ active: ativo === 'grid' }" @click="ativo = 'grid'">
+            <router-link to="/" class="btn" :class="{ active: route.name === 'home' }">
               <ion-icon name="grid-outline"></ion-icon>
-            </span>
+            </router-link>
           </li>
         </ul>
         <button class="fab">+</button>
@@ -117,7 +117,8 @@ function fecharMenu() {
   color: #FF7500;
   flex-shrink: 0;
 }
-.sidebar-link:active{
+.sidebar-link{
   font-size: 18px;
 }
+
 </style>
