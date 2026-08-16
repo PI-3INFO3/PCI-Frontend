@@ -36,12 +36,21 @@ const router = createRouter({
 
 const rotasPublicas = ['login', 'cadastro', 'tipodeusuario']
 
-router.beforeEach((to) => {
-    const authStore = useAuthStore();
 
-    if (!rotasPublicas.includes(to.name) && !authStore.isAuthenticated) {
-        return { name: 'login' };
-    }
+router.beforeEach(async (to) => {
+  const authStore = useAuthStore();
+
+  if (authStore.isAuthenticated && !authStore.user) {
+    await authStore.fetchUser();
+  }
+
+  if (!rotasPublicas.includes(to.name) && !authStore.isAuthenticated) {
+    return { name: 'login' };
+  }
+
+  if (rotasPublicas.includes(to.name) && to.name !== 'tipodeusuario' && authStore.isAuthenticated) {
+    return { name: 'home' };
+  }
 });
 
 export default router;

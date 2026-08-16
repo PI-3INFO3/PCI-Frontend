@@ -11,11 +11,10 @@ registerSW({
       }, 60 * 1000);
     }
   },
+  onNeedRefresh() {
+    window.location.reload();
+  },
 });
-const temaSalvo = localStorage.getItem('tema')
-if(temaSalvo === 'Escuro'){
-  document.body.classList.add('dark')
-}
 
 
 import { createApp } from 'vue'

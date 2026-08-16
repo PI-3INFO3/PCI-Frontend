@@ -2,13 +2,12 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api/';
 
-// Para pegar/salvar token, respeitando onde ele foi guardado
 function getToken(key) {
   return localStorage.getItem(key) ?? sessionStorage.getItem(key);
 }
 
 function setTokens(access, refresh, remember) {
-  // Garante que não fica duplicado nos dois storages
+
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
   sessionStorage.removeItem('access_token');

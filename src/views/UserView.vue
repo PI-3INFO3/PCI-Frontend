@@ -20,14 +20,10 @@ function inicio() {
 }
 
 onMounted(async () => {
-    await auth.fetchUser()
-
-    const temaSalvo = localStorage.getItem('tema')
-    if (temaSalvo) {
-        tema.value = temaSalvo
-        document.body.classList.toggle('dark', temaSalvo === 'Escuro')
-    }
+  await auth.fetchUser()
+  tema.value = auth.user?.theme || 'Claro'
 })
+
 const nome = computed({
     get: () => auth.user?.name || '',
     set: (value) => {
@@ -115,15 +111,10 @@ async function salvarAlteracoes() {
     }
 }
 
-function trocarTema() {
-    if (tema.value === 'Claro') {
-        tema.value = 'Escuro'
-        document.body.classList.add('dark')
-    } else {
-        tema.value = 'Claro'
-        document.body.classList.remove('dark')
-    }
-    localStorage.setItem('tema', tema.value)
+async function trocarTema() {
+  const novoTema = tema.value === 'Claro' ? 'Escuro' : 'Claro'
+  tema.value = novoTema
+  await auth.setTheme(novoTema)
 }
 
 function sairConta() {
