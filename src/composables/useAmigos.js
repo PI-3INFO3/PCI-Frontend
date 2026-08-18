@@ -59,4 +59,4 @@ export function useAmigos() {
     aceitarPedido,
     recusarPedido,
   }
-}
+} 
