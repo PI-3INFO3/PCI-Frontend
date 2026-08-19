@@ -1,6 +1,6 @@
-import './assets/css/style.css'
+import "./assets/css/style.css";
 
-import { registerSW } from 'virtual:pwa-register';
+import { registerSW } from "virtual:pwa-register";
 
 registerSW({
   immediate: true,
@@ -12,19 +12,19 @@ registerSW({
     }
   },
 });
-const temaSalvo = localStorage.getItem('tema')
-if(temaSalvo === 'Escuro'){
-  document.body.classList.add('dark')
+const temaSalvo = localStorage.getItem("tema");
+if (temaSalvo === "Escuro") {
+  document.body.classList.add("dark");
 }
-document.documentElement.classList.remove('dark-preload')
+document.documentElement.classList.remove("dark-preload");
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia';
-import './assets/css/style.css'
-import router from './router'
-import App from './App.vue'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import "./assets/css/style.css";
+import router from "./router";
+import App from "./App.vue";
 
 const app = createApp(App);
 app.use(createPinia());
 app.use(router);
-app.mount('#app');
+app.mount("#app");

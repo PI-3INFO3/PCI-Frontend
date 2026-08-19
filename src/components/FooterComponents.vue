@@ -1,12 +1,12 @@
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 
-const route = useRoute()
-const abriMenu = ref(false)
+const route = useRoute();
+const abriMenu = ref(false);
 
 function fecharMenu() {
-  abriMenu.value = false
+  abriMenu.value = false;
 }
 </script>
 
@@ -16,12 +16,17 @@ function fecharMenu() {
   <aside :class="['sidebar', { open: abriMenu }]">
     <img src="/logo-72x72.png" alt="soul." class="logo-img" />
 
-    <ul class="sidebar-menu"><li>
-  <router-link to="/meus-projetos" class="sidebar-link" @click="fecharMenu">
-    <ion-icon name="grid-outline"></ion-icon>
-    <span>Meus projetos</span>
-  </router-link>
-</li>
+    <ul class="sidebar-menu">
+      <li>
+        <router-link
+          to="/meus-projetos"
+          class="sidebar-link"
+          @click="fecharMenu"
+        >
+          <ion-icon name="grid-outline"></ion-icon>
+          <span>Meus projetos</span>
+        </router-link>
+      </li>
       <li>
         <div class="sidebar-link">
           <ion-icon name="bookmark-outline"></ion-icon>
@@ -29,7 +34,11 @@ function fecharMenu() {
         </div>
       </li>
       <li>
-        <router-link to="/notificacoes" class="sidebar-link" @click="fecharMenu">
+        <router-link
+          to="/notificacoes"
+          class="sidebar-link"
+          @click="fecharMenu"
+        >
           <ion-icon name="notifications-outline"></ion-icon>
           <span>Notificação</span>
         </router-link>
@@ -43,7 +52,6 @@ function fecharMenu() {
     </ul>
   </aside>
 
-
   <footer>
     <div class="navbar">
       <nav>
@@ -54,17 +62,29 @@ function fecharMenu() {
             </span>
           </li>
           <li>
-            <router-link to="/favoritos" class="btn" :class="{ active: route.name === 'favoritos' }">
+            <router-link
+              to="/favoritos"
+              class="btn"
+              :class="{ active: route.name === 'favoritos' }"
+            >
               <ion-icon name="star-outline"></ion-icon>
             </router-link>
           </li>
           <li>
-            <router-link to="/designs" class="btn" :class="{ active: route.name === 'designs' }">
+            <router-link
+              to="/designs"
+              class="btn"
+              :class="{ active: route.name === 'designs' }"
+            >
               <ion-icon name="folder-open-outline"></ion-icon>
             </router-link>
           </li>
           <li>
-            <router-link to="/" class="btn" :class="{ active: route.name === 'home' }">
+            <router-link
+              :to="{ name: 'home' }"
+              class="btn"
+              :class="{ active: route.name === 'home' }"
+            >
               <ion-icon name="grid-outline"></ion-icon>
             </router-link>
           </li>
@@ -76,7 +96,7 @@ function fecharMenu() {
 </template>
 
 <style scoped>
-.logo-img{
+.logo-img {
   margin-right: 140px;
   margin-bottom: 50px;
 }
@@ -85,25 +105,25 @@ function fecharMenu() {
   margin-bottom: 15px;
 }
 
-.sidebar-logo{
+.sidebar-logo {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 30px;
   font-size: 22px;
   font-weight: 800;
-  color: #FF7500;
+  color: #ff7500;
 }
-.sidebar-logo ion-icon{
+.sidebar-logo ion-icon {
   font-size: 18px;
 }
 
-.sidebar-menu{
+.sidebar-menu {
   list-style: none;
   border: none;
 }
 
-.sidebar-link{
+.sidebar-link {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -112,13 +132,12 @@ function fecharMenu() {
   color: var(--cor-texto);
 }
 
-.sidebar-link ion-icon{
+.sidebar-link ion-icon {
   font-size: 22px;
-  color: #FF7500;
+  color: #ff7500;
   flex-shrink: 0;
 }
-.sidebar-link{
+.sidebar-link {
   font-size: 18px;
 }
-
 </style>
