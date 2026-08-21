@@ -177,4 +177,13 @@ a {
 a:active {
   text-decoration: underline;
 }
+/* =========================
+   COMPUTADOR / PROJETOR
+   ========================= */
+@media (min-width: 1025px) {
+  .login-container {
+    max-width: 700px;
+    
+  }
+}
 </style>

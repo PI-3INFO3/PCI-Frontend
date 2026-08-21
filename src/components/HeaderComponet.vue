@@ -177,4 +177,88 @@ function inicio() {
 
   }
 }
+/* =========================
+   COMPUTADOR / PROJETOR
+   ========================= */
+@media (min-width: 768px) {
+
+  .header {
+    padding: 24px 35px;
+  }
+
+  .logo {
+    gap: 35px;
+  }
+
+  .logo-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .foto-container img {
+    width: 65px;
+    height: 65px;
+  }
+
+  .foto-icon {
+    font-size: 65px;
+  }
+
+  .search-wrapper {
+    max-width: 900px;
+  }
+
+  .search-bar {
+    height: 55px;
+    font-size: 18px;
+    padding-left: 58px;
+  }
+
+  .search-icon {
+    left: 20px;
+    font-size: 25px;
+  }
+}
+
+@media (min-width: 1025px) {
+
+  .header {
+    padding: 28px 50px;
+  }
+
+  .logo {
+    gap: 50px;
+  }
+
+  .logo-img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .foto-container img {
+    width: 75px;
+    height: 75px;
+  }
+
+  .foto-icon {
+    font-size: 75px;
+  }
+
+  .search-wrapper {
+    max-width: 1200px;
+  }
+
+  .search-bar {
+    height: 62px;
+    font-size: 21px;
+    padding-left: 65px;
+  }
+
+  .search-icon {
+    left: 23px;
+    font-size: 29px;
+  }
+}
+
+
 </style>

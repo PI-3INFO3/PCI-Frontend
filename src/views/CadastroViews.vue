@@ -273,4 +273,52 @@ span {
 .cdt:active {
   transform: scale(1.1);
 }
+/* =========================
+   COMPUTADOR / PROJETOR
+   ========================= */
+@media (min-width: 1025px) {
+
+  .pagina-tipo {
+    padding-top: 45px;
+  }
+
+  .pagina-tipo > img {
+    width: 120px;
+    height: 120px;
+    margin: 10px auto 35px;
+  }
+
+  form {
+    gap: 28px;
+  }
+
+  legend {
+    font-size: 58px;
+    margin-bottom: 15px;
+  }
+
+  .input-box {
+    width: 500px;
+  }
+
+  .input-box input {
+    padding: 18px 25px 18px 58px;
+    font-size: 19px;
+  }
+
+  .input-box ion-icon {
+    left: 20px;
+    font-size: 26px;
+  }
+
+  .icon-senha,
+  .icon-olho {
+    font-size: 26px;
+  }
+
+  .cdt {
+    padding: 16px 140px;
+    font-size: 22px;
+  }
+}
 </style>

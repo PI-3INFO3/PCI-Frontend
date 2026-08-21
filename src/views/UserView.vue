@@ -650,4 +650,156 @@ li {
 .fade-leave-to {
     opacity: 0;
 }
+/* =========================
+   COMPUTADOR / PROJETOR
+   ========================= */
+@media (min-width: 1025px) {
+
+    .conta {
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto;
+        gap: 35px;
+    }
+
+    .conta h1 {
+        margin-left: 0;
+        font-size: 42px;
+    }
+
+    .user-card {
+        width: 100%;
+        margin-left: 0;
+        padding: 20px;
+        min-height: 90px;
+    }
+
+    .foto-container img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .foto-icon {
+        font-size: 75px;
+    }
+
+    .nome {
+        font-size: 23px;
+    }
+
+    .email {
+        font-size: 18px;
+    }
+
+    .adicionar {
+        width: 100%;
+        margin: 0;
+        padding: 16px 20px;
+        font-size: 19px;
+    }
+
+    .opcoes {
+        margin-top: 60px;
+    }
+
+    ul {
+        gap: 38px;
+    }
+
+    li {
+        font-size: 23px;
+    }
+
+    .icon {
+        font-size: 31px;
+        margin-right: 25px;
+    }
+    .opcoes {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+}
+@media (min-width: 1025px) {
+
+    .painel-expandido {
+        padding: 15px 60px;
+    }
+
+    .topo-painel {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .topo-painel h2 {
+        font-size: 40px;
+    }
+
+    .arrow-down {
+        font-size: 32px;
+    }
+
+    .conteudo-painel {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 45px 50px;
+        border-radius: 25px;
+    }
+
+    .foto-container.grande img,
+    .foto-container.grande .foto-icon {
+        width: 130px;
+        height: 130px;
+        font-size: 130px;
+    }
+
+    .legenda-foto {
+        font-size: 20px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+    }
+
+    .campo-input {
+        width: 600px;
+        max-width: 80%;
+        padding: 17px 22px;
+        margin-bottom: 20px;
+    }
+
+    .campo-input ion-icon {
+        font-size: 27px;
+    }
+
+    .campo-input input {
+        font-size: 18px;
+    }
+
+    .card-tipo-usuario {
+        width: 600px;
+        max-width: 80%;
+        padding: 20px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+    }
+
+    .card-tipo-usuario h3 {
+        font-size: 19px;
+        margin-bottom: 14px;
+    }
+
+    .btn-tipo {
+        padding: 13px;
+        font-size: 18px;
+    }
+
+    .btn-confirmar {
+        width: 500px;
+        max-width: 60%;
+        padding: 16px;
+        font-size: 20px;
+        margin: 30px;
+    }
+}
+
 </style>

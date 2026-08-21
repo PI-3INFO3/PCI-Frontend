@@ -187,4 +187,57 @@ button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
+/* =========================
+   COMPUTADOR / PROJETOR
+   ========================= */
+@media (min-width: 1025px) {
+
+  .pagina-tipo {
+    padding-top: 45px;
+  }
+
+  .pagina-tipo > img {
+    width: 120px;
+    height: 120px;
+    margin: 10px auto 40px;
+  }
+
+  .select-box {
+    width: 500px;
+    margin: 35px auto;
+  }
+
+  .select {
+    font-size: 38px;
+    padding: 18px;
+    margin-bottom: 25px;
+  }
+
+  .select-opcoes {
+    padding: 30px;
+    border-radius: 30px;
+  }
+
+  .select-opcoes ul li {
+    font-size: 22px;
+    padding: 18px;
+    margin-bottom: 20px;
+    gap: 16px;
+  }
+
+  .select-opcoes ion-icon {
+    font-size: 28px;
+  }
+
+  .erro {
+    font-size: 16px;
+  }
+
+  button {
+    margin: 40px auto;
+    padding: 16px 130px;
+    font-size: 22px;
+  }
+}
+
 </style>
