@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import verificacao from '../views/Verificacao.vue';
 
 const routes = [
   {
@@ -7,6 +8,11 @@ const routes = [
     name: 'user',
     component: () => import('../views/UserView.vue'),
   },
+  {
+    path: '/verificar',
+    name: 'verificar',
+    component: verificacao  },
+  
   {
     path: '/login',
     name: 'login',
