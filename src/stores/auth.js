@@ -101,6 +101,20 @@ export const useAuthStore = defineStore("auth", () => {
         return authApi.uploadImage(file);
     }
 
+    async function changePassword(currentPassword, newPassword) {
+        loading.value = true;
+        error.value = null;
+        try {
+            await authApi.changePassword(currentPassword, newPassword);
+        } catch (err) {
+            error.value = err.response?.data?.current_password?.[0]
+                ?? 'Erro ao alterar a senha.';
+            throw err;
+        } finally {
+            loading.value = false;
+        }
+    }
+
     return {
         user,
         accessToken,
@@ -114,6 +128,7 @@ export const useAuthStore = defineStore("auth", () => {
         register,
         updateUser,
         uploadPhoto,
+        changePassword,
         setTheme,
     };
 });

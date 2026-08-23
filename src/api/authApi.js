@@ -20,19 +20,26 @@ const authApi = {
         return apiClient.patch('/usuarios/me/', data);
     },
 
+    changePassword(currentPassword, newPassword) {
+        return apiClient.post('/usuarios/change_password/', {
+            current_password: currentPassword,
+            new_password: newPassword,
+        });
+    },
+
     uploadImage(file, description = '') {
-    const formData = new FormData()
+        const formData = new FormData()
 
-    formData.append('file', file)
-    if (description) {
-        formData.append('description', description)
-    }
-
-    return apiClient.post('/media/images/', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
+        formData.append('file', file)
+        if (description) {
+            formData.append('description', description)
         }
-    })
+
+        return apiClient.post('/media/images/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
     },
 };
 
