@@ -14,6 +14,8 @@ onMounted(async () => {
 </script>
 
 <template>
+
+  <div class="notficacoes">
   <NotificacoesSkeleton v-if="carregando" />
 
   <div v-else class="notificacoes-container">
@@ -37,9 +39,11 @@ onMounted(async () => {
   </div>
 
   <FooterComponents />
+</div>
 </template>
 
 <style scoped>
+.notificacoes{min-height: 100vh;}
 .notificacoes-container { padding: 16px; }
 h2 { margin-bottom: 16px; color: var(--cor-texto); }
 .sem-pendentes { color: var(--cor-texto-secundario); font-size: 14px; }

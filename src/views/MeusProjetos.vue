@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import designsApi from '@/api/designsApi'
+import FooterComponents from '../components/FooterComponents.vue'
 
 const auth = useAuthStore()
 const projetos = ref([])
@@ -47,11 +48,12 @@ async function desmarcarImportante(projeto) {
         <span class="projeto-nome">{{ projeto.name }}</span>
       </div>
     </div>
+    <footer-components/>
   </div>
 </template>
 
 <style scoped>
-.meus-projetos-container { padding: 16px; padding-bottom: 100px; }
+.meus-projetos-container { min-height:100vh; padding: 16px; padding-bottom: 100px; }
 h2 { margin-bottom: 16px; color: var(--cor-texto); }
 .sem-projetos { color: var(--cor-texto-secundario); font-size: 14px; line-height: 1.5; }
 .projetos-lista {

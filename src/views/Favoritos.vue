@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import FooterComponents from '../components/FooterComponents.vue';
-
+import HeaderComponent from '../components/HeaderComponet.vue'
 </script>
 
 <template>
   <div class="favoritos-container">
+    <HeaderComponent />
     <h2>Favoritos</h2>
     <div class="em-breve">
       <ion-icon name="star-outline"></ion-icon>
       <p>Em breve você poderá favoritar seus projetos por aqui.</p>
     </div>
+    <FooterComponents />
   </div>
 
- <FooterComponents />
 </template>
 
 <style scoped>

@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import designsApi from '@/api/designsApi'
+import FooterComponents from '../components/FooterComponents.vue'
+import HeaderComponet from '../components/HeaderComponet.vue'
 
 const auth = useAuthStore()
 const designs = ref([])
@@ -29,6 +31,8 @@ async function alternarImportante(design) {
 
 <template>
   <div class="designs-container">
+<HeaderComponet />
+
     <h2>Meus Designs</h2>
 
     <div v-if="carregando" class="designs-lista">
@@ -52,6 +56,7 @@ async function alternarImportante(design) {
         <span class="design-nome">{{ design.name }}</span>
       </div>
     </div>
+    <FooterComponents />
   </div>
 </template>
 

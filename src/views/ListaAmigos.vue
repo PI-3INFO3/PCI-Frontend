@@ -111,9 +111,9 @@ function abrirConversa(amizade) {
         </div>
       </div>
     </section>
+    <footer-components />
   </div>
 
-  <footer-components />
 </template>
 
 <style scoped>
