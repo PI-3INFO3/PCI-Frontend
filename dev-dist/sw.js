@@ -81,11 +81,7 @@ define(['./workbox-5d155c7a'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "index.html",
-<<<<<<< HEAD
-    "revision": "0.bjifmfjv1qo"
-=======
-    "revision": "0.hqfp72qahg8"
->>>>>>> f65429b (FIX:(nome errado do skeleron para Skeleton))
+    "revision": "0.cf44e2p4kj"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {

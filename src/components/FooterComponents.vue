@@ -69,8 +69,10 @@ function fecharMenu() {
             </router-link>
           </li>
         </ul>
-        <button class="fab">+</button>
-      </nav>
+        <router-link to="/criar">
+          <button class="fab">+</button>
+        </router-link>
+        </nav>
     </div>
   </footer>
 </template>

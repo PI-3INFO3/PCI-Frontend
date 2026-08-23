@@ -5,6 +5,7 @@ import HomeViews from '../views/HomeViews.vue';
 import UserView from '../views/UserView.vue';
 import CadastroViews from '../views/CadastroViews.vue'
 import TipoDeUsuarioViews from '../views/TipoDeUsuarioViews.vue'
+import Criar from '../views/Criar.vue';
 import Chat from '../views/Chat.vue'
 import ListaAmigos from '../views/ListaAmigos.vue'
 import Notificacoes from '../views/Notificacoes.vue'
@@ -27,6 +28,12 @@ const routes = [
     path: '/cadastro',
     name: 'cadastro',
     component: CadastroViews
+  },
+  
+  {
+    path: '/criar',
+    name: 'criar',
+    component: Criar
   },
   {
     path: '/tipo-de-usuario',
