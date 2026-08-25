@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import ToastNotification from '../components/ToastNotifification.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -9,7 +10,22 @@ const authStore = useAuthStore();
 const codigo2fa = ref('');
 const loading = ref(false);
 const errorMessage = ref('');
-const menuOpcoesAberto = ref(true); 
+const menuOpcoesAberto = ref(true);
+
+const mensagem = ref('');
+const tipoMensagem = ref('sucesso');
+const mostrarMensagem = ref(false);
+
+function exibirMensagem(texto, tipo = 'sucesso') {
+  mensagem.value = texto;
+  tipoMensagem.value = tipo;
+  mostrarMensagem.value = true;
+}
+
+function fecharToast() {
+  mostrarMensagem.value = false;
+}
+
 async function handleVerificacao() {
   if (codigo2fa.value.length < 6) {
     errorMessage.value = 'Por favor, insira o código de 6 dígitos.';
@@ -18,10 +34,13 @@ async function handleVerificacao() {
 
   loading.value = true;
   errorMessage.value = '';
-  
+
   try {
     await authStore.verify2FA(codigo2fa.value);
-    router.push('/');
+    exibirMensagem('E-mail verificado com sucesso!', 'sucesso');
+    setTimeout(() => {
+      router.push('/');
+    }, 1500);
   } catch (err) {
     errorMessage.value =
       err.response?.data?.detail ??
@@ -35,14 +54,15 @@ async function reenviarCodigo() {
   try {
     if (authStore.resend2FACode) {
       await authStore.resend2FACode();
-      alert('Um novo código de verificação foi enviado para o seu e-mail.');
+      exibirMensagem('Um novo código de verificação foi enviado para o seu e-mail.', 'sucesso');
     }
   } catch (err) {
-    alert('Erro ao reenviar código. Tente mais tarde.');
+    exibirMensagem('Erro ao reenviar código. Tente mais tarde.', 'erro');
   }
 }
 
 function cancelarAutenticacao() {
+  authStore.logout();
   router.push('/login');
 }
 </script>
@@ -51,6 +71,13 @@ function cancelarAutenticacao() {
   <div class="verificacao-tela-cheia">
     
     <img src="/logo-96x96.png" alt="SOUL Logo" class="logo-soul">
+
+    <ToastNotification
+      :mensagem="mensagem"
+      :tipo="tipoMensagem"
+      :mostrar="mostrarMensagem"
+      @fechar="fecharToast"
+    />
     
     <p class="texto-informativo">
       Autenticação de dois fatores. Enviamos um código para o seu E-mail. Insira-o abaixo. Insira o código de verificação.

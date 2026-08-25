@@ -11,8 +11,8 @@ const routes = [
   {
     path: '/verificar',
     name: 'verificar',
-    component: verificacao  },
-  
+    component: verificacao
+  },
   {
     path: '/login',
     name: 'login',
@@ -40,8 +40,7 @@ const router = createRouter({
   routes,
 });
 
-const rotasPublicas = ['login', 'cadastro', 'tipodeusuario']
-
+const rotasPublicas = ['login', 'cadastro', 'tipodeusuario', 'verificar']
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
@@ -54,7 +53,7 @@ router.beforeEach(async (to) => {
     return { name: 'login' };
   }
 
-  if (rotasPublicas.includes(to.name) && to.name !== 'tipodeusuario' && authStore.isAuthenticated) {
+  if (rotasPublicas.includes(to.name) && to.name !== 'tipodeusuario' && to.name !== 'verificar' && authStore.isAuthenticated) {
     return { name: 'home' };
   }
 });
