@@ -1,20 +1,30 @@
 <script setup>
-import { onMounted } from 'vue'
-import { RouterView } from 'vue-router'
-import { useAuthStore } from './stores/auth'
+import { ref, onMounted } from 'vue'
+import { RouterView, useRouter } from 'vue-router'
+import AppSkeleton from './components/skeleton/AppSkeleton.vue'
 
-const auth = useAuthStore()
+const carregando = ref(true)
+const router = useRouter()
 
-onMounted(() => {
-  if (!auth.isAuthenticated) {
-    const temaLocal = localStorage.getItem('tema') || 'Claro'
-    document.body.classList.toggle('dark', temaLocal === 'Escuro')
-  }
+onMounted(async () => {
+  const inicio = Date.now()
+
+  await router.isReady()
+
+  const minimoVisivel = 600
+  const decorrido = Date.now() - inicio
+  const espera = Math.max(0, minimoVisivel - decorrido)
+
+  setTimeout(() => {
+    carregando.value = false
+  }, espera)
 })
 </script>
 
 <template>
-  <RouterView v-slot="{ Component }">
+  <AppSkeleton v-if="carregando" />
+
+  <RouterView v-else v-slot="{ Component }">
     <transition name="fade" mode="out-in">
       <component :is="Component" />
     </transition>

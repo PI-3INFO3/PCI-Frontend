@@ -16,7 +16,6 @@ registerSW({
   },
 });
 
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia';
 import './assets/css/style.css'
