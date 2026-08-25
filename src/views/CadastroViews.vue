@@ -31,6 +31,8 @@ function fecharToast() {
 }
 
 async function proximaEtapa() {
+  if (authStore.loading) return;
+
   if (!nome.value || !email.value || !senha.value || !confirmarSenha.value) {
     alert('Preencha todos os campos')
     return
@@ -57,7 +59,7 @@ async function proximaEtapa() {
   if (!authStore.error) {
     exibirMensagem('Cadastro realizado com sucesso!', 'sucesso')
     setTimeout(() => {
-      router.push('/')
+      router.push('/verificar')
     }, 1500)
   } else {
     exibirMensagem(authStore.error, 'erro')
@@ -67,48 +69,40 @@ async function proximaEtapa() {
 
 <template>
   <div class="pagina-tipo">
-  <img src="/icons/logo-96x96.png" alt="logo">
-  <ToastNotification 
-    :mensagem="mensagem" 
-    :tipo="tipoMensagem" 
-    :mostrar="mostrarMensagem"
-    @fechar="fecharToast"
-  />
-  <form @submit.prevent="proximaEtapa">
-    <legend><span>Cadastre-se</span></legend>
+    <img src="/icons/logo-96x96.png" alt="logo">
+    <ToastNotification :mensagem="mensagem" :tipo="tipoMensagem" :mostrar="mostrarMensagem" @fechar="fecharToast" />
+    <form @submit.prevent="proximaEtapa">
+      <legend><span>Cadastre-se</span></legend>
 
-  
-    <div class="input-box" :class="{active: ativo === 'Nome'}" @click="ativo = 'Nome'">
-      <ion-icon name="person-outline"></ion-icon>
-      <input v-model="nome" type="text" placeholder="Nome" required>
-    </div>
 
-    <div class="input-box" :class="{active: ativo === 'Email'}" @click="ativo = 'Email'">
-      <ion-icon name="mail-outline"></ion-icon>
-      <input v-model="email" type="email" placeholder="Email" required>
-    </div>
+      <div class="input-box" :class="{ active: ativo === 'Nome' }" @click="ativo = 'Nome'">
+        <ion-icon name="person-outline"></ion-icon>
+        <input v-model="nome" type="text" placeholder="Nome" required>
+      </div>
 
-    <div class="input-box" :class="{active: ativo === 'Senha'}" @click="ativo = 'Senha'">
-      <ion-icon
-        :name="mostrarSenha ? 'lock-open-outline' : 'lock-closed-outline'"
-        class="icon-senha"
-        @click.stop="mostrarSenha = !mostrarSenha"
-      ></ion-icon>
-      <input v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha" required>
-    </div>
+      <div class="input-box" :class="{ active: ativo === 'Email' }" @click="ativo = 'Email'">
+        <ion-icon name="mail-outline"></ion-icon>
+        <input v-model="email" type="email" placeholder="Email" required>
+      </div>
 
-    <div class="input-box" :class="{active: ativo === 'Confirmar'}" @click="ativo = 'Confirmar'">
-      <ion-icon
-        :name="mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'"
-        class="icon-olho"
-        @click.stop="mostrarConfirmarSenha = !mostrarConfirmarSenha"
-      ></ion-icon>
-      <input v-model="confirmarSenha" :type="mostrarConfirmarSenha ? 'text' : 'password'" placeholder="Confirmar senha" required>
-    </div>
+      <div class="input-box" :class="{ active: ativo === 'Senha' }" @click="ativo = 'Senha'">
+        <ion-icon :name="mostrarSenha ? 'lock-open-outline' : 'lock-closed-outline'" class="icon-senha"
+          @click.stop="mostrarSenha = !mostrarSenha"></ion-icon>
+        <input v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha" required>
+      </div>
 
-    <button class="cdt" type="submit">Cadastrar</button>
-  </form>
-</div>
+      <div class="input-box" :class="{ active: ativo === 'Confirmar' }" @click="ativo = 'Confirmar'">
+        <ion-icon :name="mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'" class="icon-olho"
+          @click.stop="mostrarConfirmarSenha = !mostrarConfirmarSenha"></ion-icon>
+        <input v-model="confirmarSenha" :type="mostrarConfirmarSenha ? 'text' : 'password'"
+          placeholder="Confirmar senha" required>
+      </div>
+
+      <button class="cdt" type="submit" :disabled="authStore.loading">
+        {{ authStore.loading ? 'Cadastrando...' : 'Cadastrar' }}
+      </button>
+    </form>
+  </div>
 </template>
 
 <style scoped>
@@ -116,20 +110,21 @@ async function proximaEtapa() {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  
+
 }
 
-.pagina-tipo{
+.pagina-tipo {
   min-height: 100vh;
   background-color: #fff;
   color: #000;
   padding-top: 20px;
 }
+
 img {
   display: block;
   margin: 20px auto;
   margin-top: -5px;
-  filter: drop-shadow(0 6px 1px rgba(0,0,0,0.10)) drop-shadow(0 0 4px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 6px 1px rgba(0, 0, 0, 0.10)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
 }
 
 form {
@@ -147,10 +142,11 @@ legend {
 
 span {
   border: none;
-  text-shadow: 0px 5px 5px rgba(0,0,0,.30);
+  text-shadow: 0px 5px 5px rgba(0, 0, 0, .30);
 }
 
-.icon-senha, .icon-olho {
+.icon-senha,
+.icon-olho {
   position: absolute;
   left: 15px;
   top: 50%;
@@ -166,26 +162,26 @@ span {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  
-  width: 300px;            
-  min-height: 60px;        
-  padding: 0 10px;         
+
+  width: 300px;
+  min-height: 60px;
+  padding: 0 10px;
   border-radius: 10px;
   font-weight: 700;
   font-size: 18px;
   color: #000;
   background: #fff;
   border: 2px solid #FF5700;
-  
+
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
   text-align: left;
   z-index: 9999;
   user-select: none;
-  
-  
-  animation: 
+
+
+  animation:
     descer 0.5s ease-out forwards,
     movi 1s ease-in-out infinite 0.5s;
 }
@@ -208,11 +204,12 @@ span {
 
 @keyframes descer {
   0% {
-    top: -120px; 
+    top: -120px;
     opacity: 0;
   }
+
   100% {
-    top: 20px; 
+    top: 20px;
     opacity: 1;
   }
 }
@@ -221,9 +218,11 @@ span {
   0% {
     transform: translateX(-50%) scale(1);
   }
+
   50% {
     transform: translateX(-50%) scale(.95);
   }
+
   100% {
     transform: translateX(-50%) scale(1);
   }
@@ -232,12 +231,12 @@ span {
 .input-box {
   position: relative;
   width: 260px;
-  border-radius: 20px; 
+  border-radius: 20px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
   transition: transform .3s ease;
 }
 
-.input-box.active { 
+.input-box.active {
   transform: scale(1.1);
 }
 

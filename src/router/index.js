@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import verificacao from '../views/Verificacao.vue';
 import { useLoadingStore } from '../stores/loading.js';
 import HomeViews from '../views/HomeViews.vue';
 import LoginView from '../views/LoginView.vue'
@@ -15,6 +16,11 @@ const routes = [
     path: '/user',
     name: 'user',
     component: UserView
+  },
+  {
+    path: '/verificar',
+    name: 'verificar',
+    component: verificacao
   },
   {
     path: '/login',
@@ -59,12 +65,22 @@ const router = createRouter({
   routes,
 });
 
-const rotasPublicas = ['login', 'cadastro', 'tipodeusuario']
+const rotasPublicas = ['login', 'cadastro', 'tipodeusuario', 'verificar']
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+
+  if (authStore.isAuthenticated && !authStore.user) {
+    await authStore.fetchUser();
+  }
+
   if (!rotasPublicas.includes(to.name) && !authStore.isAuthenticated) {
-        return { name: 'login' };
-    }
-})
+    return { name: 'login' };
+  }
+
+  if (rotasPublicas.includes(to.name) && to.name !== 'tipodeusuario' && to.name !== 'verificar' && authStore.isAuthenticated) {
+    return { name: 'home' };
+  }
+});
+
 export default router;
