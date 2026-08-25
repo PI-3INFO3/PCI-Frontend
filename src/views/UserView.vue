@@ -6,13 +6,14 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const auth = useAuthStore()
 
+const senhaAtual = ref('')
 const senha = ref('')
 const confirmarSenha = ref('')
 
 const tema = ref('Claro')
 
 const expandido = ref(false)
-const visualizadorAberto = ref(false) 
+const visualizadorAberto = ref(false)
 const inputFoto = ref(null)
 
 function inicio() {
@@ -21,13 +22,9 @@ function inicio() {
 
 onMounted(async () => {
     await auth.fetchUser()
-
-    const temaSalvo = localStorage.getItem('tema')
-    if (temaSalvo) {
-        tema.value = temaSalvo
-        document.body.classList.toggle('dark', temaSalvo === 'Escuro')
-    }
+    tema.value = auth.user?.theme || 'Claro'
 })
+
 const nome = computed({
     get: () => auth.user?.name || '',
     set: (value) => {
@@ -89,7 +86,13 @@ function gerenciadorScroll() {
 }
 
 async function salvarAlteracoes() {
-    if (senha.value || confirmarSenha.value) {
+    const querTrocarSenha = senha.value || confirmarSenha.value || senhaAtual.value
+
+    if (querTrocarSenha) {
+        if (!senhaAtual.value) {
+            alert('Informe a senha atual para trocar a senha.')
+            return
+        }
         if (senha.value !== confirmarSenha.value) {
             alert('As senhas não coincidem!')
             return
@@ -100,9 +103,13 @@ async function salvarAlteracoes() {
         await auth.updateUser({
             name: auth.user.name,
             user_type: auth.user.user_type,
-            password: senha.value || undefined
         })
 
+        if (querTrocarSenha) {
+            await auth.changePassword(senhaAtual.value, senha.value)
+        }
+
+        senhaAtual.value = ''
         senha.value = ''
         confirmarSenha.value = ''
         expandido.value = false
@@ -110,20 +117,18 @@ async function salvarAlteracoes() {
         await auth.fetchUser()
 
     } catch (err) {
-        alert('Erro ao atualizar usuário')
+        const msg = err.response?.data?.current_password?.[0]
+            ?? err.response?.data?.new_password?.[0]
+            ?? 'Erro ao atualizar usuário'
+        alert(msg)
         console.error(err)
     }
 }
 
-function trocarTema() {
-    if (tema.value === 'Claro') {
-        tema.value = 'Escuro'
-        document.body.classList.add('dark')
-    } else {
-        tema.value = 'Claro'
-        document.body.classList.remove('dark')
-    }
-    localStorage.setItem('tema', tema.value)
+async function trocarTema() {
+    const novoTema = tema.value === 'Claro' ? 'Escuro' : 'Claro'
+    tema.value = novoTema
+    await auth.setTheme(novoTema)
 }
 
 function sairConta() {
@@ -142,9 +147,7 @@ function sairConta() {
 
             <div class="user-card">
                 <div class="foto-container" @click.stop="abrirVisualizadorFoto">
-                    <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil"
-                    
-                    >
+                    <img v-if="fotoPerfil" :src="fotoPerfil" alt="Foto de Perfil">
                     <ion-icon v-else class="foto-icon" name="person-circle-outline"></ion-icon>
 
                     <button type="button" class="btn-mais" @click.stop="acionarInputFoto">+</button>
@@ -189,7 +192,7 @@ function sairConta() {
                         Sair da conta
                     </div>
                 </li>
-                
+
                 <li class="voltar" @click="inicio">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="caret-back-outline"></ion-icon>
@@ -227,13 +230,20 @@ function sairConta() {
                     </div>
 
                     <div class="campo-input">
+                        <ion-icon name="key-outline"></ion-icon>
+                        <input type="password" v-model="senhaAtual" placeholder="Senha atual"
+                            autocomplete="current-password">
+                    </div>
+
+                    <div class="campo-input">
                         <ion-icon name="lock-closed-outline"></ion-icon>
-                        <input type="password" v-model="senha" placeholder="Alterar senha?">
+                        <input type="password" v-model="senha" placeholder="Nova senha" autocomplete="new-password">
                     </div>
 
                     <div class="campo-input">
                         <ion-icon name="eye-off-outline"></ion-icon>
-                        <input type="password" v-model="confirmarSenha" placeholder="Confirmar senha?">
+                        <input type="password" v-model="confirmarSenha" placeholder="Confirmar nova senha"
+                            autocomplete="new-password">
                     </div>
 
                     <div class="card-tipo-usuario">
@@ -388,7 +398,8 @@ function sairConta() {
     font-weight: 600;
     transition: .2s;
 }
-.adicionar:active{
+
+.adicionar:active {
     transform: translateY(2px);
 }
 
@@ -419,10 +430,10 @@ li {
 }
 
 .lado-esquerdo {
-    
+
     display: flex;
     align-items: center;
-    
+
     margin-left: 24px;
 }
 
@@ -516,6 +527,7 @@ li {
     transition: .2s;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .campo-input ion-icon {
     font-size: 20px;
     color: var(--cor-texto);
@@ -595,7 +607,12 @@ li {
 }
 
 .modal-body {
-    position: fixed;top: 0; left: 0; width: 100%; height: 100%;background: rgba(15, 20, 42, 0.95);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 20, 42, 0.95);
 }
 
 .blur-bg {

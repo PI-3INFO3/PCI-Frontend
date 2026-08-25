@@ -1,103 +1,167 @@
-import { computed, ref } from 'vue';
-import { defineStore } from 'pinia';
-import authApi from '../api/authApi';
+import { computed, ref } from "vue";
+import { defineStore } from "pinia";
+import authApi from "../api/authApi";
+import { setTokens, clearTokens, getToken } from "../api/config";
 
-export const useAuthStore = defineStore('auth', () => {
-    const user = ref(null);
-    const loading = ref(false);
-    const error = ref(null);
+export const useAuthStore = defineStore("auth", () => {
+  const user = ref(null);
+  const loading = ref(false);
+  const error = ref(null);
+  const pendingEmail = ref(null);
 
-    const accessToken = ref(localStorage.getItem('access_token'));
-    const refreshToken = ref(localStorage.getItem('refresh_token'));
+  const accessToken = ref(getToken("access_token"));
+  const refreshToken = ref(getToken("refresh_token"));
 
-    const isAuthenticated = computed(() => !!accessToken.value);
+  const isAuthenticated = computed(() => !!accessToken.value);
 
-    async function login(email, password) {
-        loading.value = true;
-        error.value = null;
+  function aplicarTema(tema) {
+    document.body.classList.toggle('dark', tema === 'Escuro')
+    localStorage.setItem('tema', tema)
+  }
 
-        try {
-            const { data } = await authApi.login(email, password);
+  async function setTheme(tema) {
+    aplicarTema(tema)
+    if (isAuthenticated.value) {
+      try {
+        await updateUser({ theme: tema })
+      } catch (err) {
+        console.error('Erro ao salvar tema', err)
+      }
+    }
+  }
 
-            const { access, refresh } = data;
+  async function login(email, password, rememberMe = false) {
+    loading.value = true;
+    error.value = null;
 
-            accessToken.value = access;
-            refreshToken.value = refresh;
+    try {
+      const { data } = await authApi.login(email, password);
+      const { access, refresh } = data;
 
-            localStorage.setItem('access_token', access);
-            localStorage.setItem('refresh_token', refresh);
+      accessToken.value = access;
+      refreshToken.value = refresh;
 
+      setTokens(access, refresh, rememberMe);
+    } catch (err) {
+      error.value = err.response?.data?.detail ?? "Erro ao fazer login.";
+      console.error(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
 
+  function logout() {
+    user.value = null;
+    accessToken.value = null;
+    refreshToken.value = null;
+    pendingEmail.value = null;
+    clearTokens();
+  }
 
-        } catch (err) {
-            error.value = 'Erro ao fazer login.';
-            console.error(err);
-        } finally {
-            loading.value = false;
-        }
+  async function fetchUser() {
+    if (!accessToken.value) return;
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await authApi.me();
+      user.value = response.data;
+      if (user.value.theme) {
+        aplicarTema(user.value.theme)
+      }
+    } catch (err) {
+      error.value = 'Erro ao carregar usuário.';
+      console.error(err);
+      if (err.response?.status === 401) {
+        logout();
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function register(data) {
+    loading.value = true;
+    error.value = null;
+    pendingEmail.value = data.email;
+
+    try {
+      await authApi.register(data);
+      // Não loga automaticamente: usuário precisa verificar o e-mail primeiro
+    } catch (err) {
+      error.value = err.response?.data?.email?.[0] ?? "Erro ao criar usuário.";
+      console.error(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function updateUser(payload) {
+    const { data } = await authApi.updateMe(payload);
+    user.value = data;
+  }
+
+  async function uploadPhoto(file) {
+    return authApi.uploadImage(file);
+  }
+
+  async function changePassword(currentPassword, newPassword) {
+    loading.value = true;
+    error.value = null;
+    try {
+      await authApi.changePassword(currentPassword, newPassword);
+    } catch (err) {
+      error.value = err.response?.data?.current_password?.[0]
+        ?? 'Erro ao alterar a senha.';
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function verify2FA(codigo) {
+    const email = pendingEmail.value;
+    if (!email) {
+      throw new Error('E-mail não encontrado para verificação.');
     }
 
-    function logout() {
-        user.value = null;
-        accessToken.value = null;
-        refreshToken.value = null;
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+    const { data } = await authApi.verifyEmail(email, codigo);
+
+    // A verificação já retorna os tokens: faz login automaticamente aqui
+    accessToken.value = data.access;
+    refreshToken.value = data.refresh;
+    setTokens(data.access, data.refresh, false);
+
+    pendingEmail.value = null;
+    await fetchUser();
+    return data;
+  }
+
+  async function resend2FACode() {
+    const email = pendingEmail.value ?? user.value?.email;
+    if (!email) {
+      throw new Error('E-mail não encontrado para reenvio.');
     }
+    return authApi.resendVerificationCode(email);
+  }
 
-    async function fetchUser() {
-        if (!accessToken.value) return;
-        loading.value = true;
-        error.value = null;
-        try {
-            const response = await authApi.me();
-            user.value = response.data;
-        } catch (err) {
-            error.value = 'Erro ao carregar usuário.';
-            console.error(err);
-            logout()
-        } finally {
-            loading.value = false;
-        }
-    }
-
-    async function register(data) {
-        loading.value = true;
-        error.value = null;
-
-        try {
-            await authApi.register(data);
-
-            await login(data.email, data.password);
-        } catch (err) {
-            error.value = 'Erro ao criar usuário.';
-            console.error(err);
-        } finally {
-            loading.value = false;
-        }
-    }
-
-    async function updateUser(payload) {
-        const { data } = await authApi.updateMe(payload);
-        user.value = data;
-    }
-
-    async function uploadPhoto(file) {
-        return authApi.uploadImage(file);
-    }
-
-    return {
-        user,
-        accessToken,
-        refreshToken,
-        loading,
-        error,
-        isAuthenticated,
-        login,
-        logout,
-        fetchUser,
-        register,
-        updateUser,
-        uploadPhoto,
-    };
+  return {
+    user,
+    accessToken,
+    refreshToken,
+    loading,
+    error,
+    isAuthenticated,
+    login,
+    logout,
+    fetchUser,
+    register,
+    updateUser,
+    uploadPhoto,
+    changePassword,
+    setTheme,
+    verify2FA,
+    resend2FACode,
+  };
 });
