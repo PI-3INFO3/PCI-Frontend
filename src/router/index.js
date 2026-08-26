@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+// import verificacao from '../views/Verificacao.vue'; // TODO: ainda não existe nessa branch, vem da dev
 import { useLoadingStore } from '../stores/loading.js';
 import HomeViews from '../views/HomeViews.vue';
+import LoginView from '../views/LoginView.vue'
 import UserView from '../views/UserView.vue';
 import CadastroViews from '../views/CadastroViews.vue'
 import TipoDeUsuarioViews from '../views/TipoDeUsuarioViews.vue'
@@ -11,15 +13,20 @@ import ListaAmigos from '../views/ListaAmigos.vue'
 import Notificacoes from '../views/Notificacoes.vue'
 import Favoritos from '../views/Favoritos.vue';
 import Designs from '../views/Designs.vue';
-import LoginView from '../views/LoginView.vue'
-import ProjetoAndamento from '../views/ProjetoAndamento.vue'; '../views/ProjetoAndamento.vue/index.js';
+import ProjetoAndamento from '../views/ProjetoAndamento.vue';
 import MeusProjetos from '../views/MeusProjetos.vue';
+
 const routes = [
   {
     path: '/user',
     name: 'user',
     component: UserView
   },
+  // {
+  //   path: '/verificar',
+  //   name: 'verificar',
+  //   component: verificacao
+  // }, // TODO: reativar quando Verificacao.vue existir nessa branch
   {
     path: '/login',
     name: 'login',
@@ -30,7 +37,6 @@ const routes = [
     name: 'cadastro',
     component: CadastroViews
   },
-  
   {
     path: '/criar',
     name: 'criar',
@@ -57,28 +63,26 @@ const routes = [
     name: 'notificacoes',
     component: Notificacoes
   },
-
   {
     path: '/projetoandamento',
     name: 'Projeto',
-    component: ProjetoAndamento  },
- {
+    component: ProjetoAndamento
+  },
+  {
     path: '/meus-projetos',
     name: 'meusprojetos',
     component: MeusProjetos
   },
   {
-  path:'/favoritos',
-  name: 'favoritos',
-  component: Favoritos
+    path: '/favoritos',
+    name: 'favoritos',
+    component: Favoritos
   },
   {
-  path:'/designs',
-  name: 'designs',
-  component: Designs
+    path: '/designs',
+    name: 'designs',
+    component: Designs
   },
-  
-  
   {
     path: '/',
     name: 'home',
@@ -91,12 +95,24 @@ const router = createRouter({
   routes,
 });
 
-const rotasPublicas = ['login', 'cadastro', 'tipodeusuario']
+const rotasPublicas = ['login', 'cadastro', 'tipodeusuario', 'verificar']
+const rotasSemLayout = ['login', 'cadastro', 'tipodeusuario', 'verificar', 'user', 'chat', 'amigos','criar']
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+
+  if (authStore.isAuthenticated && !authStore.user) {
+    await authStore.fetchUser();
+  }
+
   if (!rotasPublicas.includes(to.name) && !authStore.isAuthenticated) {
-        return { name: 'login' };
-    }
-})
+    return { name: 'login' };
+  }
+
+  if (rotasPublicas.includes(to.name) && to.name !== 'tipodeusuario' && to.name !== 'verificar' && authStore.isAuthenticated) {
+    return { name: 'home' };
+  }
+});
+
+export { rotasPublicas, rotasSemLayout };
 export default router;
