@@ -23,10 +23,10 @@ function fecharMenu() {
   </router-link>
 </li>
       <li>
-        <div class="sidebar-link">
+        <router-link to="/projetoandamento"" class="sidebar-link" @click="fecharMenu">
           <ion-icon name="bookmark-outline"></ion-icon>
           <span>Projetos em andamento</span>
-        </div>
+        </router-link>
       </li>
       <li>
         <router-link to="/notificacoes" class="sidebar-link" @click="fecharMenu">

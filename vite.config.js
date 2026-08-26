@@ -9,7 +9,6 @@ export default defineConfig({
     vue({
       template: {
         compilerOptions: {
-          // Ignora elementos custom como <ion-icon>
           isCustomElement: (tag) => tag === 'ion-icon'
         }
       }
@@ -20,6 +19,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         cleanupOutdatedCaches: true,
         sourcemap: false,
+        navigateFallbackDenylist: [/^\/api/],
+        
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -45,17 +46,21 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+        
           {
-            urlPattern: /^https:\/\/127\.0\.0\.1:8000\/api\/.*/i,
-            handler: 'NetworkFirst',
+            urlPattern: /^http:\/\/(localhost|127\.0\.0\.1):8000\/api\/.*/i,
+            handler: 'NetworkOnly',
+          },
+          {
+            urlPattern: /^https:\/\/unpkg\.com\/ionicons@.*/i,
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'api-cache',
+              cacheName: 'ionicons-cache',
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24,
+                maxEntries: 40,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // Guarda por 30 dias
               },
               cacheableResponse: { statuses: [0, 200] },
-              networkTimeoutSeconds: 10,
             },
           },
         ],

@@ -7,14 +7,15 @@ export function useChat(outroUsuarioId) {
   let intervalo = null
 
   async function carregarMensagens() {
-
     const { data } = await mensagensApi.listarConversa(outroUsuarioId)
     mensagens.value = data.results ?? data
   }
 
   async function enviarMensagem(texto) {
     if (!texto.trim()) return
+
     enviando.value = true
+
     try {
       await mensagensApi.enviar(outroUsuarioId, texto)
       await carregarMensagens()
@@ -22,8 +23,16 @@ export function useChat(outroUsuarioId) {
       enviando.value = false
     }
   }
+
   async function deletarMensagem(id) {
-    await mensagensApi.deletar(id)
+    await mensagensApi.delete(id)
+    await carregarMensagens()
+  }
+
+  async function editarMensagem(id, texto) {
+    if (!texto.trim()) return
+
+    await mensagensApi.editar(id, texto)
     await carregarMensagens()
   }
 
@@ -33,8 +42,18 @@ export function useChat(outroUsuarioId) {
   }
 
   onUnmounted(() => {
-    if (intervalo) clearInterval(intervalo)
+    if (intervalo) {
+      clearInterval(intervalo)
+    }
   })
 
-  return { mensagens, enviando, carregarMensagens, enviarMensagem, iniciarAtualizacaoAutomatica,deletarMensagem }
+  return {
+    mensagens,
+    enviando,
+    carregarMensagens,
+    enviarMensagem,
+    deletarMensagem,
+    editarMensagem,
+    iniciarAtualizacaoAutomatica
+  }
 }

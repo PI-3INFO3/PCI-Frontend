@@ -44,7 +44,7 @@ onMounted(async () => {
 
 <style scoped>
 .notificacoes{min-height: 100vh;}
-.notificacoes-container { padding: 16px; }
+.notificacoes-container { padding: 16px;  margin-top: 20px; }
 h2 { margin-bottom: 16px; color: var(--cor-texto); }
 .sem-pendentes { color: var(--cor-texto-secundario); font-size: 14px; }
 .item-pendente {

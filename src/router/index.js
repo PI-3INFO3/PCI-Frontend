@@ -12,6 +12,7 @@ import Notificacoes from '../views/Notificacoes.vue'
 import Favoritos from '../views/Favoritos.vue';
 import Designs from '../views/Designs.vue';
 import LoginView from '../views/LoginView.vue'
+import ProjetoAndamento from '../views/ProjetoAndamento.vue'; '../views/ProjetoAndamento.vue/index.js';
 import MeusProjetos from '../views/MeusProjetos.vue';
 const routes = [
   {
@@ -56,6 +57,11 @@ const routes = [
     name: 'notificacoes',
     component: Notificacoes
   },
+
+  {
+    path: '/projetoandamento',
+    name: 'Projeto',
+    component: ProjetoAndamento  },
  {
     path: '/meus-projetos',
     name: 'meusprojetos',

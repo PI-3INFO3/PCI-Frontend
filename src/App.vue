@@ -6,7 +6,7 @@ import AppSkeleton from './components/skeleton/AppSkeleton.vue'
 const carregando = ref(true)
 const router = useRouter()
 
-const rotasSemEsqueleto = ['login','cadastro','tipodeusuario','chat']
+const rotasSemEsqueleto = ['login','cadastro','tipodeusuario','chat','criar']
 
 onMounted(async () => {
   const inicio = Date.now()

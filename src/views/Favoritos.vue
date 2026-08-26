@@ -17,8 +17,9 @@ import HeaderComponent from '../components/HeaderComponet.vue'
 </template>
 
 <style scoped>
+
 .favoritos-container { padding: 16px; padding-bottom: 100px; }
-h2 { margin-bottom: 16px; color: var(--cor-texto); }
+h2 { margin-left: 10px; margin-bottom: 16px; color: var(--cor-texto); }
 .em-breve {
   display: flex;
   flex-direction: column;

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import designsApi from '@/api/designsApi'
 import FooterComponents from '../components/FooterComponents.vue'
+import HeaderComponet from '../components/HeaderComponet.vue'
 
 const auth = useAuthStore()
 const projetos = ref([])
@@ -30,6 +31,7 @@ async function desmarcarImportante(projeto) {
 
 <template>
   <div class="meus-projetos-container">
+    <HeaderComponet />
     <h2>Meus Projetos</h2>
 
     <div v-if="carregando" class="projetos-lista">
@@ -37,7 +39,6 @@ async function desmarcarImportante(projeto) {
     </div>
 
     <div v-else-if="!projetos.length" class="sem-projetos">
-      Nenhum projeto marcado como importante ainda. Vá em "Designs" e toque na estrela dos projetos que quiser fixar aqui.
     </div>
 
     <div v-else class="projetos-lista">
@@ -54,7 +55,7 @@ async function desmarcarImportante(projeto) {
 
 <style scoped>
 .meus-projetos-container { min-height:100vh; padding: 16px; padding-bottom: 100px; }
-h2 { margin-bottom: 16px; color: var(--cor-texto); }
+h2 { margin-left: 10px; margin-bottom: 16px; color: var(--cor-texto); }
 .sem-projetos { color: var(--cor-texto-secundario); font-size: 14px; line-height: 1.5; }
 .projetos-lista {
   display: grid;

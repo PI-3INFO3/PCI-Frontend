@@ -31,8 +31,8 @@ async function alternarImportante(design) {
 
 <template>
   <div class="designs-container">
-<HeaderComponet />
-
+    
+    <HeaderComponet />
     <h2>Meus Designs</h2>
 
     <div v-if="carregando" class="designs-lista">
@@ -68,6 +68,9 @@ h2 { margin-bottom: 16px; color: var(--cor-texto); }
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+}
+h2{
+  margin-left: 10px;
 }
 .design-card {
   position: relative;
