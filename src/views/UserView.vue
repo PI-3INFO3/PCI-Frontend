@@ -9,6 +9,10 @@ const auth = useAuthStore()
 const senha = ref('')
 const confirmarSenha = ref('')
 
+const ativo = ref('')
+const mostrarSenha = ref(false)
+const mostrarConfirmarSenha = ref(false)
+
 const tema = ref('Claro')
 
 const expandido = ref(false)
@@ -226,15 +230,23 @@ function sairConta() {
                         <input type="email" :value="email" disabled>
                     </div>
 
-                    <div class="campo-input">
-                        <ion-icon name="lock-closed-outline"></ion-icon>
-                        <input type="password" v-model="senha" placeholder="Alterar senha?">
-                    </div>
+                    <div class="campo-input" :class="{active: ativo === 'Senha'}" @click="ativo = 'Senha'">
+      <ion-icon
+        :name="mostrarSenha ? 'lock-open-outline' : 'lock-closed-outline'"
+        class="icon-senha"
+        @click.stop="mostrarSenha = !mostrarSenha"
+      ></ion-icon>
+      <input v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha" required>
+    </div>
 
-                    <div class="campo-input">
-                        <ion-icon name="eye-off-outline"></ion-icon>
-                        <input type="password" v-model="confirmarSenha" placeholder="Confirmar senha?">
-                    </div>
+    <div class="campo-input" :class="{active: ativo === 'Confirmar'}" @click="ativo = 'Confirmar'">
+      <ion-icon
+        :name="mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'"
+        class="icon-olho"
+        @click.stop="mostrarConfirmarSenha = !mostrarConfirmarSenha"
+      ></ion-icon>
+      <input v-model="confirmarSenha" :type="mostrarConfirmarSenha ? 'text' : 'password'" placeholder="Confirmar senha" required>
+    </div>
 
                     <div class="card-tipo-usuario">
                         <h3>Tipo de usuário</h3>

@@ -1,24 +1,32 @@
+```vue
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
+
 import AppSkeleton from './components/skeleton/AppSkeleton.vue'
 import HeaderComponent from './components/HeaderComponent.vue'
 import FooterComponent from './components/FooterComponent.vue'
+
 import { useAuthStore } from './stores/auth'
 import { rotasPublicas, rotasSemLayout } from './router'
 
 const carregando = ref(true)
+
 const router = useRouter()
 const authStore = useAuthStore()
 
 const rotaAtual = computed(() => router.currentRoute.value.name)
 
-const mostrarLayout = computed(() =>
-  authStore.isAuthenticated && !rotasSemLayout.includes(rotaAtual.value)
-)
+const mostrarLayout = computed(() => {
+  return (
+    authStore.isAuthenticated &&
+    !rotasSemLayout.includes(rotaAtual.value)
+  )
+})
 
 onMounted(async () => {
   const inicio = Date.now()
+
   await router.isReady()
 
   if (rotasPublicas.includes(rotaAtual.value)) {
@@ -40,30 +48,82 @@ onMounted(async () => {
   <AppSkeleton v-if="carregando" />
 
   <template v-else>
-    <transition name="fade">
-      <HeaderComponent v-if="mostrarLayout" key="header" />
-    </transition>
 
-    <RouterView v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </RouterView>
+    <!-- Páginas COM layout -->
+    <Transition name="layout-fade" mode="out-in">
+      <div v-if="mostrarLayout" :key="'layout-' + rotaAtual" class="app-layout">
 
-    <transition name="fade">
-      <FooterComponent v-if="mostrarLayout" key="footer" />
-    </transition>
+        <HeaderComponent />
+
+        <RouterView v-slot="{ Component }">
+          <Transition name="page-fade" mode="out-in">
+            <component
+              :is="Component"
+              :key="rotaAtual"
+            />
+          </Transition>
+        </RouterView>
+
+        <FooterComponent />
+
+      </div>
+
+      <!-- Páginas SEM layout -->
+      <div
+        v-else
+        :key="'sem-layout-' + rotaAtual"
+        class="no-layout"
+      >
+        <RouterView v-slot="{ Component }">
+          <component
+            :is="Component"
+            :key="rotaAtual"
+          />
+        </RouterView>
+      </div>
+    </Transition>
+
   </template>
 </template>
 
 <style>
-.fade-enter-active,
-.fade-leave-active {
+/* =========================
+   TRANSIÇÃO DO LAYOUT
+========================= */
+
+.layout-fade-enter-active,
+.layout-fade-leave-active {
   transition: opacity 0.3s ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.layout-fade-enter-from,
+.layout-fade-leave-to {
   opacity: 0;
 }
+
+.layout-fade-enter-to,
+.layout-fade-leave-from {
+  opacity: 1;
+}
+
+
+/* =========================
+   TRANSIÇÃO DAS PÁGINAS
+========================= */
+
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+}
+
+.page-fade-enter-to,
+.page-fade-leave-from {
+  opacity: 1;
+}
 </style>
+```
