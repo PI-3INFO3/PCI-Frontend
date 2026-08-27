@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
-// import verificacao from '../views/Verificacao.vue'; // TODO: ainda não existe nessa branch, vem da dev
+import verificacao from '../views/Verificacao.vue';
 import { useLoadingStore } from '../stores/loading.js';
 import HomeViews from '../views/HomeViews.vue';
 import LoginView from '../views/LoginView.vue'
@@ -22,11 +22,11 @@ const routes = [
     name: 'user',
     component: UserView
   },
-  // {
-  //   path: '/verificar',
-  //   name: 'verificar',
-  //   component: verificacao
-  // }, // TODO: reativar quando Verificacao.vue existir nessa branch
+  {
+    path: '/verificar',
+    name: 'verificar',
+    component: verificacao
+  },
   {
     path: '/login',
     name: 'login',
@@ -96,7 +96,7 @@ const router = createRouter({
 });
 
 const rotasPublicas = ['login', 'cadastro', 'tipodeusuario', 'verificar']
-const rotasSemLayout = ['login', 'cadastro', 'tipodeusuario', 'verificar', 'user', 'chat', 'amigos','criar']
+const rotasSemLayout = ['login', 'cadastro', 'tipodeusuario', 'verificar', 'user', 'chat', 'amigos', 'criar']
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
