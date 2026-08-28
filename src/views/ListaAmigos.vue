@@ -1,48 +1,52 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAmigos } from '@/composables/useAmigos'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useAmigos } from "@/composables/useAmigos";
+import { useAuthStore } from "@/stores/auth";
+import FooterComponents from "../components/FooterComponent.vue";
 
-const router = useRouter()
-const auth = useAuthStore()
-const meuId = computed(() => auth.user?.id)
+const router = useRouter();
+const auth = useAuthStore();
+const meuId = computed(() => auth.user?.id);
 
-const { amigos, resultadosBusca, carregarAmigos, buscarPessoas, enviarPedido } = useAmigos()
-const termo = ref('')
-const enviados = ref(new Set())
+const { amigos, resultadosBusca, carregarAmigos, buscarPessoas, enviarPedido } =
+  useAmigos();
+const termo = ref("");
+const enviados = ref(new Set());
 
-let debounceTimer = null
+let debounceTimer = null;
 
 onMounted(() => {
-  carregarAmigos()
-})
+  carregarAmigos();
+});
 
 watch(termo, (novoValor) => {
-  clearTimeout(debounceTimer)
+  clearTimeout(debounceTimer);
 
   if (!novoValor.trim()) {
-    resultadosBusca.value = []
-    return
+    resultadosBusca.value = [];
+    return;
   }
 
   debounceTimer = setTimeout(() => {
-    buscarPessoas(novoValor)
-  }, 400)
-})
+    buscarPessoas(novoValor);
+  }, 400);
+});
 
 async function adicionar(usuario) {
-  await enviarPedido(usuario.id)
-  enviados.value.add(usuario.id)
+  await enviarPedido(usuario.id);
+  enviados.value.add(usuario.id);
 }
 
 function outroUsuario(amizade) {
-  return amizade.remetente.id === meuId.value ? amizade.destinatario : amizade.remetente
+  return amizade.remetente.id === meuId.value
+    ? amizade.destinatario
+    : amizade.remetente;
 }
 
 function abrirConversa(amizade) {
-  const outro = outroUsuario(amizade)
-  router.push({ name: 'chat', params: { outroUsuarioId: outro.id } })
+  const outro = outroUsuario(amizade);
+  router.push({ name: "chat", params: { outroUsuarioId: outro.id } });
 }
 </script>
 
@@ -62,7 +66,11 @@ function abrirConversa(amizade) {
     <!-- Resultados da busca (só aparece enquanto tem termo digitado) -->
     <section v-if="termo.trim()" class="secao-busca">
       <h3 v-if="!resultadosBusca.length">Nenhum resultado</h3>
-      <div v-for="usuario in resultadosBusca" :key="usuario.id" class="busca-item">
+      <div
+        v-for="usuario in resultadosBusca"
+        :key="usuario.id"
+        class="busca-item"
+      >
         <div class="busca-info">
           <img
             v-if="usuario.profile_photo"
@@ -71,7 +79,7 @@ function abrirConversa(amizade) {
             class="avatar"
           />
           <div v-else class="avatar avatar-vazio">
-            {{ (usuario.name || usuario.email || '?').charAt(0).toUpperCase() }}
+            {{ (usuario.name || usuario.email || "?").charAt(0).toUpperCase() }}
           </div>
           <span>{{ usuario.name || usuario.email }}</span>
         </div>
@@ -104,17 +112,26 @@ function abrirConversa(amizade) {
             class="avatar"
           />
           <div v-else class="avatar avatar-vazio">
-            {{ (outroUsuario(amizade).name || outroUsuario(amizade).email || '?').charAt(0).toUpperCase() }}
+            {{
+              (outroUsuario(amizade).name || outroUsuario(amizade).email || "?")
+                .charAt(0)
+                .toUpperCase()
+            }}
           </div>
-          <span>{{ outroUsuario(amizade).name || outroUsuario(amizade).email }}</span>
+          <span>{{
+            outroUsuario(amizade).name || outroUsuario(amizade).email
+          }}</span>
         </div>
       </div>
     </section>
+    <footer-components />
   </div>
 </template>
 
 <style scoped>
-.lista-container { padding: 16px; }
+.lista-container {
+  padding: 16px;
+}
 .lista-topo {
   display: flex;
   justify-content: space-between;
@@ -130,9 +147,15 @@ function abrirConversa(amizade) {
   color: var(--cor-texto);
   margin-bottom: 16px;
 }
-h3 { color: var(--cor-texto-secundario); font-size: 13px; margin: 12px 0 6px; text-transform: uppercase; }
+h3 {
+  color: var(--cor-texto-secundario);
+  font-size: 13px;
+  margin: 12px 0 6px;
+  text-transform: uppercase;
+}
 
-.busca-item, .item-amigo {
+.busca-item,
+.item-amigo {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -140,7 +163,9 @@ h3 { color: var(--cor-texto-secundario); font-size: 13px; margin: 12px 0 6px; te
   border-bottom: 1px solid var(--cor-borda);
   color: var(--cor-texto);
 }
-.item-amigo { cursor: pointer; }
+.item-amigo {
+  cursor: pointer;
+}
 
 .busca-info {
   display: flex;
@@ -166,12 +191,15 @@ h3 { color: var(--cor-texto-secundario); font-size: 13px; margin: 12px 0 6px; te
 }
 
 .btn-adicionar {
-  background: #FF7500;
+  background: #ff7500;
   color: #fff;
   border: none;
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
 }
-.pedido-enviado { color: var(--cor-texto-secundario); font-size: 13px; }
+.pedido-enviado {
+  color: var(--cor-texto-secundario);
+  font-size: 13px;
+}
 </style>

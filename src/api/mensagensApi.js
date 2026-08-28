@@ -10,8 +10,14 @@ const mensagensApi = {
    
     },
 
-    delete(id){
-        return apiClient.delete(`/menssagens/${id}/`)
+    editar(id, content) {
+        return apiClient.patch(`/menssagens/${id}/`, {
+            content
+        });
+    },
+
+    delete(id) {
+        return apiClient.delete(`/menssagens/${id}/`);
     }
 };
 

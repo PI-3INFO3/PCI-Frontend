@@ -10,6 +10,11 @@ const senhaAtual = ref('')
 const senha = ref('')
 const confirmarSenha = ref('')
 
+const ativo = ref('')
+const mostrarSenhaAtual = ref(false)
+const mostrarSenha = ref(false)
+const mostrarConfirmarSenha = ref(false)
+
 const tema = ref('Claro')
 
 const expandido = ref(false)
@@ -171,8 +176,8 @@ function sairConta() {
         </div>
 
         <div class="opcoes">
-             <ul>
-            <!--    <li @click="abrirConfiguracoes">
+            <ul>
+                <!--    <li @click="abrirConfiguracoes">
                     <div class="lado-esquerdo">
                         <ion-icon class="icon" name="settings-outline"></ion-icon>
                         Configurações
@@ -229,21 +234,26 @@ function sairConta() {
                         <input type="email" :value="email" disabled>
                     </div>
 
-                    <div class="campo-input">
-                        <ion-icon name="key-outline"></ion-icon>
-                        <input type="password" v-model="senhaAtual" placeholder="Senha atual"
-                            autocomplete="current-password">
+                    <div class="campo-input" :class="{ active: ativo === 'SenhaAtual' }" @click="ativo = 'SenhaAtual'">
+                        <ion-icon name="key-outline" class="icon-senha"
+                            :style="{ opacity: mostrarSenhaAtual ? 1 : 0.5 }"
+                            @click.stop="mostrarSenhaAtual = !mostrarSenhaAtual"></ion-icon>
+                        <input v-model="senhaAtual" :type="mostrarSenhaAtual ? 'text' : 'password'"
+                            placeholder="Senha atual" autocomplete="current-password">
                     </div>
 
-                    <div class="campo-input">
-                        <ion-icon name="lock-closed-outline"></ion-icon>
-                        <input type="password" v-model="senha" placeholder="Nova senha" autocomplete="new-password">
-                    </div>
-
-                    <div class="campo-input">
-                        <ion-icon name="eye-off-outline"></ion-icon>
-                        <input type="password" v-model="confirmarSenha" placeholder="Confirmar nova senha"
+                    <div class="campo-input" :class="{ active: ativo === 'Senha' }" @click="ativo = 'Senha'">
+                        <ion-icon :name="mostrarSenha ? 'lock-open-outline' : 'lock-closed-outline'" class="icon-senha"
+                            @click.stop="mostrarSenha = !mostrarSenha"></ion-icon>
+                        <input v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="Nova senha"
                             autocomplete="new-password">
+                    </div>
+
+                    <div class="campo-input" :class="{ active: ativo === 'Confirmar' }" @click="ativo = 'Confirmar'">
+                        <ion-icon :name="mostrarConfirmarSenha ? 'eye-outline' : 'eye-off-outline'" class="icon-olho"
+                            @click.stop="mostrarConfirmarSenha = !mostrarConfirmarSenha"></ion-icon>
+                        <input v-model="confirmarSenha" :type="mostrarConfirmarSenha ? 'text' : 'password'"
+                            placeholder="Confirmar nova senha" autocomplete="new-password">
                     </div>
 
                     <div class="card-tipo-usuario">
@@ -453,7 +463,7 @@ li {
     left: 0;
     width: 100vw;
     height: 100vh;
-    height:100dvh;
+    height: 100dvh;
     background-color: var(--cor-fundo);
     z-index: 9998;
     padding: 5px 20px;
@@ -485,7 +495,7 @@ li {
     border: 1px solid var(--cor-borda);
     border-radius: 16px;
     flex: 1;
-    min-height:0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;

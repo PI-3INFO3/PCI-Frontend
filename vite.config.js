@@ -22,6 +22,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         cleanupOutdatedCaches: true,
         sourcemap: false,
+        navigateFallbackDenylist: [/^\/api/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -45,6 +46,22 @@ export default defineConfig({
             },
           },
           {
+            urlPattern: /^http:\/\/(localhost|127\.0\.0\.1):8000\/api\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/unpkg\.com\/ionicons@.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "ionicons-cache",
+              expiration: {
+                maxEntries: 40,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // Guarda por 30 dias
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
             urlPattern: ({ url }) =>
               /\/api\//.test(url.pathname) &&
               !/\/api\/(token|registro)\//.test(url.pathname),
@@ -53,7 +70,6 @@ export default defineConfig({
               cacheName: "api-cache",
               expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
               cacheableResponse: { statuses: [0, 200] },
-              networkTimeoutSeconds: 10,
             },
           },
         ],
