@@ -6,7 +6,7 @@ import FooterSkeleton from './FooterSkeleton.vue'
 import HomeSkeleton from './HomeSkeleton.vue'
 import ListaAmigosSkeleton from './ListaAmigosSkeleton.vue'
 import NotificacoesSkeleton from './NotificacoesSkeleton.vue'
-import ChatSkeleton from './NotificacoesSkeleton.vue'
+import ChatSkeleton from './ChatSkeleton.vue'
 
 const route = useRoute()
 

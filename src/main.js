@@ -11,12 +11,10 @@ registerSW({
       }, 60 * 1000);
     }
   },
+  onNeedRefresh() {
+    window.location.reload();
+  },
 });
-const temaSalvo = localStorage.getItem('tema')
-if(temaSalvo === 'Escuro'){
-  document.body.classList.add('dark')
-}
-document.documentElement.classList.remove('dark-preload')
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia';
