@@ -6,6 +6,8 @@ import { useAuthStore } from '../stores/auth';
 const router = useRouter();
 const authStore = useAuthStore();
 
+const mostrarSenha = ref(false)
+
 const email = ref('');
 const password = ref('');
 const loading = ref(false);
@@ -35,13 +37,19 @@ function irParaCadastro() {
 
 <template>
   <div class="login-container">
-    <img src="/logo-96x96.png" alt="Logo">
-    
+    <img
+      src="/logo-96x96.png"
+      alt="Logo"
+    >
     <form @submit.prevent="handleLogin">
       <h2>Login</h2>
 
       <div class="input-group">
-        <input 
+        <ion-icon
+          name="person-outline"
+          class="icon-input"
+        ></ion-icon>
+        <input
           id="email"
           v-model="email"
           type="email"
@@ -52,31 +60,59 @@ function irParaCadastro() {
       </div>
 
       <div class="input-group">
-        <input 
-          type="password" 
-          id="password" 
-          v-model="password" 
-          placeholder="Senha" 
+        <!-- O olho agora fica no mesmo lugar que o boneco -->
+        <ion-icon
+          :name="
+            mostrarSenha
+              ? 'eye-outline'
+              : 'eye-off-outline'
+          "
+          class="icon-olho"
+          @click.stop="mostrarSenha = !mostrarSenha"
+        ></ion-icon>
+        
+        <input
+          :type="mostrarSenha ? 'text' : 'password'"
+          id="password"
+          v-model="password"
+          placeholder="Senha"
           required
           autocomplete="current-password"
         >
       </div>
 
       <label class="checkbox-label">
-        <input type="checkbox" v-model="rememberMe">
+        <input
+          type="checkbox"
+          v-model="rememberMe"
+        >
         Lembre de mim
       </label>
-      
-      <button type="submit" :disabled="loading">
+
+      <button
+        type="submit"
+        :disabled="loading"
+      >
         {{ loading ? 'Entrando...' : 'Entrar' }}
       </button>
     </form>
-    
-    <p>Não tem conta? <a @click.stop="irParaCadastro">Clique aqui</a></p>
+    <p>
+      Não tem conta?
+      <a
+        @click.stop="irParaCadastro"
+        class="pointer"
+      >
+        Clique aqui
+      </a>
+    </p>
   </div>
 </template>
 
 <style scoped>
+.pointer {
+  cursor: pointer;
+}
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;
@@ -95,7 +131,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 25px; 
+  gap: 25px;
 }
 
 h2 {
@@ -109,24 +145,56 @@ h2 {
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: transform .2s ease;
 }
 
-input[type="email"],
-input[type="password"] {
+.input-group:focus-within {
+  transform: scale(1.03);
+}
+
+.input-group input {
   width: 80%;
-  padding: 10px 45px; 
+  padding: 10px 45px; /* Mantém o espaçamento igual em ambos os inputs */
   border-radius: 40px;
   border: 2px solid #FF5700;
   font-size: 15px;
   outline: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15);
   background-color: transparent;
-  transition: transform .2s ease, border-color .2s ease;
+  transition: border-color .2s ease;
 }
 
-input:focus { 
-  transform: scale(1.03); 
+/* Borda no foco */
+.input-group:focus-within input {
   border-color: #FF4500;
+}
+
+/* Ícone do Boneco (Esquerda) */
+.icon-input {
+  position: absolute;
+  left: 14%;
+  font-size: 20px;
+  z-index: 2;
+  pointer-events: none;
+  color: #666;
+}
+
+/* Ícone do Olho (Agora também alinhado à Esquerda) */
+.icon-olho {
+  position: absolute;
+  left: 14%; /* Alinhado perfeitamente com o boneco */
+  font-size: 20px;
+  z-index: 2;
+  cursor: pointer;
+  transition: transform .15s ease;
+  color: #666;
+}
+
+.icon-olho:active {
+  transform: scale(1.1);
 }
 
 .checkbox-label {
@@ -146,9 +214,12 @@ button {
   color: white;
   font-size: 18px;
   font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: transform .1s ease, background-color .2s ease;
+  transition:
+    transform .1s ease,
+    background-color .2s ease;
 }
 
 button:hover {
@@ -156,7 +227,12 @@ button:hover {
 }
 
 button:active {
-  transform: scale(0.98); /* Efeito de clique físico para dentro, mais natural */
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 p {
@@ -174,6 +250,6 @@ a {
 }
 
 a:active {
-  text-decoration: underline;
+  text-underline-position: under;
 }
 </style>
