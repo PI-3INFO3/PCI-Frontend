@@ -1,5 +1,6 @@
-<script setup>
-import skeletonBox from './SkeletonBox.vue';
+vue<script setup>
+// Corrigido de 'skeletonBox' para 'SkeletonBox'
+import SkeletonBox from './SkeletonBox.vue'; 
 </script>
 
 <template>
@@ -10,7 +11,6 @@ import skeletonBox from './SkeletonBox.vue';
     <SkeletonBox class="fab-skeleton" width="60px" height="60px" radius="50%" />
   </footer>
 </template>
-
 <style scoped>
 .footer-skeleton {
   border-top: var(--cor-borda) 2px solid;

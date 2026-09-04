@@ -1,12 +1,4 @@
-O ChatGPT disse:
-Sim. O problema principal do seu código é que você está usando fabric como variável global, mas no projeto com Fabric 7.4.0 é muito mais seguro importar as classes diretamente. Além disso, vamos deixar o limite de 3 cores salvas na paleta, funcionando tanto no celular quanto no computador.
 
-Também vou manter o carregamento das fontes pelo WebFontLoader.
-
-1. Instale as dependências
-npm install fabric@^7.4.0 webfontloader
-
-2. Use este componente completo
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -25,11 +17,6 @@ import WebFont from 'webfontloader'
 
 const router = useRouter()
 const route = useRoute()
-
-// =====================================================
-// REFERÊNCIAS
-// =====================================================
-
 const canvasRef = ref(null)
 const canvasAreaRef = ref(null)
 
@@ -38,23 +25,12 @@ let fabricCanvas = null
 const imgUrl = route.query.img
 const templateTitulo = route.query.titulo || 'Design'
 
-// =====================================================
-// MENUS
-// =====================================================
-
 const menuAtivoAcima = ref('nenhum')
 
-// =====================================================
-// TEXTO
-// =====================================================
 
 const tamanhoFonte = ref(30)
 const corTexto = ref('#FFFFFF')
 const fonteTexto = ref('Roboto')
-
-// =====================================================
-// FONTES
-// =====================================================
 
 const fontesDisponiveis = [
     'Roboto',
@@ -79,10 +55,6 @@ const fontesDisponiveis = [
 
 const fontesCarregadas = new Set()
 
-// =====================================================
-// PALETA
-// MÁXIMO 3 CORES
-// =====================================================
 
 const LIMITE_CORES = 3
 
@@ -92,9 +64,6 @@ const coresTexto = ref([
     '#FF5700'
 ])
 
-// =====================================================
-// CARREGAR FONTE
-// =====================================================
 
 const carregarFonte = (nomeFonte) => {
 
@@ -132,10 +101,6 @@ const carregarFonte = (nomeFonte) => {
     })
 }
 
-// =====================================================
-// INICIALIZAR CANVAS
-// =====================================================
-
 const inicializarCanvas = () => {
 
     if (
@@ -165,9 +130,6 @@ const inicializarCanvas = () => {
         }
     )
 
-    // =================================================
-    // CONFIGURAÇÃO MOBILE
-    // =================================================
 
     if (fabricCanvas.upperCanvasEl) {
 
@@ -248,11 +210,6 @@ const inicializarCanvas = () => {
             )
         }
     }
-
-    // =================================================
-    // SELEÇÃO
-    // =================================================
-
     fabricCanvas.on(
         'selection:created',
         lidarComSelecao
@@ -272,9 +229,6 @@ const inicializarCanvas = () => {
         }
     )
 
-    // =================================================
-    // DUPLO CLIQUE NO TEXTO
-    // =================================================
 
     fabricCanvas.on(
         'mouse:dblclick',
@@ -308,10 +262,6 @@ const inicializarCanvas = () => {
         }
     )
 
-    // =================================================
-    // MOVIMENTO
-    // =================================================
-
     fabricCanvas.on(
         'object:moving',
         () => {
@@ -319,10 +269,6 @@ const inicializarCanvas = () => {
             fabricCanvas.requestRenderAll()
         }
     )
-
-    // =================================================
-    // REDIMENSIONAMENTO
-    // =================================================
 
     fabricCanvas.on(
         'object:scaling',
@@ -332,19 +278,12 @@ const inicializarCanvas = () => {
         }
     )
 
-    // =================================================
-    // TECLADO
-    // =================================================
-
     window.addEventListener(
         'keydown',
         lidarComTeclado
     )
 }
 
-// =====================================================
-// CONTROLES DO TEXTO
-// =====================================================
 
 const atualizarControlesDoTexto = (objeto) => {
 
@@ -360,9 +299,6 @@ const atualizarControlesDoTexto = (objeto) => {
         objeto.fontFamily || 'Roboto'
 }
 
-// =====================================================
-// SELEÇÃO DE OBJETO
-// =====================================================
 
 const lidarComSelecao = (evento) => {
 
@@ -410,10 +346,6 @@ const lidarComSelecao = (evento) => {
         'nenhum'
 }
 
-// =====================================================
-// BOTÃO TEXTO
-// =====================================================
-
 const clicarTextoNoFooter = async () => {
 
     console.log('Botão texto pressionado')
@@ -430,6 +362,10 @@ const clicarTextoNoFooter = async () => {
 
     menuAtivoAcima.value =
         'texto'
+
+@media (max-width: 600px) {
+
+    .aba-superior-texto {
 
     if (!fabricCanvas) {
 
@@ -452,9 +388,6 @@ const clicarTextoNoFooter = async () => {
     }
 }
 
-// =====================================================
-// BOTÃO FORMAS
-// =====================================================
 
 const clicarFormasNoFooter = () => {
 
@@ -474,9 +407,6 @@ const clicarFormasNoFooter = () => {
         'formas'
 }
 
-// =====================================================
-// BOTÃO IMAGENS
-// =====================================================
 
 const clicarImagesNoFooter = () => {
 
@@ -496,9 +426,6 @@ const clicarImagesNoFooter = () => {
         'images'
 }
 
-// =====================================================
-// ADICIONAR TEXTO
-// =====================================================
 
 const adicionarTexto = async () => {
 
@@ -587,10 +514,6 @@ const adicionarTexto = async () => {
 
     fabricCanvas.requestRenderAll()
 
-    // =================================================
-    // ENTRAR NO TEXTO
-    // =================================================
-
     requestAnimationFrame(() => {
 
         if (!fabricCanvas) return
@@ -605,9 +528,7 @@ const adicionarTexto = async () => {
     })
 }
 
-// =====================================================
-// MUDAR COR
-// =====================================================
+
 
 const mudarCorTextoPredefinida = (cor) => {
 
@@ -616,10 +537,6 @@ const mudarCorTextoPredefinida = (cor) => {
 
     atualizarAtributosTexto()
 }
-
-// =====================================================
-// ATRIBUTOS DO TEXTO
-// =====================================================
 
 const atualizarAtributosTexto = () => {
 
@@ -649,9 +566,6 @@ const atualizarAtributosTexto = () => {
     fabricCanvas.requestRenderAll()
 }
 
-// =====================================================
-// ALTERAR FONTE
-// =====================================================
 
 const atualizarFonteTexto = async () => {
 
@@ -680,11 +594,6 @@ const atualizarFonteTexto = async () => {
 
     fabricCanvas.requestRenderAll()
 }
-
-// =====================================================
-// ADICIONAR COR
-// MÁXIMO 3
-// =====================================================
 
 const adicionarCorPaleta = () => {
 
@@ -715,9 +624,6 @@ const adicionarCorPaleta = () => {
     coresTexto.value.push(cor)
 }
 
-// =====================================================
-// APAGAR COR
-// =====================================================
 
 const apagarCorPaleta = (cor) => {
 
@@ -726,10 +632,6 @@ const apagarCorPaleta = (cor) => {
             item => item !== cor
         )
 }
-
-// =====================================================
-// RETÂNGULO
-// =====================================================
 
 const adicionarRetangulo = () => {
 
@@ -792,9 +694,6 @@ const adicionarRetangulo = () => {
     adicionarObjetoCanvas(objeto)
 }
 
-// =====================================================
-// CÍRCULO
-// =====================================================
 
 const adicionarCirculo = () => {
 
@@ -851,10 +750,6 @@ const adicionarCirculo = () => {
 
     adicionarObjetoCanvas(objeto)
 }
-
-// =====================================================
-// TRIÂNGULO
-// =====================================================
 
 const adicionarTriangulo = () => {
 
@@ -915,9 +810,7 @@ const adicionarTriangulo = () => {
     adicionarObjetoCanvas(objeto)
 }
 
-// =====================================================
 // ESTRELA
-// =====================================================
 
 const adicionarEstrela = () => {
 
@@ -1008,9 +901,6 @@ const adicionarEstrela = () => {
     adicionarObjetoCanvas(objeto)
 }
 
-// =====================================================
-// ADICIONAR OBJETO
-// =====================================================
 
 const adicionarObjetoCanvas = (objeto) => {
 
@@ -1025,9 +915,6 @@ const adicionarObjetoCanvas = (objeto) => {
     fabricCanvas.requestRenderAll()
 }
 
-// =====================================================
-// DELETAR
-// =====================================================
 
 const deletarSelecionado = () => {
 
@@ -1060,9 +947,7 @@ const deletarSelecionado = () => {
         'nenhum'
 }
 
-// =====================================================
 // TECLADO
-// =====================================================
 
 const lidarComTeclado = (evento) => {
 
@@ -1092,9 +977,7 @@ const lidarComTeclado = (evento) => {
     }
 }
 
-// =====================================================
 // EXPORTAR
-// =====================================================
 
 const exportarDesign = () => {
 
@@ -1123,9 +1006,6 @@ const exportarDesign = () => {
     link.click()
 }
 
-// =====================================================
-// REDIMENSIONAR
-// =====================================================
 
 const redimensionarCanvas = () => {
 
@@ -1149,9 +1029,6 @@ const redimensionarCanvas = () => {
     fabricCanvas.requestRenderAll()
 }
 
-// =====================================================
-// MOUNT
-// =====================================================
 
 onMounted(() => {
 
@@ -1163,9 +1040,6 @@ onMounted(() => {
     )
 })
 
-// =====================================================
-// UNMOUNT
-// =====================================================
 
 onBeforeUnmount(() => {
 
@@ -1192,10 +1066,7 @@ onBeforeUnmount(() => {
 
     <div class="editor-interface">
 
-        <!-- ========================================= -->
-        <!-- HEADER -->
-        <!-- ========================================= -->
-
+      
         <header class="editor-header">
 
             <button
@@ -1273,16 +1144,11 @@ onBeforeUnmount(() => {
         <footer class="editor-footer">
 
 
-            <!-- ===================================== -->
-            <!-- TEXTO -->
-            <!-- ===================================== -->
-
             <div
                 v-if="menuAtivoAcima === 'texto'"
                 class="aba-superior-texto"
             >
 
-                <!-- PALETA -->
 
                 <div class="cores-predefinidas">
 
@@ -1312,7 +1178,6 @@ onBeforeUnmount(() => {
                     </div>
 
 
-                    <!-- COLOR PICKER -->
 
                     <input
                         type="color"
@@ -1322,7 +1187,6 @@ onBeforeUnmount(() => {
                     />
 
 
-                    <!-- ADICIONAR COR -->
 
                     <button
                         type="button"
@@ -1338,7 +1202,6 @@ onBeforeUnmount(() => {
                 </div>
 
 
-                <!-- TAMANHO -->
 
                 <div class="controle-tamanho">
 
@@ -1358,7 +1221,6 @@ onBeforeUnmount(() => {
                 </div>
 
 
-                <!-- FONTE -->
 
                 <div class="controle-fonte">
 
@@ -1388,9 +1250,7 @@ onBeforeUnmount(() => {
             </div>
 
 
-            <!-- ===================================== -->
-            <!-- IMAGENS -->
-            <!-- ===================================== -->
+        >
 
             <div
                 v-if="menuAtivoAcima === 'images'"
@@ -1404,10 +1264,7 @@ onBeforeUnmount(() => {
             </div>
 
 
-            <!-- ===================================== -->
-            <!-- FORMAS -->
-            <!-- ===================================== -->
-
+          
             <div
                 v-if="menuAtivoAcima === 'formas'"
                 class="aba-superior-formas"
@@ -1467,10 +1324,7 @@ onBeforeUnmount(() => {
             </div>
 
 
-            <!-- ===================================== -->
-            <!-- BARRA PRINCIPAL -->
-            <!-- ===================================== -->
-
+        
             <div class="ferramentas-container-fixo">
 
                 <button
@@ -1580,9 +1434,6 @@ onBeforeUnmount(() => {
         sans-serif;
 }
 
-/* ==========================================
-   HEADER
-========================================== */
 
 .editor-header {
 
@@ -1646,10 +1497,6 @@ onBeforeUnmount(() => {
     flex: 1;
 }
 
-/* ==========================================
-   CANVAS
-========================================== */
-
 .canvas-area {
 
     flex: 1;
@@ -1670,10 +1517,6 @@ onBeforeUnmount(() => {
 
     position: relative;
 }
-
-/* ==========================================
-   FOOTER
-========================================== */
 
 .editor-footer {
 
@@ -1696,9 +1539,6 @@ onBeforeUnmount(() => {
     z-index: 30;
 }
 
-/* ==========================================
-   MENU TEXTO
-========================================== */
 
 .aba-superior-texto {
 
@@ -1733,9 +1573,6 @@ onBeforeUnmount(() => {
     display: none;
 }
 
-/* ==========================================
-   CORES
-========================================== */
 
 .cores-predefinidas {
 
@@ -1888,10 +1725,6 @@ onBeforeUnmount(() => {
         white;
 }
 
-/* ==========================================
-   TAMANHO
-========================================== */
-
 .controle-tamanho {
 
     height: 34px;
@@ -1954,9 +1787,7 @@ onBeforeUnmount(() => {
         none;
 }
 
-/* ==========================================
-   FONTE
-========================================== */
+
 
 .controle-fonte {
 
@@ -2008,9 +1839,6 @@ onBeforeUnmount(() => {
         white;
 }
 
-/* ==========================================
-   FORMAS
-========================================== */
 
 .aba-superior-formas {
 
@@ -2087,10 +1915,6 @@ onBeforeUnmount(() => {
         scale(.85);
 }
 
-/* ==========================================
-   IMAGENS
-========================================== */
-
 .aba-superior-img {
 
     height:
@@ -2111,10 +1935,6 @@ onBeforeUnmount(() => {
     color:
         #aaa;
 }
-
-/* ==========================================
-   BARRA PRINCIPAL
-========================================== */
 
 .ferramentas-container-fixo {
 
@@ -2205,10 +2025,6 @@ onBeforeUnmount(() => {
     color:
         #FF5700;
 }
-
-/* ==========================================
-   CELULAR
-========================================== */
 
 @media (max-width: 600px) {
 
