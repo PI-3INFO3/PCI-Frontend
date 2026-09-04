@@ -363,10 +363,6 @@ const clicarTextoNoFooter = async () => {
     menuAtivoAcima.value =
         'texto'
 
-@media (max-width: 600px) {
-
-    .aba-superior-texto {
-
     if (!fabricCanvas) {
 
         console.error(
