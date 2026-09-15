@@ -13,7 +13,6 @@ import * as fabric from 'fabric'
 
 import { removeBackground } from '@imgly/background-removal'
 
-// FONTES
 import '@fontsource/poppins'
 import '@fontsource/roboto'
 import '@fontsource/montserrat'
@@ -32,11 +31,6 @@ let fabricCanvas = null
 
 const templateTitulo = route.query.titulo || 'Design'
 
-/*
-|--------------------------------------------------------------------------
-| ESTADOS
-|--------------------------------------------------------------------------
-*/
 
 const fonteImagemAtual = ref(route.query.img || null)
 
@@ -50,50 +44,24 @@ const progressoRemocao = ref(0)
 const extraindoObjeto = ref(false)
 const progressoExtracao = ref(0)
 
-/*
-|--------------------------------------------------------------------------
-| SELEÇÃO MANUAL
-|--------------------------------------------------------------------------
-*/
 
 const modoSelecaoArea = ref(false)
 
 const extraindoArea = ref(false)
 const progressoArea = ref(0)
 
-/*
-|--------------------------------------------------------------------------
-| REMENDO
-|--------------------------------------------------------------------------
-*/
+
 
 const corRemendo = ref('#FFFF')
 
-/*
-|--------------------------------------------------------------------------
-| MENUS
-|--------------------------------------------------------------------------
-*/
 
 const menuAtivoAcima = ref('nenhum')
-
-/*
-|--------------------------------------------------------------------------
-| TEXTO
-|--------------------------------------------------------------------------
-*/
 
 const tamanhoFonte = ref(30)
 
 const corTexto = ref('#ffffff')
 
 const fonteSelecionada = ref('Poppins')
-
-/*
-|--------------------------------------------------------------------------
-| FONTES DISPONÍVEIS
-|--------------------------------------------------------------------------
-*/
 
 const fontesDisponiveis = [
     'Poppins',
@@ -109,19 +77,6 @@ const fontesDisponiveis = [
     'Times New Roman',
     'Courier New'
 ]
-
-/*
-|--------------------------------------------------------------------------
-| PALETA DE CORES DO TEXTO
-|--------------------------------------------------------------------------
-|
-| No computador:
-|   - pode ter quantas cores quiser.
-|
-| No celular:
-|   - mostramos apenas as 2 primeiras.
-|
-*/
 
 const coresTexto = ref([
     '#ffffff',
@@ -141,26 +96,15 @@ const coresVisiveis =
             : quantidadeMaximaCoresDesktop
 
         return coresTexto.value.slice(0, limite)
-    })/*
-|--------------------------------------------------------------------------
-| ALTERAÇÃO DO TAMANHO DA TELA
-|--------------------------------------------------------------------------
-*/
+    })
 
 function verificarTamanhoTela() {
     ehMobile.value = window.innerWidth <= 600
 }
 
-/*
-|--------------------------------------------------------------------------
-| ADICIONAR COR
-|--------------------------------------------------------------------------
-*/
 
 function adicionarCorTexto() {
-       /*
-     * LIMITE (celular ou computador)
-     */
+  
 
     const limiteAtual = ehMobile.value
         ? quantidadeMaximaCoresMobile
@@ -178,7 +122,7 @@ function adicionarCorTexto() {
 
         return
     }
-    const novaCor = '#00A8FF'
+    const novaCor = '#FFFFFF'
 
     coresTexto.value.push(novaCor)
 
@@ -186,12 +130,6 @@ function adicionarCorTexto() {
 
     atualizarAtributosTexto()
 }
-
-/*
-|--------------------------------------------------------------------------
-| ALTERAR UMA COR DA PALETA
-|--------------------------------------------------------------------------
-*/
 
 function alterarCorDaPaleta(index, cor) {
     if (!cor) {
@@ -204,12 +142,6 @@ function alterarCorDaPaleta(index, cor) {
 
     atualizarAtributosTexto()
 }
-
-/*
-|--------------------------------------------------------------------------
-| REMOVER COR
-|--------------------------------------------------------------------------
-*/
 
 function removerCorTexto(index) {
     if (coresTexto.value.length <= 1) {
@@ -233,12 +165,6 @@ function removerCorTexto(index) {
 
     atualizarAtributosTexto()
 }
-
-/*
-|--------------------------------------------------------------------------
-| CARREGAR IMAGEM
-|--------------------------------------------------------------------------
-*/
 
 function carregarImagem(url) {
     return new Promise((resolve, reject) => {
@@ -270,12 +196,6 @@ function carregarImagem(url) {
         imgElemento.src = url
     })
 }
-
-/*
-|--------------------------------------------------------------------------
-| SUBSTITUIR IMAGEM PRINCIPAL
-|--------------------------------------------------------------------------
-*/
 
 async function substituirImagemPrincipal(
     novaUrl,
@@ -399,11 +319,6 @@ async function substituirImagemPrincipal(
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| INICIALIZAR CANVAS
-|--------------------------------------------------------------------------
-*/
 
 async function inicializarCanvas() {
     await nextTick()
@@ -498,11 +413,6 @@ async function inicializarCanvas() {
     )
 }
 
-/*
-|--------------------------------------------------------------------------
-| REDIMENSIONAR CANVAS
-|--------------------------------------------------------------------------
-*/
 
 function redimensionarCanvas() {
     if (
@@ -533,11 +443,6 @@ function redimensionarCanvas() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| IDENTIFICAR SELEÇÃO
-|--------------------------------------------------------------------------
-*/
 
 function lidarComSelecao(evento) {
     const objetoAtivo =
@@ -547,9 +452,6 @@ function lidarComSelecao(evento) {
         return
     }
 
-    /*
-     * TEXTO
-     */
 
     if (
         objetoAtivo.type === 'i-text' ||
@@ -594,11 +496,7 @@ function lidarComSelecao(evento) {
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| MENUS
-|--------------------------------------------------------------------------
-*/
+
 
 function clicarTextoNoFooter() {
     if (
@@ -648,11 +546,6 @@ function clicarFormasNoFooter() {
             : 'formas'
 }
 
-/*
-|--------------------------------------------------------------------------
-| TEXTO
-|--------------------------------------------------------------------------
-*/
 
 function adicionarTexto() {
     if (!fabricCanvas) {
@@ -718,11 +611,6 @@ function adicionarTexto() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| ALTERAR COR DO TEXTO
-|--------------------------------------------------------------------------
-*/
 
 function mudarCorTextoPredefinida(
     cor
@@ -731,13 +619,6 @@ function mudarCorTextoPredefinida(
 
     atualizarAtributosTexto()
 }
-
-/*
-|--------------------------------------------------------------------------
-| ALTERAR FONTE
-|--------------------------------------------------------------------------
-*/
-
 function mudarFonteTexto() {
     if (!fabricCanvas) {
         return
@@ -770,11 +651,6 @@ function mudarFonteTexto() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| ATUALIZAR TEXTO
-|--------------------------------------------------------------------------
-*/
 
 function atualizarAtributosTexto() {
     if (!fabricCanvas) {
@@ -814,16 +690,6 @@ function atualizarAtributosTexto() {
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| FORMAS
-|--------------------------------------------------------------------------
-*/
-
-/*
- * Configuração comum das formas.
- */
-
 function configuracaoForma(
     cor = '#FF5700'
 ) {
@@ -848,11 +714,6 @@ function configuracaoForma(
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| RETÂNGULO
-|--------------------------------------------------------------------------
-*/
 
 function adicionarRetangulo() {
     if (!fabricCanvas) {
@@ -891,11 +752,6 @@ function adicionarRetangulo() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| CÍRCULO
-|--------------------------------------------------------------------------
-*/
 
 function adicionarCirculo() {
     if (!fabricCanvas) {
@@ -932,11 +788,6 @@ function adicionarCirculo() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| TRIÂNGULO
-|--------------------------------------------------------------------------
-*/
 
 function adicionarTriangulo() {
     if (!fabricCanvas) {
@@ -977,11 +828,6 @@ function adicionarTriangulo() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| ESTRELA
-|--------------------------------------------------------------------------
-*/
 
 function criarPontosEstrela(
     centroX,
@@ -1080,12 +926,6 @@ function adicionarEstrela() {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| COR DA FORMA
-|--------------------------------------------------------------------------
-*/
-
 function alterarCorForma(cor) {
     if (!fabricCanvas) {
         return
@@ -1116,11 +956,6 @@ function alterarCorForma(cor) {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| DELETAR
-|--------------------------------------------------------------------------
-*/
 
 function deletarSelecionado() {
     if (!fabricCanvas) {
@@ -1153,12 +988,6 @@ function deletarSelecionado() {
         'nenhum'
 }
 
-/*
-|--------------------------------------------------------------------------
-| TECLADO
-|--------------------------------------------------------------------------
-*/
-
 function lidarComTeclado(evento) {
     if (
         evento.key !== 'Delete' &&
@@ -1188,11 +1017,7 @@ function lidarComTeclado(evento) {
     deletarSelecionado()
 }
 
-/*
-|--------------------------------------------------------------------------
-| REMOVER FUNDO
-|--------------------------------------------------------------------------
-*/
+
 
 async function removerFundo() {
     if (
@@ -1283,11 +1108,6 @@ async function removerFundo() {
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR OBJETO PRINCIPAL
-|--------------------------------------------------------------------------
-*/
 
 async function extrairObjetoFlutuante() {
     if (
@@ -1440,11 +1260,6 @@ async function extrairObjetoFlutuante() {
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| SELEÇÃO MANUAL
-|--------------------------------------------------------------------------
-*/
 
 let selecaoRect = null
 let selecaoInicio = null
@@ -1686,12 +1501,6 @@ async function finalizarSelecaoArea() {
 }
 
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR OBJETO DA ÁREA
-|--------------------------------------------------------------------------
-*/
 
 async function extrairObjetoDaArea(
     area
@@ -1955,11 +1764,6 @@ async function extrairObjetoDaArea(
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| REMENDO
-|--------------------------------------------------------------------------
-*/
 
 function adicionarRemendo() {
     if (!fabricCanvas) {
@@ -2017,12 +1821,6 @@ function adicionarRemendo() {
 
     fabricCanvas.requestRenderAll()
 }
-
-/*
-|--------------------------------------------------------------------------
-| TROCAR IMAGEM
-|--------------------------------------------------------------------------
-*/
 
 async function trocarImagemPrincipal(
     evento
@@ -2103,11 +1901,7 @@ function trocarCorFundo(cor) {
     fabricCanvas.requestRenderAll()
 }
 
-/*
-|--------------------------------------------------------------------------
-| EXPORTAR
-|--------------------------------------------------------------------------
-*/
+
 
 function exeportadorDesing() {
     if (!fabricCanvas) {
@@ -2147,11 +1941,7 @@ function exeportadorDesing() {
     )
 }
 
-/*
-|--------------------------------------------------------------------------
-| MOUNT / UNMOUNT
-|--------------------------------------------------------------------------
-*/
+
 
 onMounted(() => {
     inicializarCanvas()
@@ -2201,7 +1991,6 @@ onBeforeUnmount(() => {
 <template>
     <div class="editor-interface">
 
-        <!-- HEADER -->
         <header class="editor-header">
 
             <button
@@ -2230,7 +2019,6 @@ onBeforeUnmount(() => {
 
         </header>
 
-        <!-- CANVAS -->
         <main
             ref="canvasAreaRef"
             class="canvas-area"
@@ -2304,7 +2092,6 @@ onBeforeUnmount(() => {
                 :key="`${cor}-${index}`"
                 class="cor-personalizada"
             >
-                <!-- BOTÃO DA COR -->
                 <label
                     class="cor-texto"
                     :style="{
@@ -2323,8 +2110,6 @@ onBeforeUnmount(() => {
                         "
                     />
                 </label>
-
-                <!-- APAGAR -->
                 <button
                     v-if="!ehMobile || coresTexto.length > 1"
                     class="apagar-cor"
@@ -2334,8 +2119,6 @@ onBeforeUnmount(() => {
                     ×
                 </button>
             </div>
-
-            <!-- ADICIONAR -->
             <button
                 class="botao-adicionar-cor"
                 title="Criar nova cor"
@@ -2345,15 +2128,9 @@ onBeforeUnmount(() => {
             </button>
  
         </div>
- <input
-                            type="color"
-                            v-model="corRemendo"
-                            class="seletor-cor"
-                            title="Escolha a cor do remendo"
-                        />
+ 
     </div>
 </div>
-            <!-- PAINEL IMAGENS -->
             <div
                 v-if="menuAtivoAcima === 'images'"
                 class="painel-flutuante aba-superior-img"
@@ -2464,15 +2241,6 @@ onBeforeUnmount(() => {
                         ></button>
 
                         <button
-                            class="circulo-cor laranja"
-                            @click="
-                                trocarCorFundo(
-                                    '#FF5700'
-                                )
-                            "
-                        ></button>
-
-                        <button
                             class="circulo-cor escuro"
                             @click="
                                 trocarCorFundo(
@@ -2496,14 +2264,11 @@ onBeforeUnmount(() => {
 
             </div>
 
-            <!-- PAINEL FORMAS -->
-          <!-- PAINEL FORMAS -->
 <div
     v-if="menuAtivoAcima === 'formas'"
     class="painel-flutuante aba-superior-formas"
 >
 
-    <!-- FORMAS -->
     <div class="formas-lista">
 
         <button
@@ -2560,7 +2325,6 @@ onBeforeUnmount(() => {
 
     </div>
 
-    <!-- COR DA FORMA -->
     <div class="cor-forma-controle">
 
         <span>
@@ -2581,7 +2345,6 @@ onBeforeUnmount(() => {
     </div>
 
 </div>
-  <!-- BARRA FIXA -->
             <div class="ferramentas-container-fixo">
 
                 <button
@@ -3151,9 +2914,7 @@ onBeforeUnmount(() => {
         font-size: 13px;
     }
 }
-/* =========================================================
-   TEXTO
-========================================================= */
+
 
 .aba-superior-texto {
     min-height: 76px;
@@ -3245,10 +3006,6 @@ onBeforeUnmount(() => {
 
     outline: none;
 }
-
-/* =========================================================
-   PALETA DE CORES
-========================================================= */
 
 .cores-texto {
     display: flex;
@@ -3371,11 +3128,6 @@ onBeforeUnmount(() => {
 
     color: #FF5700;
 }
-
-/* =========================================================
-   FORMAS
-========================================================= */
-
 .aba-superior-formas {
     min-height: 110px;
 
@@ -3483,9 +3235,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
 }
 
-/* =========================================================
-   CELULAR
-========================================================= */
+
 
 @media (max-width: 600px) {
 
