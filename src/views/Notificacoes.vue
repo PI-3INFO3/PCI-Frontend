@@ -54,7 +54,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <FooterComponents />
+   
   </div>
 </template>
 

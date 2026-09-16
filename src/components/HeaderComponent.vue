@@ -21,7 +21,7 @@ function inicio() {
 <template>
   <header class="header">
     <div class="logo">
-      <img src="/logo-48x48.png" alt="soul." class="logo-img"
+      <img src="/icons/logo-48x48.png" alt="soul." class="logo-img"
       @click.stop="inicio">
     
     <div class="user-card">

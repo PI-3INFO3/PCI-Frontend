@@ -68,7 +68,6 @@ onMounted(async () => {
 
       </div>
 
-      <!-- Páginas SEM layout -->
       <div
         v-else
         :key="'sem-layout-' + rotaAtual"

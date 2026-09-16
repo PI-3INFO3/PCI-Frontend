@@ -15,7 +15,7 @@ function fecharMenu() {
     <div class="overlay" v-if="abriMenu" @click="fecharMenu"></div>
 
     <aside :class="['sidebar', { open: abriMenu }]">
-      <img src="/logo-72x72.png" alt="soul." class="logo-img" />
+      <img src="/icons/logo-72x72.png" alt="soul." class="logo-img" />
 
       <ul class="sidebar-menu">
         <li>

@@ -27,7 +27,7 @@ function inicio() {
 
 onMounted(async () => {
     await auth.fetchUser()
-    tema.value = auth.user?.theme || 'Claro'
+    tema.value = auth.user?.theme || 'Claro' 
 })
 
 const nome = computed({

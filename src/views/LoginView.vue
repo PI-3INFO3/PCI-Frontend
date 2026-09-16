@@ -38,7 +38,7 @@ function irParaCadastro() {
 <template>
   <div class="login-container">
     <img
-      src="/logo-96x96.png"
+      src="/icons/logo-96x96.png"
       alt="Logo"
     >
     <form @submit.prevent="handleLogin">
