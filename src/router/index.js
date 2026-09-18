@@ -15,7 +15,7 @@ import Favoritos from '../views/Favoritos.vue';
 import Designs from '../views/Designs.vue';
 import ProjetoAndamento from '../views/ProjetoAndamento.vue';
 import MeusProjetos from '../views/MeusProjetos.vue';
-
+import PerfilPublico from '../views/PerfilPublico.vue';
 const routes = [
   {
     path: '/user',
@@ -27,6 +27,12 @@ const routes = [
     name: 'verificar',
     component: verificacao
   },
+  {
+  path: "/perfil/:id",
+  name: "perfil-publico",
+  component: () => import("@/views/PerfilPublico.vue"),
+},
+
   {
     path: '/login',
     name: 'login',

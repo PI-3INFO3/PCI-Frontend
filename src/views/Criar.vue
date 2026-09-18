@@ -21,47 +21,124 @@ import '@fontsource/bebas-neue'
 import '@fontsource/lato'
 import '@fontsource/pacifico'
 
+
 const router = useRouter()
 const route = useRoute()
+
+
+/*
+|--------------------------------------------------------------------------
+| CANVAS
+|--------------------------------------------------------------------------
+*/
 
 const canvasRef = ref(null)
 const canvasAreaRef = ref(null)
 
 let fabricCanvas = null
 
-const templateTitulo = route.query.titulo || 'Design'
+
+/*
+|--------------------------------------------------------------------------
+| PROJETO
+|--------------------------------------------------------------------------
+*/
+
+const templateTitulo =
+    route.query.titulo || 'Design'
 
 
-const fonteImagemAtual = ref(route.query.img || null)
-
-const imagemPrincipal = ref(null)
-
-const fotoOriginalBase = ref(route.query.img || null)
-
-const removendoFundo = ref(false)
-const progressoRemocao = ref(0)
-
-const extraindoObjeto = ref(false)
-const progressoExtracao = ref(0)
+const fonteImagemAtual =
+    ref(route.query.img || null)
 
 
-const modoSelecaoArea = ref(false)
-
-const extraindoArea = ref(false)
-const progressoArea = ref(0)
+const imagemPrincipal =
+    ref(null)
 
 
+const fotoOriginalBase =
+    ref(route.query.img || null)
 
-const corRemendo = ref('#FFFF')
+
+/*
+|--------------------------------------------------------------------------
+| REMOÇÃO DE FUNDO
+|--------------------------------------------------------------------------
+*/
+
+const removendoFundo =
+    ref(false)
+
+const progressoRemocao =
+    ref(0)
 
 
-const menuAtivoAcima = ref('nenhum')
+/*
+|--------------------------------------------------------------------------
+| EXTRAÇÃO DE OBJETO
+|--------------------------------------------------------------------------
+*/
 
-const tamanhoFonte = ref(30)
+const extraindoObjeto =
+    ref(false)
 
-const corTexto = ref('#ffffff')
+const progressoExtracao =
+    ref(0)
 
-const fonteSelecionada = ref('Poppins')
+
+/*
+|--------------------------------------------------------------------------
+| EXTRAÇÃO DE ÁREA
+|--------------------------------------------------------------------------
+*/
+
+const modoSelecaoArea =
+    ref(false)
+
+const extraindoArea =
+    ref(false)
+
+const progressoArea =
+    ref(0)
+
+
+/*
+|--------------------------------------------------------------------------
+| REMENDO
+|--------------------------------------------------------------------------
+*/
+
+const corRemendo =
+    ref('#FFFF')
+
+
+/*
+|--------------------------------------------------------------------------
+| MENU
+|--------------------------------------------------------------------------
+*/
+
+const menuAtivoAcima =
+    ref('nenhum')
+
+
+/*
+|--------------------------------------------------------------------------
+| TEXTO
+|--------------------------------------------------------------------------
+*/
+
+const tamanhoFonte =
+    ref(30)
+
+
+const corTexto =
+    ref('#ffffff')
+
+
+const fonteSelecionada =
+    ref('Poppins')
+
 
 const fontesDisponiveis = [
     'Poppins',
@@ -78,40 +155,66 @@ const fontesDisponiveis = [
     'Courier New'
 ]
 
-const coresTexto = ref([
-    '#ffffff',
-    '#FF5700',
-    '#111111'
-])
 
-const quantidadeMaximaCoresMobile = 3
-const quantidadeMaximaCoresDesktop = 5
+const coresTexto =
+    ref([
+        '#ffffff',
+        '#FF5700',
+        '#111111'
+    ])
 
-const ehMobile = ref(window.innerWidth <= 600)
+
+const quantidadeMaximaCoresMobile =
+    3
+
+
+const quantidadeMaximaCoresDesktop =
+    5
+
+
+const ehMobile =
+    ref(window.innerWidth <= 600)
+
+
 const coresVisiveis =
     computed(() => {
 
-        const limite = ehMobile.value
-            ? quantidadeMaximaCoresMobile
-            : quantidadeMaximaCoresDesktop
+        const limite =
+            ehMobile.value
+                ? quantidadeMaximaCoresMobile
+                : quantidadeMaximaCoresDesktop
 
-        return coresTexto.value.slice(0, limite)
+        return coresTexto.value.slice(
+            0,
+            limite
+        )
     })
 
+
 function verificarTamanhoTela() {
-    ehMobile.value = window.innerWidth <= 600
+
+    ehMobile.value =
+        window.innerWidth <= 600
 }
 
 
-function adicionarCorTexto() {
-  
+/*
+|--------------------------------------------------------------------------
+| PALETA DE CORES
+|--------------------------------------------------------------------------
+*/
 
-    const limiteAtual = ehMobile.value
-        ? quantidadeMaximaCoresMobile
-        : quantidadeMaximaCoresDesktop
+function adicionarCorTexto() {
+
+    const limiteAtual =
+        ehMobile.value
+            ? quantidadeMaximaCoresMobile
+            : quantidadeMaximaCoresDesktop
+
 
     if (
-        coresTexto.value.length >= limiteAtual
+        coresTexto.value.length >=
+        limiteAtual
     ) {
 
         alert(
@@ -122,36 +225,68 @@ function adicionarCorTexto() {
 
         return
     }
-    const novaCor = '#FFFFFF'
 
-    coresTexto.value.push(novaCor)
 
-    corTexto.value = novaCor
+    const novaCor =
+        '#FFFFFF'
+
+
+    coresTexto.value.push(
+        novaCor
+    )
+
+
+    corTexto.value =
+        novaCor
+
 
     atualizarAtributosTexto()
 }
 
-function alterarCorDaPaleta(index, cor) {
+
+function alterarCorDaPaleta(
+    index,
+    cor
+) {
+
     if (!cor) {
         return
     }
 
-    coresTexto.value[index] = cor
 
-    corTexto.value = cor
+    coresTexto.value[index] =
+        cor
+
+
+    corTexto.value =
+        cor
+
 
     atualizarAtributosTexto()
 }
 
-function removerCorTexto(index) {
-    if (coresTexto.value.length <= 1) {
+
+function removerCorTexto(
+    index
+) {
+
+    if (
+        coresTexto.value.length <= 1
+    ) {
+
         alert(
             'Você precisa manter pelo menos uma cor.'
         )
+
         return
     }
 
-    coresTexto.value.splice(index, 1)
+
+    coresTexto.value.splice(
+        index,
+        1
+    )
+
 
     const novaCor =
         coresTexto.value[
@@ -161,108 +296,189 @@ function removerCorTexto(index) {
             )
         ]
 
-    corTexto.value = novaCor
+
+    corTexto.value =
+        novaCor
+
 
     atualizarAtributosTexto()
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| IMAGEM
+|--------------------------------------------------------------------------
+*/
+
 function carregarImagem(url) {
-    return new Promise((resolve, reject) => {
-        if (!url) {
-            reject(
-                new Error(
-                    'URL da imagem não informada.'
+
+    return new Promise(
+        (resolve, reject) => {
+
+            if (!url) {
+
+                reject(
+                    new Error(
+                        'URL da imagem não informada.'
+                    )
                 )
-            )
-            return
+
+                return
+            }
+
+
+            const imgElemento =
+                new Image()
+
+
+            imgElemento.onload =
+                () => {
+
+                    resolve(
+                        imgElemento
+                    )
+                }
+
+
+            imgElemento.onerror =
+                () => {
+
+                    reject(
+                        new Error(
+                            `Não foi possível carregar a imagem: ${url}`
+                        )
+                    )
+                }
+
+
+            imgElemento.crossOrigin =
+                'anonymous'
+
+
+            imgElemento.src =
+                url
         }
-
-        const imgElemento = new Image()
-
-        imgElemento.onload = () => {
-            resolve(imgElemento)
-        }
-
-        imgElemento.onerror = () => {
-            reject(
-                new Error(
-                    `Não foi possível carregar a imagem: ${url}`
-                )
-            )
-        }
-
-        imgElemento.crossOrigin = 'anonymous'
-
-        imgElemento.src = url
-    })
+    )
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| SUBSTITUIR IMAGEM PRINCIPAL
+|--------------------------------------------------------------------------
+*/
 
 async function substituirImagemPrincipal(
     novaUrl,
     manterTransform = false
 ) {
-    if (!fabricCanvas || !novaUrl) {
+
+    if (
+        !fabricCanvas ||
+        !novaUrl
+    ) {
+
         console.warn(
             'Canvas ou URL da imagem não disponível.'
         )
+
         return
     }
+
 
     const imagemAnterior =
         imagemPrincipal.value
 
+
     try {
+
         const imgElemento =
-            await carregarImagem(novaUrl)
+            await carregarImagem(
+                novaUrl
+            )
+
 
         const novaImg =
             new fabric.FabricImage(
                 imgElemento,
                 {
-                    borderColor: '#FF5700',
-                    cornerColor: '#FF5700',
-                    cornerSize: 10,
-                    transparentCorners: false,
 
-                    selectable: false,
-                    evented: false
+                    borderColor:
+                        '#FF5700',
+
+                    cornerColor:
+                        '#FF5700',
+
+                    cornerSize:
+                        10,
+
+                    transparentCorners:
+                        false,
+
+                    selectable:
+                        false,
+
+                    evented:
+                        false,
+
+                    nomeCamada:
+                        'Imagem principal',
+
+                    tipoCamada:
+                        'imagem'
                 }
             )
+
 
         if (
             manterTransform &&
             imagemAnterior
         ) {
+
             novaImg.set({
+
                 left:
                     imagemAnterior.left,
+
                 top:
                     imagemAnterior.top,
+
                 scaleX:
                     imagemAnterior.scaleX,
+
                 scaleY:
                     imagemAnterior.scaleY,
+
                 angle:
                     imagemAnterior.angle,
+
                 originX:
                     imagemAnterior.originX,
+
                 originY:
                     imagemAnterior.originY
             })
+
         } else {
+
             const larguraCanvas =
                 fabricCanvas.getWidth()
 
+
             const alturaCanvas =
                 fabricCanvas.getHeight()
+
 
             const escalaLargura =
                 (larguraCanvas * 0.85) /
                 imgElemento.width
 
+
             const escalaAltura =
                 (alturaCanvas * 0.60) /
                 imgElemento.height
+
 
             const escalaPerfeita =
                 Math.min(
@@ -270,47 +486,63 @@ async function substituirImagemPrincipal(
                     escalaAltura
                 )
 
+
             novaImg.set({
+
                 scaleX:
                     escalaPerfeita,
+
                 scaleY:
                     escalaPerfeita
             })
 
+
             novaImg.setCoords()
+
 
             fabricCanvas.centerObject(
                 novaImg
             )
         }
 
+
         if (imagemAnterior) {
+
             fabricCanvas.remove(
                 imagemAnterior
             )
         }
 
-        fabricCanvas.add(novaImg)
+
+        fabricCanvas.add(
+            novaImg
+        )
+
 
         fabricCanvas.sendObjectToBack(
             novaImg
         )
 
+
         novaImg.setCoords()
+
 
         imagemPrincipal.value =
             novaImg
 
+
+        atualizarCamadas()
+
+
         fabricCanvas.requestRenderAll()
 
-        console.log(
-            'Imagem atualizada com sucesso.'
-        )
     } catch (erro) {
+
         console.error(
             'Erro ao carregar imagem:',
             erro
         )
+
 
         alert(
             'Não foi possível carregar essa imagem. ' +
@@ -320,41 +552,59 @@ async function substituirImagemPrincipal(
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| INICIALIZAR CANVAS
+|--------------------------------------------------------------------------
+*/
+
 async function inicializarCanvas() {
+
     await nextTick()
+
 
     if (
         !canvasRef.value ||
         !canvasAreaRef.value
     ) {
+
         console.error(
             'Elementos do canvas não encontrados.'
         )
+
         return
     }
+
 
     const larguraDisponivel =
         canvasAreaRef.value.clientWidth
 
+
     const alturaDisponivel =
         canvasAreaRef.value.clientHeight
+
 
     if (
         larguraDisponivel <= 0 ||
         alturaDisponivel <= 0
     ) {
+
         console.error(
             'Área do canvas possui tamanho inválido.'
         )
+
         return
     }
+
 
     fabricCanvas =
         new fabric.Canvas(
             canvasRef.value,
             {
+
                 width:
                     larguraDisponivel,
+
                 height:
                     alturaDisponivel,
 
@@ -364,89 +614,152 @@ async function inicializarCanvas() {
                 preserveObjectStacking:
                     true,
 
-                selection: true
+                selection:
+                    true
             }
         )
 
-    if (fonteImagemAtual.value) {
+
+    if (
+        fonteImagemAtual.value
+    ) {
+
         await substituirImagemPrincipal(
             fonteImagemAtual.value,
             false
         )
     }
 
+
     fabricCanvas.on(
         'selection:created',
         lidarComSelecao
     )
+
 
     fabricCanvas.on(
         'selection:updated',
         lidarComSelecao
     )
 
+
     fabricCanvas.on(
         'selection:cleared',
         () => {
+
             if (
                 !modoSelecaoArea.value
             ) {
+
                 menuAtivoAcima.value =
                     'nenhum'
             }
+
+            atualizarCamadas()
         }
     )
+
+
+    fabricCanvas.on(
+        'object:added',
+        atualizarCamadas
+    )
+
+
+    fabricCanvas.on(
+        'object:removed',
+        atualizarCamadas
+    )
+
+
+    fabricCanvas.on(
+        'object:modified',
+        atualizarCamadas
+    )
+
 
     window.addEventListener(
         'keydown',
         lidarComTeclado
     )
 
+
     window.addEventListener(
         'resize',
         redimensionarCanvas
     )
 
+
     window.addEventListener(
         'resize',
         verificarTamanhoTela
     )
+
+
+    atualizarCamadas()
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| REDIMENSIONAR CANVAS
+|--------------------------------------------------------------------------
+*/
+
 function redimensionarCanvas() {
+
     if (
         !fabricCanvas ||
         !canvasAreaRef.value
     ) {
+
         return
     }
+
 
     const largura =
         canvasAreaRef.value.clientWidth
 
+
     const altura =
         canvasAreaRef.value.clientHeight
+
 
     if (
         largura <= 0 ||
         altura <= 0
     ) {
+
         return
     }
 
+
     fabricCanvas.setDimensions({
-        width: largura,
-        height: altura
+        width:
+            largura,
+
+        height:
+            altura
     })
+
 
     fabricCanvas.requestRenderAll()
 }
 
 
-function lidarComSelecao(evento) {
+/*
+|--------------------------------------------------------------------------
+| SELEÇÃO
+|--------------------------------------------------------------------------
+*/
+
+function lidarComSelecao(
+    evento
+) {
+
     const objetoAtivo =
         evento?.selected?.[0]
+
 
     if (!objetoAtivo) {
         return
@@ -458,25 +771,30 @@ function lidarComSelecao(evento) {
         objetoAtivo.type === 'text' ||
         objetoAtivo.type === 'textbox'
     ) {
+
         menuAtivoAcima.value =
             'texto'
+
 
         tamanhoFonte.value =
             objetoAtivo.fontSize || 30
 
+
         corTexto.value =
-            objetoAtivo.fill || '#ffffff'
+            objetoAtivo.fill ||
+            '#ffffff'
+
 
         fonteSelecionada.value =
             objetoAtivo.fontFamily ||
             'Poppins'
 
+
+        atualizarCamadas()
+
         return
     }
 
-    /*
-     * FORMAS
-     */
 
     if (
         objetoAtivo.type === 'rect' ||
@@ -484,36 +802,69 @@ function lidarComSelecao(evento) {
         objetoAtivo.type === 'triangle' ||
         objetoAtivo.type === 'polygon'
     ) {
+
         menuAtivoAcima.value =
             'formas'
+
+
+        atualizarCamadas()
 
         return
     }
 
-    if (!modoSelecaoArea.value) {
+
+    if (
+        objetoAtivo.type === 'image'
+    ) {
+
         menuAtivoAcima.value =
-            'nenhum'
+            'images'
     }
+
+
+    if (!modoSelecaoArea.value) {
+
+        if (
+            objetoAtivo.type !== 'image'
+        ) {
+
+            menuAtivoAcima.value =
+                'nenhum'
+        }
+    }
+
+
+    atualizarCamadas()
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| TEXTO
+|--------------------------------------------------------------------------
+*/
 
 function clicarTextoNoFooter() {
+
     if (
         menuAtivoAcima.value ===
         'texto'
     ) {
+
         menuAtivoAcima.value =
             'nenhum'
 
         return
     }
 
+
     menuAtivoAcima.value =
         'texto'
 
+
     const objetoAtivo =
         fabricCanvas?.getActiveObject()
+
 
     if (
         !objetoAtivo ||
@@ -526,11 +877,14 @@ function clicarTextoNoFooter() {
                 'textbox'
         )
     ) {
+
         adicionarTexto()
     }
 }
 
+
 function clicarImagesNoFooter() {
+
     menuAtivoAcima.value =
         menuAtivoAcima.value ===
         'images'
@@ -538,7 +892,9 @@ function clicarImagesNoFooter() {
             : 'images'
 }
 
+
 function clicarFormasNoFooter() {
+
     menuAtivoAcima.value =
         menuAtivoAcima.value ===
         'formas'
@@ -547,15 +903,37 @@ function clicarFormasNoFooter() {
 }
 
 
+function clicarCamadasNoFooter() {
+
+    menuAtivoAcima.value =
+        menuAtivoAcima.value ===
+        'camadas'
+            ? 'nenhum'
+            : 'camadas'
+
+
+    atualizarCamadas()
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| ADICIONAR TEXTO
+|--------------------------------------------------------------------------
+*/
+
 function adicionarTexto() {
+
     if (!fabricCanvas) {
         return
     }
+
 
     const textoEditavel =
         new fabric.IText(
             'Seus',
             {
+
                 left:
                     fabricCanvas.getWidth() /
                     3,
@@ -592,40 +970,67 @@ function adicionarTexto() {
                     true,
 
                 evented:
-                    true
+                    true,
+
+                nomeCamada:
+                    'Texto',
+
+                tipoCamada:
+                    'texto'
             }
         )
+
 
     fabricCanvas.add(
         textoEditavel
     )
 
+
     fabricCanvas.setActiveObject(
         textoEditavel
     )
+
 
     fabricCanvas.bringObjectToFront(
         textoEditavel
     )
 
+
+    atualizarCamadas()
+
+
     fabricCanvas.requestRenderAll()
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| TEXTO
+|--------------------------------------------------------------------------
+*/
+
 function mudarCorTextoPredefinida(
     cor
 ) {
-    corTexto.value = cor
+
+    corTexto.value =
+        cor
+
 
     atualizarAtributosTexto()
 }
+
+
 function mudarFonteTexto() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const objetoAtivo =
         fabricCanvas.getActiveObject()
+
 
     if (
         !objetoAtivo ||
@@ -638,27 +1043,35 @@ function mudarFonteTexto() {
                 'textbox'
         )
     ) {
+
         return
     }
 
+
     objetoAtivo.set({
+
         fontFamily:
             fonteSelecionada.value
     })
 
+
     objetoAtivo.setCoords()
+
 
     fabricCanvas.requestRenderAll()
 }
 
 
 function atualizarAtributosTexto() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const objetoAtivo =
         fabricCanvas.getActiveObject()
+
 
     if (
         objetoAtivo &&
@@ -671,7 +1084,9 @@ function atualizarAtributosTexto() {
                 'textbox'
         )
     ) {
+
         objetoAtivo.set({
+
             fontSize:
                 parseInt(
                     tamanhoFonte.value
@@ -684,44 +1099,67 @@ function atualizarAtributosTexto() {
                 fonteSelecionada.value
         })
 
+
         objetoAtivo.setCoords()
+
 
         fabricCanvas.requestRenderAll()
     }
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| FORMAS
+|--------------------------------------------------------------------------
+*/
+
 function configuracaoForma(
     cor = '#FF5700'
 ) {
+
     return {
-        fill: cor,
 
-        stroke: '#FF5700',
+        fill:
+            cor,
 
-        strokeWidth: 0,
+        stroke:
+            '#FF5700',
 
-        borderColor: '#FF5700',
+        strokeWidth:
+            0,
 
-        cornerColor: '#FF5700',
+        borderColor:
+            '#FF5700',
 
-        cornerSize: 10,
+        cornerColor:
+            '#FF5700',
 
-        transparentCorners: false,
+        cornerSize:
+            10,
 
-        selectable: true,
+        transparentCorners:
+            false,
 
-        evented: true
+        selectable:
+            true,
+
+        evented:
+            true
     }
 }
 
 
 function adicionarRetangulo() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const retangulo =
         new fabric.Rect({
+
             ...configuracaoForma(),
 
             left:
@@ -732,34 +1170,52 @@ function adicionarRetangulo() {
                 fabricCanvas.getHeight() /
                 2,
 
-            width: 100,
+            width:
+                100,
 
-            height: 100
+            height:
+                100,
+
+            nomeCamada:
+                'Retângulo',
+
+            tipoCamada:
+                'forma'
         })
+
 
     fabricCanvas.add(
         retangulo
     )
 
+
     fabricCanvas.setActiveObject(
         retangulo
     )
 
+
     fabricCanvas.bringObjectToFront(
         retangulo
     )
+
+
+    atualizarCamadas()
+
 
     fabricCanvas.requestRenderAll()
 }
 
 
 function adicionarCirculo() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const circulo =
         new fabric.Circle({
+
             ...configuracaoForma(),
 
             left:
@@ -770,32 +1226,49 @@ function adicionarCirculo() {
                 fabricCanvas.getHeight() /
                 2,
 
-            radius: 50
+            radius:
+                50,
+
+            nomeCamada:
+                'Círculo',
+
+            tipoCamada:
+                'forma'
         })
+
 
     fabricCanvas.add(
         circulo
     )
 
+
     fabricCanvas.setActiveObject(
         circulo
     )
 
+
     fabricCanvas.bringObjectToFront(
         circulo
     )
+
+
+    atualizarCamadas()
+
 
     fabricCanvas.requestRenderAll()
 }
 
 
 function adicionarTriangulo() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const triangulo =
         new fabric.Triangle({
+
             ...configuracaoForma(),
 
             left:
@@ -806,24 +1279,40 @@ function adicionarTriangulo() {
                 fabricCanvas.getHeight() /
                 2,
 
-            width: 110,
+            width:
+                110,
 
-            height: 100,
+            height:
+                100,
 
-            fill: '#FF5700'
+            fill:
+                '#FF5700',
+
+            nomeCamada:
+                'Triângulo',
+
+            tipoCamada:
+                'forma'
         })
+
 
     fabricCanvas.add(
         triangulo
     )
 
+
     fabricCanvas.setActiveObject(
         triangulo
     )
 
+
     fabricCanvas.bringObjectToFront(
         triangulo
     )
+
+
+    atualizarCamadas()
+
 
     fabricCanvas.requestRenderAll()
 }
@@ -836,27 +1325,34 @@ function criarPontosEstrela(
     raioInterno,
     quantidadePontas = 5
 ) {
+
     const pontos = []
+
 
     const totalPontos =
         quantidadePontas * 2
+
 
     for (
         let i = 0;
         i < totalPontos;
         i++
     ) {
+
         const angulo =
             -Math.PI / 2 +
             (Math.PI * 2 * i) /
                 totalPontos
+
 
         const raio =
             i % 2 === 0
                 ? raioExterno
                 : raioInterno
 
+
         pontos.push({
+
             x:
                 centroX +
                 Math.cos(angulo) *
@@ -869,13 +1365,17 @@ function criarPontosEstrela(
         })
     }
 
+
     return pontos
 }
 
+
 function adicionarEstrela() {
+
     if (!fabricCanvas) {
         return
     }
+
 
     const pontos =
         criarPontosEstrela(
@@ -886,10 +1386,12 @@ function adicionarEstrela() {
             5
         )
 
+
     const estrela =
         new fabric.Polygon(
             pontos,
             {
+
                 ...configuracaoForma(),
 
                 left:
@@ -907,36 +1409,56 @@ function adicionarEstrela() {
                     'center',
 
                 fill:
-                    '#FF5700'
+                    '#FF5700',
+
+                nomeCamada:
+                    'Estrela',
+
+                tipoCamada:
+                    'forma'
             }
         )
+
 
     fabricCanvas.add(
         estrela
     )
 
+
     fabricCanvas.setActiveObject(
         estrela
     )
+
 
     fabricCanvas.bringObjectToFront(
         estrela
     )
 
+
+    atualizarCamadas()
+
+
     fabricCanvas.requestRenderAll()
 }
 
-function alterarCorForma(cor) {
+
+function alterarCorForma(
+    cor
+) {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const objetoAtivo =
         fabricCanvas.getActiveObject()
+
 
     if (!objetoAtivo) {
         return
     }
+
 
     if (
         objetoAtivo.type !== 'rect' &&
@@ -944,60 +1466,541 @@ function alterarCorForma(cor) {
         objetoAtivo.type !== 'triangle' &&
         objetoAtivo.type !== 'polygon'
     ) {
+
         return
     }
 
+
     objetoAtivo.set({
-        fill: cor
+        fill:
+            cor
     })
 
+
     objetoAtivo.setCoords()
+
 
     fabricCanvas.requestRenderAll()
 }
 
 
-function deletarSelecionado() {
+/*
+|--------------------------------------------------------------------------
+| CAMADAS
+|--------------------------------------------------------------------------
+*/
+
+const camadas =
+    ref([])
+
+
+function nomeAutomaticoCamada(
+    objeto,
+    index
+) {
+
+    if (
+        objeto.nomeCamada
+    ) {
+
+        return objeto.nomeCamada
+    }
+
+
+    if (
+        objeto.type === 'i-text' ||
+        objeto.type === 'text' ||
+        objeto.type === 'textbox'
+    ) {
+
+        return objeto.text
+            ? `Texto: ${objeto.text.substring(0, 20)}`
+            : 'Texto'
+    }
+
+
+    if (
+        objeto.type === 'rect'
+    ) {
+
+        return 'Retângulo'
+    }
+
+
+    if (
+        objeto.type === 'circle'
+    ) {
+
+        return 'Círculo'
+    }
+
+
+    if (
+        objeto.type === 'triangle'
+    ) {
+
+        return 'Triângulo'
+    }
+
+
+    if (
+        objeto.type === 'polygon'
+    ) {
+
+        return 'Forma'
+    }
+
+
+    if (
+        objeto.type === 'image'
+    ) {
+
+        if (
+            objeto === imagemPrincipal.value
+        ) {
+
+            return 'Imagem principal'
+        }
+
+        return 'Imagem recortada'
+    }
+
+
+    return `Elemento ${index + 1}`
+}
+
+
+function iconeDaCamada(
+    objeto
+) {
+
+    if (
+        objeto.type === 'i-text' ||
+        objeto.type === 'text' ||
+        objeto.type === 'textbox'
+    ) {
+
+        return 'text-outline'
+    }
+
+
+    if (
+        objeto.type === 'circle'
+    ) {
+
+        return 'ellipse-outline'
+    }
+
+
+    if (
+        objeto.type === 'triangle'
+    ) {
+
+        return 'triangle-outline'
+    }
+
+
+    if (
+        objeto.type === 'rect'
+    ) {
+
+        return 'square-outline'
+    }
+
+
+    if (
+        objeto.type === 'polygon'
+    ) {
+
+        return 'star-outline'
+    }
+
+
+    if (
+        objeto.type === 'image'
+    ) {
+
+        return 'image-outline'
+    }
+
+
+    return 'layers-outline'
+}
+
+
+function atualizarCamadas() {
+
     if (!fabricCanvas) {
         return
     }
 
+
+    const objetos =
+        fabricCanvas.getObjects()
+
+
+    camadas.value =
+        objetos
+            .map(
+                (
+                    objeto,
+                    index
+                ) => ({
+
+                    objeto,
+
+                    index,
+
+                    nome:
+                        nomeAutomaticoCamada(
+                            objeto,
+                            index
+                        ),
+
+                    icone:
+                        iconeDaCamada(
+                            objeto
+                        )
+                })
+            )
+            .reverse()
+}
+
+
+function selecionarCamada(
+    camada
+) {
+
+    if (
+        !fabricCanvas ||
+        !camada?.objeto
+    ) {
+
+        return
+    }
+
+
+    const objeto =
+        camada.objeto
+
+
+    if (
+        objeto === imagemPrincipal.value
+    ) {
+
+        /*
+         * A imagem principal não pode
+         * ser selecionada porque no seu
+         * código ela é o fundo.
+         */
+        return
+    }
+
+
+    fabricCanvas.setActiveObject(
+        objeto
+    )
+
+
+    objeto.setCoords()
+
+
+    fabricCanvas.requestRenderAll()
+
+
+    if (
+        objeto.type === 'i-text' ||
+        objeto.type === 'text' ||
+        objeto.type === 'textbox'
+    ) {
+
+        menuAtivoAcima.value =
+            'texto'
+
+    } else if (
+        objeto.type === 'rect' ||
+        objeto.type === 'circle' ||
+        objeto.type === 'triangle' ||
+        objeto.type === 'polygon'
+    ) {
+
+        menuAtivoAcima.value =
+            'formas'
+    }
+}
+
+
+function estaSelecionado(
+    objeto
+) {
+
+    return (
+        fabricCanvas?.getActiveObject() ===
+        objeto
+    )
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| ORDEM DAS CAMADAS
+|--------------------------------------------------------------------------
+*/
+
+function obterObjetoSelecionado() {
+
+    if (!fabricCanvas) {
+        return null
+    }
+
+
+    const objeto =
+        fabricCanvas.getActiveObject()
+
+
+    if (!objeto) {
+
+        alert(
+            'Selecione um elemento primeiro.'
+        )
+
+        return null
+    }
+
+
+    return objeto
+}
+
+
+function trazerParaFrente() {
+
+    const objeto =
+        obterObjetoSelecionado()
+
+
+    if (!objeto) {
+        return
+    }
+
+
+    fabricCanvas.bringObjectForward(
+        objeto
+    )
+
+
+    fabricCanvas.setActiveObject(
+        objeto
+    )
+
+
+    atualizarCamadas()
+
+
+    fabricCanvas.requestRenderAll()
+}
+
+
+function enviarParaTras() {
+
+    const objeto =
+        obterObjetoSelecionado()
+
+
+    if (!objeto) {
+        return
+    }
+
+
+    if (
+        objeto === imagemPrincipal.value
+    ) {
+
+        return
+    }
+
+
+    fabricCanvas.sendObjectBackwards(
+        objeto
+    )
+
+
+    /*
+     * Garante que a imagem principal
+     * continue como fundo.
+     */
+    if (
+        imagemPrincipal.value
+    ) {
+
+        fabricCanvas.sendObjectToBack(
+            imagemPrincipal.value
+        )
+    }
+
+
+    fabricCanvas.setActiveObject(
+        objeto
+    )
+
+
+    atualizarCamadas()
+
+
+    fabricCanvas.requestRenderAll()
+}
+
+
+function trazerParaTopo() {
+
+    const objeto =
+        obterObjetoSelecionado()
+
+
+    if (!objeto) {
+        return
+    }
+
+
+    fabricCanvas.bringObjectToFront(
+        objeto
+    )
+
+
+    fabricCanvas.setActiveObject(
+        objeto
+    )
+
+
+    atualizarCamadas()
+
+
+    fabricCanvas.requestRenderAll()
+}
+
+
+function enviarParaFundo() {
+
+    const objeto =
+        obterObjetoSelecionado()
+
+
+    if (!objeto) {
+        return
+    }
+
+
+    if (
+        objeto === imagemPrincipal.value
+    ) {
+
+        return
+    }
+
+
+    fabricCanvas.sendObjectToBack(
+        objeto
+    )
+
+
+    /*
+     * Mantém a imagem original
+     * como fundo absoluto.
+     */
+    if (
+        imagemPrincipal.value &&
+        imagemPrincipal.value !== objeto
+    ) {
+
+        fabricCanvas.sendObjectToBack(
+            imagemPrincipal.value
+        )
+    }
+
+
+    fabricCanvas.setActiveObject(
+        objeto
+    )
+
+
+    atualizarCamadas()
+
+
+    fabricCanvas.requestRenderAll()
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| EXCLUIR
+|--------------------------------------------------------------------------
+*/
+
+function deletarSelecionado() {
+
+    if (!fabricCanvas) {
+        return
+    }
+
+
     const objetoAtivo =
         fabricCanvas.getActiveObject()
+
 
     if (!objetoAtivo) {
         return
     }
 
+
     if (
         objetoAtivo ===
         imagemPrincipal.value
     ) {
+
         return
     }
+
 
     fabricCanvas.remove(
         objetoAtivo
     )
 
+
     fabricCanvas.discardActiveObject()
 
+
+    atualizarCamadas()
+
+
     fabricCanvas.requestRenderAll()
+
 
     menuAtivoAcima.value =
         'nenhum'
 }
 
-function lidarComTeclado(evento) {
+
+/*
+|--------------------------------------------------------------------------
+| TECLADO
+|--------------------------------------------------------------------------
+*/
+
+function lidarComTeclado(
+    evento
+) {
+
     if (
         evento.key !== 'Delete' &&
         evento.key !== 'Backspace'
     ) {
+
         return
     }
 
+
     const ativo =
         fabricCanvas?.getActiveObject()
+
 
     if (
         ativo &&
@@ -1011,36 +2014,52 @@ function lidarComTeclado(evento) {
         ) &&
         ativo.isEditing
     ) {
+
         return
     }
+
 
     deletarSelecionado()
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| REMOVER FUNDO
+|--------------------------------------------------------------------------
+*/
 
 async function removerFundo() {
+
     if (
         !fonteImagemAtual.value ||
         removendoFundo.value
     ) {
+
         return
     }
+
 
     removendoFundo.value =
         true
 
+
     progressoRemocao.value =
         0
 
+
     try {
+
         const blob =
             await removeBackground(
                 fonteImagemAtual.value,
                 {
+
                     output: {
+
                         format:
                             'image/png',
+
                         quality:
                             0.9
                     },
@@ -1050,9 +2069,11 @@ async function removerFundo() {
                         atual,
                         total
                     ) => {
+
                         if (
                             total > 0
                         ) {
+
                             progressoRemocao.value =
                                 Math.min(
                                     100,
@@ -1069,37 +2090,48 @@ async function removerFundo() {
                 }
             )
 
+
         if (!blob) {
+
             throw new Error(
                 'A IA não retornou uma imagem.'
             )
         }
+
 
         const cutoutUrl =
             URL.createObjectURL(
                 blob
             )
 
+
         fonteImagemAtual.value =
             cutoutUrl
+
 
         await substituirImagemPrincipal(
             cutoutUrl,
             true
         )
 
+
         fabricCanvas?.requestRenderAll()
+
     } catch (erro) {
+
         console.error(
             'Falha ao remover fundo:',
             erro
         )
 
+
         alert(
             'Não foi possível remover o fundo dessa imagem. ' +
             'Verifique sua conexão e tente novamente.'
         )
+
     } finally {
+
         removendoFundo.value =
             false
 
@@ -1109,28 +2141,43 @@ async function removerFundo() {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| EXTRAIR OBJETO FLUTUANTE
+|--------------------------------------------------------------------------
+*/
+
 async function extrairObjetoFlutuante() {
+
     if (
         !fotoOriginalBase.value ||
         extraindoObjeto.value
     ) {
+
         return
     }
+
 
     extraindoObjeto.value =
         true
 
+
     progressoExtracao.value =
         0
 
+
     try {
+
         const blob =
             await removeBackground(
                 fotoOriginalBase.value,
                 {
+
                     output: {
+
                         format:
                             'image/png',
+
                         quality:
                             0.9
                     },
@@ -1140,9 +2187,11 @@ async function extrairObjetoFlutuante() {
                         atual,
                         total
                     ) => {
+
                         if (
                             total > 0
                         ) {
+
                             progressoExtracao.value =
                                 Math.min(
                                     100,
@@ -1159,26 +2208,32 @@ async function extrairObjetoFlutuante() {
                 }
             )
 
+
         if (!blob) {
+
             throw new Error(
                 'A IA não retornou uma imagem.'
             )
         }
+
 
         const cutoutUrl =
             URL.createObjectURL(
                 blob
             )
 
+
         const imgElemento =
             await carregarImagem(
                 cutoutUrl
             )
 
+
         const novoObjeto =
             new fabric.FabricImage(
                 imgElemento,
                 {
+
                     borderColor:
                         '#FF5700',
 
@@ -1195,14 +2250,23 @@ async function extrairObjetoFlutuante() {
                         true,
 
                     evented:
-                        true
+                        true,
+
+                    nomeCamada:
+                        'Objeto recortado',
+
+                    tipoCamada:
+                        'imagem'
                 }
             )
+
 
         if (
             imagemPrincipal.value
         ) {
+
             novoObjeto.set({
+
                 left:
                     imagemPrincipal.value.left,
 
@@ -1226,32 +2290,45 @@ async function extrairObjetoFlutuante() {
             })
         }
 
+
         novoObjeto.setCoords()
+
 
         fabricCanvas.add(
             novoObjeto
         )
 
+
         fabricCanvas.bringObjectToFront(
             novoObjeto
         )
+
 
         fabricCanvas.setActiveObject(
             novoObjeto
         )
 
+
+        atualizarCamadas()
+
+
         fabricCanvas.requestRenderAll()
+
     } catch (erro) {
+
         console.error(
             'Falha ao extrair objeto:',
             erro
         )
 
+
         alert(
             'Não foi possível extrair um objeto dessa imagem. ' +
             'Verifique sua conexão e tente novamente.'
         )
+
     } finally {
+
         extraindoObjeto.value =
             false
 
@@ -1261,48 +2338,69 @@ async function extrairObjetoFlutuante() {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| SELEÇÃO DE ÁREA
+|--------------------------------------------------------------------------
+*/
+
 let selecaoRect = null
+
 let selecaoInicio = null
 
+
 function ativarModoSelecaoArea() {
+
     if (
         !fabricCanvas ||
         !imagemPrincipal.value
     ) {
+
         alert(
             'Carregue uma imagem primeiro.'
         )
+
         return
     }
+
 
     modoSelecaoArea.value =
         true
 
+
     menuAtivoAcima.value =
         'nenhum'
 
+
     fabricCanvas.discardActiveObject()
+
 
     fabricCanvas.selection =
         false
 
+
     fabricCanvas.skipTargetFind =
         true
+
 
     fabricCanvas.defaultCursor =
         'crosshair'
 
+
     fabricCanvas.requestRenderAll()
+
 
     fabricCanvas.on(
         'mouse:down',
         iniciarSelecaoArea
     )
 
+
     fabricCanvas.on(
         'mouse:move',
         atualizarSelecaoArea
     )
+
 
     fabricCanvas.on(
         'mouse:up',
@@ -1310,39 +2408,50 @@ function ativarModoSelecaoArea() {
     )
 }
 
+
 function desativarModoSelecaoArea() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     modoSelecaoArea.value =
         false
+
 
     fabricCanvas.selection =
         true
 
+
     fabricCanvas.skipTargetFind =
         false
 
+
     fabricCanvas.defaultCursor =
         'default'
+
 
     fabricCanvas.off(
         'mouse:down',
         iniciarSelecaoArea
     )
 
+
     fabricCanvas.off(
         'mouse:move',
         atualizarSelecaoArea
     )
+
 
     fabricCanvas.off(
         'mouse:up',
         finalizarSelecaoArea
     )
 
+
     if (selecaoRect) {
+
         fabricCanvas.remove(
             selecaoRect
         )
@@ -1350,47 +2459,65 @@ function desativarModoSelecaoArea() {
         selecaoRect = null
     }
 
+
     selecaoInicio = null
+
 
     fabricCanvas.requestRenderAll()
 }
 
+
 function iniciarSelecaoArea(
     evento
 ) {
+
     if (
         !fabricCanvas ||
         !modoSelecaoArea.value
     ) {
+
         return
     }
+
 
     const pointer =
         evento.scenePoint
 
+
     if (!pointer) {
+
         console.warn(
             'Não foi possível obter a posição do mouse.'
         )
+
         return
     }
 
+
     selecaoInicio = {
-        x: pointer.x,
-        y: pointer.y
+
+        x:
+            pointer.x,
+
+        y:
+            pointer.y
     }
+
 
     selecaoRect =
         new fabric.Rect({
+
             left:
                 pointer.x,
 
             top:
                 pointer.y,
 
-            width: 0,
+            width:
+                0,
 
-            height: 0,
+            height:
+                0,
 
             fill:
                 'rgba(255, 87, 0, 0.15)',
@@ -1411,40 +2538,51 @@ function iniciarSelecaoArea(
                 false
         })
 
+
     fabricCanvas.add(
         selecaoRect
     )
 
+
     fabricCanvas.requestRenderAll()
 }
+
 
 function atualizarSelecaoArea(
     evento
 ) {
+
     if (
         !selecaoRect ||
         !selecaoInicio ||
         !fabricCanvas
     ) {
+
         return
     }
 
+
     const pointer =
         evento.scenePoint
+
 
     if (!pointer) {
         return
     }
 
+
     const largura =
         pointer.x -
         selecaoInicio.x
+
 
     const altura =
         pointer.y -
         selecaoInicio.y
 
+
     selecaoRect.set({
+
         left:
             largura < 0
                 ? pointer.x
@@ -1462,17 +2600,23 @@ function atualizarSelecaoArea(
             Math.abs(altura)
     })
 
+
     selecaoRect.setCoords()
+
 
     fabricCanvas.requestRenderAll()
 }
 
+
 async function finalizarSelecaoArea() {
+
     if (!selecaoRect) {
         return
     }
 
+
     const areaSelecionada = {
+
         left:
             selecaoRect.left,
 
@@ -1486,14 +2630,18 @@ async function finalizarSelecaoArea() {
             selecaoRect.height
     }
 
+
     desativarModoSelecaoArea()
+
 
     if (
         areaSelecionada.width < 15 ||
         areaSelecionada.height < 15
     ) {
+
         return
     }
+
 
     await extrairObjetoDaArea(
         areaSelecionada
@@ -1501,53 +2649,71 @@ async function finalizarSelecaoArea() {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| EXTRAIR ÁREA
+|--------------------------------------------------------------------------
+*/
 
 async function extrairObjetoDaArea(
     area
 ) {
+
     if (
         !fotoOriginalBase.value ||
         !imagemPrincipal.value
     ) {
+
         return
     }
+
 
     if (extraindoArea.value) {
         return
     }
 
+
     extraindoArea.value =
         true
+
 
     progressoArea.value =
         0
 
+
     try {
+
         const base =
             imagemPrincipal.value
+
 
         const relX =
             (area.left -
                 base.left) /
             base.scaleX
 
+
         const relY =
             (area.top -
                 base.top) /
             base.scaleY
 
+
         const relW =
             area.width /
             base.scaleX
+
 
         const relH =
             area.height /
             base.scaleY
 
+
         const imgOriginal =
             await carregarImagem(
                 fotoOriginalBase.value
             )
+
 
         const cropX =
             Math.max(
@@ -1555,11 +2721,13 @@ async function extrairObjetoDaArea(
                 relX
             )
 
+
         const cropY =
             Math.max(
                 0,
                 relY
             )
+
 
         const cropW =
             Math.min(
@@ -1568,6 +2736,7 @@ async function extrairObjetoDaArea(
                     cropX
             )
 
+
         const cropH =
             Math.min(
                 relH,
@@ -1575,52 +2744,68 @@ async function extrairObjetoDaArea(
                     cropY
             )
 
+
         if (
             cropW <= 0 ||
             cropH <= 0
         ) {
+
             throw new Error(
                 'Área selecionada fica fora da imagem.'
             )
         }
+
 
         const canvasTemp =
             document.createElement(
                 'canvas'
             )
 
+
         canvasTemp.width =
             Math.round(cropW)
 
+
         canvasTemp.height =
             Math.round(cropH)
+
 
         const ctx =
             canvasTemp.getContext(
                 '2d'
             )
 
+
         if (!ctx) {
+
             throw new Error(
                 'Não foi possível criar o contexto 2D.'
             )
         }
 
+
         ctx.drawImage(
+
             imgOriginal,
+
             cropX,
             cropY,
+
             cropW,
             cropH,
+
             0,
             0,
+
             canvasTemp.width,
             canvasTemp.height
         )
 
+
         const recorteBlob =
             await new Promise(
                 (resolve) => {
+
                     canvasTemp.toBlob(
                         resolve,
                         'image/png'
@@ -1628,23 +2813,31 @@ async function extrairObjetoDaArea(
                 }
             )
 
+
         if (!recorteBlob) {
+
             throw new Error(
                 'Não foi possível recortar a área.'
             )
         }
 
+
         let blobFinal =
             recorteBlob
 
+
         try {
+
             const blobLimpo =
                 await removeBackground(
                     recorteBlob,
                     {
+
                         output: {
+
                             format:
                                 'image/png',
+
                             quality:
                                 0.9
                         },
@@ -1654,9 +2847,11 @@ async function extrairObjetoDaArea(
                             atual,
                             total
                         ) => {
+
                             if (
                                 total > 0
                             ) {
+
                                 progressoArea.value =
                                     Math.min(
                                         100,
@@ -1673,31 +2868,39 @@ async function extrairObjetoDaArea(
                     }
                 )
 
+
             if (blobLimpo) {
+
                 blobFinal =
                     blobLimpo
             }
+
         } catch (erroIA) {
+
             console.warn(
                 'IA não conseguiu limpar essa área, usando recorte simples:',
                 erroIA
             )
         }
 
+
         const urlFinal =
             URL.createObjectURL(
                 blobFinal
             )
+
 
         const imgFinal =
             await carregarImagem(
                 urlFinal
             )
 
+
         const novoObjeto =
             new fabric.FabricImage(
                 imgFinal,
                 {
+
                     left:
                         area.left,
 
@@ -1726,36 +2929,55 @@ async function extrairObjetoDaArea(
                         true,
 
                     evented:
-                        true
+                        true,
+
+                    nomeCamada:
+                        'Área recortada',
+
+                    tipoCamada:
+                        'imagem'
                 }
             )
 
+
         novoObjeto.setCoords()
+
 
         fabricCanvas.add(
             novoObjeto
         )
 
+
         fabricCanvas.bringObjectToFront(
             novoObjeto
         )
+
 
         fabricCanvas.setActiveObject(
             novoObjeto
         )
 
+
+        atualizarCamadas()
+
+
         fabricCanvas.requestRenderAll()
+
     } catch (erro) {
+
         console.error(
             'Falha ao extrair área:',
             erro
         )
 
+
         alert(
             'Não foi possível extrair essa área. ' +
             'Tente selecionar uma região maior ou com um objeto mais definido.'
         )
+
     } finally {
+
         extraindoArea.value =
             false
 
@@ -1765,13 +2987,22 @@ async function extrairObjetoDaArea(
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| REMENDO
+|--------------------------------------------------------------------------
+*/
+
 function adicionarRemendo() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     const remendo =
         new fabric.Rect({
+
             left:
                 fabricCanvas.getWidth() /
                 2,
@@ -1808,79 +3039,116 @@ function adicionarRemendo() {
                 true,
 
             evented:
-                true
+                true,
+
+            nomeCamada:
+                'Remendo',
+
+            tipoCamada:
+                'forma'
         })
+
 
     fabricCanvas.add(
         remendo
     )
 
+
     fabricCanvas.setActiveObject(
         remendo
     )
 
+
+    atualizarCamadas()
+
+
     fabricCanvas.requestRenderAll()
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| TROCAR IMAGEM
+|--------------------------------------------------------------------------
+*/
 
 async function trocarImagemPrincipal(
     evento
 ) {
+
     const file =
         evento?.target?.files?.[0]
+
 
     if (!file) {
         return
     }
+
 
     if (
         !file.type.startsWith(
             'image/'
         )
     ) {
+
         alert(
             'Selecione uma imagem PNG, JPG ou WEBP.'
         )
 
+
         evento.target.value =
             ''
+
 
         return
     }
 
+
     try {
+
         const novaUrl =
             URL.createObjectURL(
                 file
             )
 
+
         fonteImagemAtual.value =
             novaUrl
 
+
         fotoOriginalBase.value =
             novaUrl
+
 
         await substituirImagemPrincipal(
             novaUrl,
             false
         )
+
     } catch (erro) {
+
         console.error(
             'Erro ao trocar imagem:',
             erro
         )
 
+
         alert(
             'Não foi possível trocar a imagem.'
         )
+
     } finally {
+
         if (
             evento?.target
         ) {
+
             evento.target.value =
                 ''
         }
     }
 }
+
 
 /*
 |--------------------------------------------------------------------------
@@ -1888,53 +3156,79 @@ async function trocarImagemPrincipal(
 |--------------------------------------------------------------------------
 */
 
-function trocarCorFundo(cor) {
+function trocarCorFundo(
+    cor
+) {
+
     if (!fabricCanvas) {
         return
     }
+
 
     fabricCanvas.backgroundColor =
         cor === 'transparent'
             ? 'rgba(0,0,0,0)'
             : cor
 
+
     fabricCanvas.requestRenderAll()
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| EXPORTAR
+|--------------------------------------------------------------------------
+*/
 
 function exeportadorDesing() {
+
     if (!fabricCanvas) {
         return
     }
 
+
     fabricCanvas.discardActiveObject()
+
 
     fabricCanvas.requestRenderAll()
 
+
     const dataURL =
         fabricCanvas.toDataURL({
-            format: 'png',
-            quality: 1,
-            multiplier: 1
+
+            format:
+                'png',
+
+            quality:
+                1,
+
+            multiplier:
+                1
         })
+
 
     const link =
         document.createElement(
             'a'
         )
 
+
     link.download =
         `editado-${templateTitulo}.png`
 
+
     link.href =
         dataURL
+
 
     document.body.appendChild(
         link
     )
 
+
     link.click()
+
 
     document.body.removeChild(
         link
@@ -1942,609 +3236,1257 @@ function exeportadorDesing() {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| CICLO DE VIDA
+|--------------------------------------------------------------------------
+*/
 
 onMounted(() => {
+
     inicializarCanvas()
 
     verificarTamanhoTela()
 })
 
+
 onBeforeUnmount(() => {
+
     window.removeEventListener(
         'keydown',
         lidarComTeclado
     )
+
 
     window.removeEventListener(
         'resize',
         redimensionarCanvas
     )
 
+
     window.removeEventListener(
         'resize',
         verificarTamanhoTela
     )
 
+
     if (fabricCanvas) {
+
         fabricCanvas.off(
             'mouse:down',
             iniciarSelecaoArea
         )
+
 
         fabricCanvas.off(
             'mouse:move',
             atualizarSelecaoArea
         )
 
+
         fabricCanvas.off(
             'mouse:up',
             finalizarSelecaoArea
         )
 
+
         fabricCanvas.dispose()
+
 
         fabricCanvas = null
     }
 })
 </script>
 
+
 <template>
-    <div class="editor-interface">
 
-        <header class="editor-header">
+<div class="editor-interface">
 
-            <button
-                class="header-btn"
-                @click="router.push('/')"
-            >
-                <ion-icon name="arrow-back"></ion-icon>
-            </button>
 
-            <button class="header-btn">
-                <ion-icon name="home-outline"></ion-icon>
-            </button>
+    <!-- HEADER -->
 
-            <div class="header-spacer"></div>
+    <header class="editor-header">
 
-            <button class="header-btn">
-                <ion-icon name="people-outline"></ion-icon>
-            </button>
+        <button
+            class="header-btn"
+            @click="router.push('/')"
+        >
+            <ion-icon
+                name="arrow-back"
+            ></ion-icon>
+        </button>
 
-            <button
-                class="header-btn"
-                @click="exeportadorDesing"
-            >
-                <ion-icon name="download-outline"></ion-icon>
-            </button>
 
-        </header>
+        <button
+            class="header-btn"
+        >
+            <ion-icon
+                name="home-outline"
+            ></ion-icon>
+        </button>
 
-        <main
-            ref="canvasAreaRef"
-            class="canvas-area"
+
+        <div
+            class="header-spacer"
+        ></div>
+
+
+        <button
+            class="header-btn"
+        >
+            <ion-icon
+                name="people-outline"
+            ></ion-icon>
+        </button>
+
+
+        <button
+            class="header-btn"
+            @click="exeportadorDesing"
+        >
+            <ion-icon
+                name="download-outline"
+            ></ion-icon>
+        </button>
+
+    </header>
+
+
+
+    <!-- CANVAS -->
+
+    <main
+        ref="canvasAreaRef"
+        class="canvas-area"
+    >
+
+        <canvas
+            ref="canvasRef"
+        ></canvas>
+
+
+        <div
+            v-if="modoSelecaoArea"
+            class="aviso-selecao"
+        >
+            Desenhe um retângulo ao redor do objeto que você quer extrair
+        </div>
+
+
+        <div
+            v-if="extraindoArea"
+            class="aviso-selecao"
+        >
+            Extraindo...
+            {{ progressoArea }}%
+        </div>
+
+    </main>
+
+
+
+    <!-- FOOTER -->
+
+    <footer
+        class="editor-footer"
+    >
+
+
+        <!-- ================================================= -->
+        <!-- PAINEL TEXTO -->
+        <!-- ================================================= -->
+
+        <div
+            v-if="
+                menuAtivoAcima ===
+                'texto'
+            "
+            class="painel-flutuante aba-superior-texto"
         >
 
-            <canvas ref="canvasRef"></canvas>
-
             <div
-                v-if="modoSelecaoArea"
-                class="aviso-selecao"
+                class="texto-controles"
             >
-                Desenhe um retângulo ao redor do objeto que você quer extrair
-            </div>
 
-            <div
-                v-if="extraindoArea"
-                class="aviso-selecao"
-            >
-                Extraindo... {{ progressoArea }}%
-            </div>
 
-        </main>
-
-        <!-- FOOTER -->
-        <footer class="editor-footer">
-
-            <!-- PAINEL TEXTO -->
-          <!-- PAINEL TEXTO -->
-<div
-    v-if="menuAtivoAcima === 'texto'"
-    class="painel-flutuante aba-superior-texto"
->
-    <div class="texto-controles">
-
-        <!-- FONTE -->
-        <label class="controle-fonte">
-            <span>Fonte</span>
-
-            <select
-                v-model="fonteSelecionada"
-                @change="mudarFonteTexto"
-            >
-                <option
-                    v-for="fonte in fontesDisponiveis"
-                    :key="fonte"
-                    :value="fonte"
-                >
-                    {{ fonte }}
-                </option>
-            </select>
-        </label>
-
-        <!-- TAMANHO -->
-        <label class="controle-tamanho">
-            <span>Tamanho</span>
-
-            <input
-                v-model.number="tamanhoFonte"
-                type="number"
-                min="8"
-                max="200"
-                @input="atualizarAtributosTexto"
-            />
-        </label>
-
-        <!-- CORES -->
-        <div class="cores-texto">
-
-            <div
-                v-for="(cor, index) in coresVisiveis"
-                :key="`${cor}-${index}`"
-                class="cor-personalizada"
-            >
                 <label
-                    class="cor-texto"
-                    :style="{
-                        backgroundColor: cor
-                    }"
-                    :title="`Cor ${cor}`"
+                    class="controle-fonte"
                 >
-                    <input
-                        type="color"
-                        :value="cor"
-                        @input="
-                            alterarCorDaPaleta(
-                                index,
-                                $event.target.value
-                            )
-                        "
-                    />
-                </label>
-                <button
-                    v-if="!ehMobile || coresTexto.length > 1"
-                    class="apagar-cor"
-                    title="Apagar cor"
-                    @click="removerCorTexto(index)"
-                >
-                    ×
-                </button>
-            </div>
-            <button
-                class="botao-adicionar-cor"
-                title="Criar nova cor"
-                @click="adicionarCorTexto"
-            >
-                +
-            </button>
- 
-        </div>
- 
-    </div>
-</div>
-            <div
-                v-if="menuAtivoAcima === 'images'"
-                class="painel-flutuante aba-superior-img"
-            >
 
-                <div class="img-secao">
-
-                
-
-                    <button
-                        class="botao-acao"
-                        :disabled="extraindoObjeto"
-                        @click="extrairObjetoFlutuante"
-                    >
-
-                        <ion-icon name="copy-outline"></ion-icon>
-
-                        <span v-if="!extraindoObjeto">
-                            Extrair objeto (manter fundo)
-                        </span>
-
-                        <span v-else>
-                            Extraindo...
-                            {{ progressoExtracao }}%
-                        </span>
-
-                    </button>
-
-                    <button
-                        class="botao-acao"
-                        @click="ativarModoSelecaoArea"
-                    >
-
-                        <ion-icon name="scan-outline"></ion-icon>
-
-                        <span>
-                            Selecionar área e extrair
-                        </span>
-
-                    </button>
-
-                    <label class="botao-acao label-upload">
-
-                        <ion-icon name="image-outline"></ion-icon>
-
-                        <span>
-                            Trocar imagem
-                        </span>
-
-                        <input
-                            type="file"
-                            accept="image/png,image/jpeg,image/webp"
-                            class="input-oculto"
-                            @change="trocarImagemPrincipal"
-                        />
-
-                    </label>
-
-                </div>
-
-                <div class="img-secao">
-
-                    <span class="label-fonte">
-                        Cobrir buraco
+                    <span>
+                        Fonte
                     </span>
 
-                    <div class="remendo-controles">
 
-                        <input
-                            type="color"
-                            v-model="corRemendo"
-                            class="seletor-cor"
-                            title="Escolha a cor do remendo"
-                        />
+                    <select
+                        v-model="
+                            fonteSelecionada
+                        "
+                        @change="
+                            mudarFonteTexto
+                        "
+                    >
 
-                        <button
-                            class="botao-acao"
-                            @click="adicionarRemendo"
+                        <option
+                            v-for="
+                                fonte in
+                                fontesDisponiveis
+                            "
+                            :key="fonte"
+                            :value="fonte"
+                        >
+                            {{ fonte }}
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+
+                <label
+                    class="controle-tamanho"
+                >
+
+                    <span>
+                        Tamanho
+                    </span>
+
+
+                    <input
+                        v-model.number="
+                            tamanhoFonte
+                        "
+                        type="number"
+                        min="8"
+                        max="200"
+                        @input="
+                            atualizarAtributosTexto
+                        "
+                    />
+
+                </label>
+
+
+
+                <div
+                    class="cores-texto"
+                >
+
+                    <div
+                        v-for="
+                            (cor, index)
+                            in coresVisiveis
+                        "
+                        :key="
+                            `${cor}-${index}`
+                        "
+                        class="cor-personalizada"
+                    >
+
+                        <label
+                            class="cor-texto"
+                            :style="{
+                                backgroundColor:
+                                    cor
+                            }"
                         >
 
-                            <ion-icon name="square-outline"></ion-icon>
+                            <input
+                                type="color"
+                                :value="
+                                    cor
+                                "
+                                @input="
+                                    alterarCorDaPaleta(
+                                        index,
+                                        $event.target.value
+                                    )
+                                "
+                            />
 
-                            <span>
-                                Adicionar remendo
-                            </span>
+                        </label>
 
+
+                        <button
+                            v-if="
+                                !ehMobile ||
+                                coresTexto.length >
+                                    1
+                            "
+                            class="apagar-cor"
+                            @click="
+                                removerCorTexto(
+                                    index
+                                )
+                            "
+                        >
+                            ×
                         </button>
 
                     </div>
 
-                </div>
 
-                <div class="img-secao">
-
-                    <span class="label-fonte">
-                        Fundo do canvas
-                    </span>
-
-                    <div class="cores-predefinidas">
-
-                        <button
-                            class="circulo-cor branco"
-                            @click="
-                                trocarCorFundo(
-                                    '#ffffff'
-                                )
-                            "
-                        ></button>
-
-                        <button
-                            class="circulo-cor escuro"
-                            @click="
-                                trocarCorFundo(
-                                    '#111111'
-                                )
-                            "
-                        ></button>
-
-                        <button
-                            class="circulo-cor transp-borda"
-                            @click="
-                                trocarCorFundo(
-                                    'transparent'
-                                )
-                            "
-                        ></button>
-
-                    </div>
+                    <button
+                        class="
+                            botao-adicionar-cor
+                        "
+                        @click="
+                            adicionarCorTexto
+                        "
+                    >
+                        +
+                    </button>
 
                 </div>
 
             </div>
 
-<div
-    v-if="menuAtivoAcima === 'formas'"
-    class="painel-flutuante aba-superior-formas"
->
+        </div>
 
-    <div class="formas-lista">
 
-        <button
-            class="forma-btn"
-            @click="adicionarRetangulo"
-        >
-            <ion-icon
-                name="square-outline"
-            ></ion-icon>
 
-            <span>
-                Retângulo
-            </span>
-        </button>
+        <!-- ================================================= -->
+        <!-- PAINEL IMAGENS -->
+        <!-- ================================================= -->
 
-        <button
-            class="forma-btn"
-            @click="adicionarCirculo"
-        >
-            <ion-icon
-                name="ellipse-outline"
-            ></ion-icon>
-
-            <span>
-                Círculo
-            </span>
-        </button>
-
-        <button
-            class="forma-btn"
-            @click="adicionarTriangulo"
-        >
-            <ion-icon
-                name="triangle-outline"
-            ></ion-icon>
-
-            <span>
-                Triângulo
-            </span>
-        </button>
-
-        <button
-            class="forma-btn"
-            @click="adicionarEstrela"
-        >
-            <ion-icon
-                name="star-outline"
-            ></ion-icon>
-
-            <span>
-                Estrela
-            </span>
-        </button>
-
-    </div>
-
-    <div class="cor-forma-controle">
-
-        <span>
-            Cor
-        </span>
-
-        <input
-            type="color"
-            value="#FFFF"
-            class="seletor-cor-forma"
-            @input="
-                alterarCorForma(
-                    $event.target.value
-                )
+        <div
+            v-if="
+                menuAtivoAcima ===
+                'images'
             "
-        />
+            class="
+                painel-flutuante
+                aba-superior-img
+            "
+        >
 
-    </div>
+            <div
+                class="img-secao"
+            >
+
+                <button
+                    class="botao-acao"
+                    :disabled="
+                        extraindoObjeto
+                    "
+                    @click="
+                        extrairObjetoFlutuante
+                    "
+                >
+
+                    <ion-icon
+                        name="copy-outline"
+                    ></ion-icon>
+
+
+                    <span
+                        v-if="
+                            !extraindoObjeto
+                        "
+                    >
+                        Extrair objeto
+                        (manter fundo)
+                    </span>
+
+
+                    <span v-else>
+                        Extraindo...
+                        {{ progressoExtracao }}%
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="botao-acao"
+                    @click="
+                        ativarModoSelecaoArea
+                    "
+                >
+
+                    <ion-icon
+                        name="scan-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Selecionar área e extrair
+                    </span>
+
+                </button>
+
+
+                <label
+                    class="
+                        botao-acao
+                        label-upload
+                    "
+                >
+
+                    <ion-icon
+                        name="image-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Trocar imagem
+                    </span>
+
+
+                    <input
+                        type="file"
+                        accept="
+                            image/png,
+                            image/jpeg,
+                            image/webp
+                        "
+                        class="input-oculto"
+                        @change="
+                            trocarImagemPrincipal
+                        "
+                    />
+
+                </label>
+
+            </div>
+
+
+
+            <div
+                class="img-secao"
+            >
+
+                <span
+                    class="label-fonte"
+                >
+                    Cobrir buraco
+                </span>
+
+
+                <div
+                    class="remendo-controles"
+                >
+
+                    <input
+                        type="color"
+                        v-model="
+                            corRemendo
+                        "
+                        class="seletor-cor"
+                    />
+
+
+                    <button
+                        class="botao-acao"
+                        @click="
+                            adicionarRemendo
+                        "
+                    >
+
+                        <ion-icon
+                            name="square-outline"
+                        ></ion-icon>
+
+
+                        <span>
+                            Adicionar remendo
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <div
+                class="img-secao"
+            >
+
+                <span
+                    class="label-fonte"
+                >
+                    Fundo do canvas
+                </span>
+
+
+                <div
+                    class="cores-predefinidas"
+                >
+
+                    <button
+                        class="
+                            circulo-cor
+                            branco
+                        "
+                        @click="
+                            trocarCorFundo(
+                                '#ffffff'
+                            )
+                        "
+                    ></button>
+
+
+                    <button
+                        class="
+                            circulo-cor
+                            escuro
+                        "
+                        @click="
+                            trocarCorFundo(
+                                '#111111'
+                            )
+                        "
+                    ></button>
+
+
+                    <button
+                        class="
+                            circulo-cor
+                            transp-borda
+                        "
+                        @click="
+                            trocarCorFundo(
+                                'transparent'
+                            )
+                        "
+                    ></button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- PAINEL FORMAS -->
+        <!-- ================================================= -->
+
+        <div
+            v-if="
+                menuAtivoAcima ===
+                'formas'
+            "
+            class="
+                painel-flutuante
+                aba-superior-formas
+            "
+        >
+
+            <div
+                class="formas-lista"
+            >
+
+                <button
+                    class="forma-btn"
+                    @click="
+                        adicionarRetangulo
+                    "
+                >
+
+                    <ion-icon
+                        name="square-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Retângulo
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="forma-btn"
+                    @click="
+                        adicionarCirculo
+                    "
+                >
+
+                    <ion-icon
+                        name="ellipse-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Círculo
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="forma-btn"
+                    @click="
+                        adicionarTriangulo
+                    "
+                >
+
+                    <ion-icon
+                        name="triangle-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Triângulo
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="forma-btn"
+                    @click="
+                        adicionarEstrela
+                    "
+                >
+
+                    <ion-icon
+                        name="star-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Estrela
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="
+                    cor-forma-controle
+                "
+            >
+
+                <span>
+                    Cor
+                </span>
+
+
+                <input
+                    type="color"
+                    value="#FF5700"
+                    class="
+                        seletor-cor-forma
+                    "
+                    @input="
+                        alterarCorForma(
+                            $event.target.value
+                        )
+                    "
+                />
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- PAINEL CAMADAS -->
+        <!-- ================================================= -->
+
+        <div
+            v-if="
+                menuAtivoAcima ===
+                'camadas'
+            "
+            class="
+                painel-flutuante
+                aba-superior-camadas
+            "
+        >
+
+            <div
+                class="
+                    camadas-topo
+                "
+            >
+
+                <div
+                    class="
+                        camadas-titulo
+                    "
+                >
+
+                    <ion-icon
+                        name="layers-outline"
+                    ></ion-icon>
+
+
+                    <span>
+                        Camadas
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="
+                        camadas-acoes
+                    "
+                >
+
+                    <button
+                        class="
+                            camada-btn
+                        "
+                        @click="
+                            trazerParaFrente
+                        "
+                    >
+
+                        <ion-icon
+                            name="chevron-up-outline"
+                        ></ion-icon>
+
+
+                        <span>
+                            Frente
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="
+                            camada-btn
+                        "
+                        @click="
+                            enviarParaTras
+                        "
+                    >
+
+                        <ion-icon
+                            name="chevron-down-outline"
+                        ></ion-icon>
+
+
+                        <span>
+                            Trás
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="
+                            camada-btn
+                        "
+                        @click="
+                            trazerParaTopo
+                        "
+                    >
+
+                        <ion-icon
+                            name="arrow-up-outline"
+                        ></ion-icon>
+
+
+                        <span>
+                            Topo
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="
+                            camada-btn
+                        "
+                        @click="
+                            enviarParaFundo
+                        "
+                    >
+
+                        <ion-icon
+                            name="arrow-down-outline"
+                        ></ion-icon>
+
+
+                        <span>
+                            Fundo
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LISTA DE CAMADAS -->
+
+            <div
+                v-if="
+                    camadas.length
+                "
+                class="
+                    lista-camadas
+                "
+            >
+
+                <button
+                    v-for="
+                        camada in camadas
+                    "
+                    :key="
+                        camada.objeto.__uid ||
+                        camada.index
+                    "
+                    class="
+                        item-camada
+                    "
+                    :class="{
+                        selecionada:
+                            estaSelecionado(
+                                camada.objeto
+                            ),
+
+                        bloqueada:
+                            camada.objeto ===
+                            imagemPrincipal
+                    }"
+                    @click="
+                        selecionarCamada(
+                            camada
+                        )
+                    "
+                >
+
+                    <ion-icon
+                        :name="
+                            camada.icone
+                        "
+                    ></ion-icon>
+
+
+                    <span
+                        class="
+                            nome-camada
+                        "
+                    >
+                        {{ camada.nome }}
+                    </span>
+
+
+                    <span
+                        v-if="
+                            camada.objeto ===
+                            imagemPrincipal
+                        "
+                        class="
+                            fundo-label
+                        "
+                    >
+                        Fundo
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div
+                v-else
+                class="
+                    nenhuma-camada
+                "
+            >
+                Nenhuma camada
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- FERRAMENTAS -->
+        <!-- ================================================= -->
+
+        <div
+            class="
+                ferramentas-container-fixo
+            "
+        >
+
+            <button
+                class="tool-btn"
+                :class="{
+                    ativo:
+                        menuAtivoAcima ===
+                        'texto'
+                }"
+                @click="
+                    clicarTextoNoFooter
+                "
+            >
+
+                <ion-icon
+                    name="text-outline"
+                ></ion-icon>
+
+
+                <span>
+                    Texto
+                </span>
+
+            </button>
+
+
+            <button
+                class="tool-btn"
+                :class="{
+                    ativo:
+                        menuAtivoAcima ===
+                        'formas'
+                }"
+                @click="
+                    clicarFormasNoFooter
+                "
+            >
+
+                <ion-icon
+                    name="shapes-outline"
+                ></ion-icon>
+
+
+                <span>
+                    Formas
+                </span>
+
+            </button>
+
+
+            <button
+                class="tool-btn"
+                :class="{
+                    ativo:
+                        menuAtivoAcima ===
+                        'images'
+                }"
+                @click="
+                    clicarImagesNoFooter
+                "
+            >
+
+                <ion-icon
+                    name="images-outline"
+                ></ion-icon>
+
+
+                <span>
+                    Imagens
+                </span>
+
+            </button>
+
+
+            <button
+                class="tool-btn"
+                :class="{
+                    ativo:
+                        menuAtivoAcima ===
+                        'camadas'
+                }"
+                @click="
+                    clicarCamadasNoFooter
+                "
+            >
+
+                <ion-icon
+                    name="layers-outline"
+                ></ion-icon>
+
+
+                <span>
+                    Camadas
+                </span>
+
+            </button>
+
+
+            <button
+                class="tool-btn"
+                @click="
+                    deletarSelecionado
+                "
+            >
+
+                <ion-icon
+                    name="trash-outline"
+                ></ion-icon>
+
+
+                <span>
+                    Excluir
+                </span>
+
+            </button>
+
+        </div>
+
+    </footer>
 
 </div>
-            <div class="ferramentas-container-fixo">
 
-                <button
-                    class="tool-btn"
-                    :class="{
-                        ativo:
-                            menuAtivoAcima === 'texto'
-                    }"
-                    @click="clicarTextoNoFooter"
-                >
-
-                    <ion-icon name="text-outline"></ion-icon>
-
-                    <span>
-                        Texto
-                    </span>
-
-                </button>
-
-                <button
-                    class="tool-btn"
-                    :class="{
-                        ativo:
-                            menuAtivoAcima === 'formas'
-                    }"
-                    @click="clicarFormasNoFooter"
-                >
-
-                    <ion-icon name="shapes-outline"></ion-icon>
-
-                    <span>
-                        Formas
-                    </span>
-
-                </button>
-
-                <button
-                    class="tool-btn"
-                    :class="{
-                        ativo:
-                            menuAtivoAcima === 'images'
-                    }"
-                    @click="clicarImagesNoFooter"
-                >
-
-                    <ion-icon name="images-outline"></ion-icon>
-
-                    <span>
-                        Imagens
-                    </span>
-
-                </button>
-
-                <button
-                    class="tool-btn"
-                    @click="deletarSelecionado"
-                >
-
-                    <ion-icon name="trash-outline"></ion-icon>
-
-                    <span>
-                        Excluir
-                    </span>
-
-                </button>
-
-            </div>
-
-        </footer>
-
-    </div>
 </template>
 
+
 <style scoped>
+
 * {
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
 }
+
 
 .editor-interface {
-    display: flex;
-    flex-direction: column;
 
-    width: 100vw;
-    height: 100vh;
+    display:
+        flex;
 
-    overflow: hidden;
+    flex-direction:
+        column;
 
-    font-family: system-ui, sans-serif;
+    width:
+        100vw;
+
+    height:
+        100vh;
+
+    overflow:
+        hidden;
+
+    font-family:
+        system-ui,
+        sans-serif;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
 
 .editor-header {
-    flex: 0 0 50px;
 
-    display: flex;
-    align-items: center;
+    flex:
+        0 0 50px;
 
-    width: 100%;
+    display:
+        flex;
 
-    padding: 0 16px;
+    align-items:
+        center;
 
-    background-color: #FF5700;
+    width:
+        100%;
+
+    padding:
+        0 16px;
+
+    background-color:
+        #FF5700;
 }
+
 
 .header-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    width: 40px;
-    height: 40px;
+    display:
+        flex;
 
-    background: transparent;
-    border: none;
+    align-items:
+        center;
 
-    color: white;
+    justify-content:
+        center;
 
-    cursor: pointer;
+    width:
+        40px;
+
+    height:
+        40px;
+
+    background:
+        transparent;
+
+    border:
+        none;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
 }
+
 
 .header-btn ion-icon {
-    font-size: 25px;
+
+    font-size:
+        25px;
 }
+
 
 .header-spacer {
-    flex: 1;
+    flex:
+        1;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| CANVAS
+|--------------------------------------------------------------------------
+*/
 
 .canvas-area {
-    position: relative;
 
-    flex: 1 1 auto;
+    position:
+        relative;
 
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height:
+        0;
 
-    width: 100%;
+    display:
+        flex;
 
-    background-color: #262626;
+    align-items:
+        center;
 
-    overflow: hidden;
+    justify-content:
+        center;
+
+    width:
+        100%;
+
+    background-color:
+        #262626;
+
+    overflow:
+        hidden;
 }
+
 
 .canvas-area canvas {
-    display: block;
+
+    display:
+        block;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| AVISOS
+|--------------------------------------------------------------------------
+*/
 
 .aviso-selecao {
-    position: absolute;
 
-    top: 12px;
-    left: 50%;
+    position:
+        absolute;
 
-    transform: translateX(-50%);
+    top:
+        12px;
 
-    z-index: 15;
+    left:
+        50%;
 
-    padding: 8px 16px;
+    transform:
+        translateX(-50%);
 
-    background: rgba(
-        30,
-        30,
-        30,
-        0.9
-    );
+    z-index:
+        15;
 
-    border: 1px solid #FF5700;
+    padding:
+        8px 16px;
 
-    border-radius: 20px;
+    background:
+        rgba(
+            30,
+            30,
+            30,
+            0.9
+        );
 
-    color: white;
+    border:
+        1px solid #FF5700;
 
-    font-size: 13px;
+    border-radius:
+        20px;
 
-    white-space: nowrap;
+    color:
+        white;
 
-    pointer-events: none;
+    font-size:
+        13px;
+
+    white-space:
+        nowrap;
+
+    pointer-events:
+        none;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
 
 .editor-footer {
-    position: relative;
 
-    flex: 0 0 56px;
+    position:
+        relative;
 
-    width: 100%;
+    flex:
+        0 0 56px;
 
-    z-index: 20;
+    width:
+        100%;
+
+    z-index:
+        20;
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| PAINÉIS
+|--------------------------------------------------------------------------
+*/
+
 .painel-flutuante {
-    position: absolute;
 
-    left: 0;
-    right: 0;
+    position:
+        absolute;
 
-    bottom: 100%;
+    left:
+        0;
 
-    z-index: 30;
+    right:
+        0;
+
+    bottom:
+        100%;
+
+    z-index:
+        30;
 
     box-shadow:
         0 -6px 16px
@@ -2556,132 +4498,393 @@ onBeforeUnmount(() => {
         );
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| TEXTO
+|--------------------------------------------------------------------------
+*/
+
 .aba-superior-texto {
-    height: 60px;
 
-    display: flex;
-    align-items: center;
+    min-height:
+        76px;
 
-    padding: 0 16px;
+    display:
+        flex;
 
-    background-color: #1e1e1e;
+    align-items:
+        center;
+
+    padding:
+        10px 16px;
+
+    background-color:
+        #1e1e1e;
 
     border-bottom:
         1px solid #2d2d2d;
+
+    overflow-x:
+        auto;
 }
+
 
 .texto-controles {
-    display: flex;
-    align-items: center;
 
-    gap: 20px;
+    display:
+        flex;
 
-    color: white;
+    align-items:
+        center;
+
+    gap:
+        18px;
+
+    color:
+        white;
+
+    width:
+        100%;
 }
 
-.texto-controles label {
-    display: flex;
-    align-items: center;
 
-    gap: 8px;
+.controle-fonte,
+.controle-tamanho {
 
-    font-size: 13px;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    font-size:
+        13px;
+
+    white-space:
+        nowrap;
 }
 
-.texto-controles input {
-    width: 70px;
 
-    padding: 6px;
+.controle-fonte select {
 
-    border: 1px solid #555;
+    min-width:
+        150px;
 
-    border-radius: 6px;
+    padding:
+        7px 10px;
 
-    background: #111;
+    border:
+        1px solid #555;
 
-    color: white;
+    border-radius:
+        6px;
+
+    background:
+        #111;
+
+    color:
+        white;
+
+    outline:
+        none;
+
+    cursor:
+        pointer;
 }
+
+
+.controle-tamanho input {
+
+    width:
+        65px;
+
+    padding:
+        7px;
+
+    border:
+        1px solid #555;
+
+    border-radius:
+        6px;
+
+    background:
+        #111;
+
+    color:
+        white;
+
+    outline:
+        none;
+}
+
 
 .cores-texto {
-    display: flex;
 
-    gap: 8px;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    flex-wrap:
+        nowrap;
 }
+
+
+.cor-personalizada {
+
+    position:
+        relative;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+}
+
 
 .cor-texto {
-    width: 24px;
-    height: 24px;
 
-    border-radius: 50%;
+    position:
+        relative;
 
-    border: 2px solid white;
+    display:
+        block;
 
-    cursor: pointer;
+    width:
+        30px;
+
+    height:
+        30px;
+
+    border-radius:
+        50%;
+
+    border:
+        2px solid white;
+
+    cursor:
+        pointer;
+
+    overflow:
+        hidden;
+
+    flex-shrink:
+        0;
 }
 
-.cor-texto.branco {
-    background: white;
+
+.cor-texto input {
+
+    position:
+        absolute;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    opacity:
+        0;
+
+    cursor:
+        pointer;
+
+    top:
+        0;
+
+    left:
+        0;
 }
 
-.cor-texto.laranja {
-    background: #FF5700;
+
+.apagar-cor {
+
+    position:
+        absolute;
+
+    top:
+        -8px;
+
+    right:
+        -8px;
+
+    width:
+        17px;
+
+    height:
+        17px;
+
+    padding:
+        0;
+
+    border:
+        none;
+
+    border-radius:
+        50%;
+
+    background:
+        #333;
+
+    color:
+        white;
+
+    font-size:
+        12px;
+
+    line-height:
+        17px;
+
+    cursor:
+        pointer;
+
+    z-index:
+        5;
 }
 
-.cor-texto.preto {
-    background: #111;
+
+.botao-adicionar-cor {
+
+    width:
+        30px;
+
+    height:
+        30px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    border:
+        1px dashed #777;
+
+    background:
+        transparent;
+
+    color:
+        white;
+
+    font-size:
+        20px;
+
+    cursor:
+        pointer;
+
+    flex-shrink:
+        0;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| IMAGENS
+|--------------------------------------------------------------------------
+*/
 
 .aba-superior-img {
-    max-height: 340px;
 
-    overflow-y: auto;
+    max-height:
+        340px;
 
-    display: flex;
-    flex-direction: column;
+    overflow-y:
+        auto;
 
-    justify-content: center;
+    display:
+        flex;
 
-    gap: 18px;
+    flex-direction:
+        column;
 
-    padding: 16px;
+    justify-content:
+        center;
 
-    background-color: #1e1e1e;
+    gap:
+        18px;
+
+    padding:
+        16px;
+
+    background-color:
+        #1e1e1e;
 
     border-bottom:
         1px solid #2d2d2d;
 }
 
-.img-secao {
-    display: flex;
-    flex-direction: column;
 
-    gap: 10px;
+.img-secao {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        10px;
 }
+
 
 .botao-acao {
-    display: flex;
-    align-items: center;
 
-    gap: 10px;
+    display:
+        flex;
 
-    width: fit-content;
+    align-items:
+        center;
 
-    padding: 10px 14px;
+    gap:
+        10px;
 
-    background: transparent;
+    width:
+        fit-content;
 
-    border: 1px solid #FF5700;
+    padding:
+        10px 14px;
 
-    border-radius: 10px;
+    background:
+        transparent;
 
-    color: white;
+    border:
+        1px solid #FF5700;
 
-    font-size: 14px;
+    border-radius:
+        10px;
 
-    cursor: pointer;
+    color:
+        white;
+
+    font-size:
+        14px;
+
+    cursor:
+        pointer;
 }
 
+
 .botao-acao:hover {
+
     background:
         rgba(
             255,
@@ -2691,88 +4894,139 @@ onBeforeUnmount(() => {
         );
 }
 
-.botao-acao:disabled {
-    opacity: 0.6;
 
-    cursor: not-allowed;
+.botao-acao:disabled {
+
+    opacity:
+        0.6;
+
+    cursor:
+        not-allowed;
 }
+
 
 .botao-acao ion-icon {
-    font-size: 18px;
 
-    color: #FF5700;
+    font-size:
+        18px;
+
+    color:
+        #FF5700;
 }
+
 
 .label-upload {
-    position: relative;
+
+    position:
+        relative;
 }
+
 
 .input-oculto {
-    display: none;
+    display:
+        none;
 }
+
 
 .label-fonte {
-    color: white;
 
-    font-size: 13px;
+    color:
+        white;
+
+    font-size:
+        13px;
 }
+
 
 .remendo-controles {
-    display: flex;
-    align-items: center;
 
-    gap: 10px;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
 }
+
 
 .seletor-cor {
-    width: 40px;
-    height: 34px;
 
-    padding: 0;
+    width:
+        40px;
 
-    border: 1px solid #555;
+    height:
+        34px;
 
-    border-radius: 6px;
+    padding:
+        0;
 
-    background: transparent;
+    border:
+        1px solid #555;
 
-    cursor: pointer;
+    border-radius:
+        6px;
+
+    background:
+        transparent;
+
+    cursor:
+        pointer;
 }
+
 
 .cores-predefinidas {
-    display: flex;
-    align-items: center;
 
-    gap: 10px;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
 }
+
 
 .circulo-cor {
-    width: 24px;
-    height: 24px;
 
-    border-radius: 50%;
+    width:
+        24px;
 
-    border: none;
+    height:
+        24px;
 
-    cursor: pointer;
+    border-radius:
+        50%;
+
+    border:
+        none;
+
+    cursor:
+        pointer;
 }
+
 
 .circulo-cor.branco {
-    background-color: #ffffff;
+    background-color:
+        #ffffff;
 }
 
-.circulo-cor.laranja {
-    background-color: #FF5700;
-}
 
 .circulo-cor.escuro {
-    background-color: #111111;
+    background-color:
+        #111111;
 }
 
-.circulo-cor.transp-borda {
-    background-color: transparent;
 
-    border: 2px solid white;
+.circulo-cor.transp-borda {
+
+    background-color:
+        transparent;
+
+    border:
+        2px solid white;
 
     background-image:
         linear-gradient(
@@ -2796,7 +5050,8 @@ onBeforeUnmount(() => {
             #666 75%
         );
 
-    background-size: 8px 8px;
+    background-size:
+        8px 8px;
 
     background-position:
         0 0,
@@ -2805,391 +5060,108 @@ onBeforeUnmount(() => {
         -4px 0;
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| FORMAS
+|--------------------------------------------------------------------------
+*/
+
 .aba-superior-formas {
-    height: 70px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height:
+        110px;
 
-    gap: 30px;
+    display:
+        flex;
 
-    background-color: #1e1e1e;
+    align-items:
+        center;
 
-    border-bottom:
-        1px solid #2d2d2d;
-}
+    justify-content:
+        center;
 
-.forma-btn {
-    display: flex;
-    align-items: center;
+    gap:
+        30px;
 
-    gap: 8px;
+    padding:
+        15px;
 
-    padding: 8px 14px;
-
-    border: 1px solid #FF5700;
-
-    border-radius: 8px;
-
-    background: transparent;
-
-    color: white;
-
-    cursor: pointer;
-}
-
-.forma-btn ion-icon {
-    font-size: 20px;
-
-    color: #FF5700;
-}
-
-.ferramentas-container-fixo {
-    height: 56px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-
-    width: 100%;
-
-    background-color: #1e1e1e;
-
-    position: relative;
-
-    z-index: 40;
-}
-
-.tool-btn {
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 2px;
-
-    width: 70px;
-    height: 56px;
-
-    background: transparent;
-
-    border: none;
-
-    color: #ffffff;
-
-    cursor: pointer;
-
-    font-size: 11px;
-}
-
-.tool-btn ion-icon {
-    font-size: 22px;
-}
-
-.tool-btn:hover {
-    color: #FF5700;
-}
-
-.tool-btn.ativo {
-    color: #FF5700;
-}
-
-@media (max-width: 600px) {
-    .editor-header {
-        padding: 0 8px;
-    }
-
-    .tool-btn {
-        width: 60px;
-    }
-
-    .aba-superior-img {
-        max-height: 300px;
-    }
-
-    .botao-acao {
-        font-size: 13px;
-    }
-}
-
-
-.aba-superior-texto {
-    min-height: 76px;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 10px 16px;
-
-    background-color: #1e1e1e;
+    background-color:
+        #1e1e1e;
 
     border-bottom:
         1px solid #2d2d2d;
-
-    overflow-x: auto;
 }
 
-.texto-controles {
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-
-    color: white;
-
-    width: 100%;
-}
-
-.controle-fonte {
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    font-size: 13px;
-
-    white-space: nowrap;
-}
-
-.controle-fonte select {
-    min-width: 150px;
-
-    padding: 7px 10px;
-
-    border: 1px solid #555;
-
-    border-radius: 6px;
-
-    background: #111;
-
-    color: white;
-
-    outline: none;
-
-    cursor: pointer;
-}
-
-.controle-fonte select:focus {
-    border-color: #FF5700;
-}
-
-.controle-tamanho {
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    font-size: 13px;
-
-    white-space: nowrap;
-}
-
-.controle-tamanho input {
-    width: 65px;
-
-    padding: 7px;
-
-    border: 1px solid #555;
-
-    border-radius: 6px;
-
-    background: #111;
-
-    color: white;
-
-    outline: none;
-}
-
-.cores-texto {
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    flex-wrap: nowrap;
-}
-
-.cor-personalizada {
-    position: relative;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-}
-
-.cor-texto {
-    position: relative;
-
-    display: block;
-
-    width: 30px;
-
-    height: 30px;
-
-    border-radius: 50%;
-
-    border: 2px solid white;
-
-    cursor: pointer;
-
-    overflow: hidden;
-
-    flex-shrink: 0;
-}
-
-.cor-texto input {
-    position: absolute;
-
-    width: 100%;
-
-    height: 100%;
-
-    opacity: 0;
-
-    cursor: pointer;
-
-    top: 0;
-
-    left: 0;
-}
-
-.apagar-cor {
-    position: absolute;
-
-    top: -8px;
-
-    right: -8px;
-
-    width: 17px;
-
-    height: 17px;
-
-    padding: 0;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: #333;
-
-    color: white;
-
-    font-size: 12px;
-
-    line-height: 17px;
-
-    cursor: pointer;
-
-    z-index: 5;
-}
-
-.apagar-cor:hover {
-    background: #FF5700;
-}
-
-.botao-adicionar-cor {
-    width: 30px;
-
-    height: 30px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 50%;
-
-    border: 1px dashed #777;
-
-    background: transparent;
-
-    color: white;
-
-    font-size: 20px;
-
-    cursor: pointer;
-
-    flex-shrink: 0;
-}
-
-.botao-adicionar-cor:hover {
-    border-color: #FF5700;
-
-    color: #FF5700;
-}
-.aba-superior-formas {
-    min-height: 110px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 30px;
-
-    padding: 15px;
-
-    background-color: #1e1e1e;
-
-    border-bottom:
-        1px solid #2d2d2d;
-}
 
 .formas-lista {
-    display: flex;
 
-    align-items: center;
+    display:
+        flex;
 
-    gap: 12px;
+    align-items:
+        center;
 
-    flex-wrap: wrap;
+    gap:
+        12px;
 
-    justify-content: center;
+    flex-wrap:
+        wrap;
+
+    justify-content:
+        center;
 }
+
 
 .forma-btn {
-    display: flex;
 
-    flex-direction: column;
+    display:
+        flex;
 
-    align-items: center;
+    flex-direction:
+        column;
 
-    justify-content: center;
+    align-items:
+        center;
 
-    gap: 5px;
+    justify-content:
+        center;
 
-    min-width: 75px;
+    gap:
+        5px;
 
-    min-height: 60px;
+    min-width:
+        75px;
 
-    padding: 8px 12px;
+    min-height:
+        60px;
 
-    border: 1px solid #FF5700;
+    padding:
+        8px 12px;
 
-    border-radius: 8px;
+    border:
+        1px solid #FF5700;
 
-    background: transparent;
+    border-radius:
+        8px;
 
-    color: white;
+    background:
+        transparent;
 
-    cursor: pointer;
+    color:
+        white;
 
-    transition: 0.2s;
+    cursor:
+        pointer;
+
+    transition:
+        0.2s;
 }
 
+
 .forma-btn:hover {
+
     background:
         rgba(
             255,
@@ -3199,106 +5171,702 @@ onBeforeUnmount(() => {
         );
 }
 
-.forma-btn ion-icon {
-    font-size: 22px;
 
-    color: #FF5700;
+.forma-btn ion-icon {
+
+    font-size:
+        22px;
+
+    color:
+        #FF5700;
 }
+
 
 .cor-forma-controle {
-    display: flex;
 
-    align-items: center;
+    display:
+        flex;
 
-    gap: 8px;
+    align-items:
+        center;
 
-    color: white;
+    gap:
+        8px;
 
-    font-size: 13px;
+    color:
+        white;
 
-    white-space: nowrap;
+    font-size:
+        13px;
+
+    white-space:
+        nowrap;
 }
+
 
 .seletor-cor-forma {
-    width: 38px;
 
-    height: 32px;
+    width:
+        38px;
 
-    padding: 0;
+    height:
+        32px;
 
-    border: 1px solid #555;
+    padding:
+        0;
 
-    border-radius: 6px;
+    border:
+        1px solid #555;
 
-    background: transparent;
+    border-radius:
+        6px;
 
-    cursor: pointer;
+    background:
+        transparent;
+
+    cursor:
+        pointer;
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| CAMADAS
+|--------------------------------------------------------------------------
+*/
+
+.aba-superior-camadas {
+
+    min-height:
+        180px;
+
+    max-height:
+        350px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    padding:
+        14px 18px;
+
+    background-color:
+        #1e1e1e;
+
+    border-bottom:
+        1px solid #2d2d2d;
+
+    overflow-y:
+        auto;
+}
+
+
+.camadas-topo {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    margin-bottom:
+        12px;
+}
+
+
+.camadas-titulo {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    color:
+        white;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    white-space:
+        nowrap;
+}
+
+
+.camadas-titulo ion-icon {
+
+    color:
+        #FF5700;
+
+    font-size:
+        22px;
+}
+
+
+.camadas-acoes {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    flex-wrap:
+        wrap;
+
+    justify-content:
+        flex-end;
+}
+
+
+.camada-btn {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        6px;
+
+    min-height:
+        36px;
+
+    padding:
+        7px 10px;
+
+    background:
+        transparent;
+
+    border:
+        1px solid #FF5700;
+
+    border-radius:
+        7px;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    transition:
+        0.2s;
+}
+
+
+.camada-btn:hover {
+
+    background:
+        rgba(
+            255,
+            87,
+            0,
+            0.15
+        );
+}
+
+
+.camada-btn ion-icon {
+
+    color:
+        #FF5700;
+
+    font-size:
+        17px;
+}
+
+
+.camada-btn span {
+
+    font-size:
+        11px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| LISTA DE CAMADAS
+|--------------------------------------------------------------------------
+*/
+
+.lista-camadas {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+    width:
+        100%;
+}
+
+
+.item-camada {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    width:
+        100%;
+
+    min-height:
+        36px;
+
+    padding:
+        6px 10px;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        7px;
+
+    background:
+        #272727;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    text-align:
+        left;
+
+    transition:
+        0.15s;
+}
+
+
+.item-camada:hover {
+
+    background:
+        #303030;
+
+    border-color:
+        #555;
+}
+
+
+.item-camada.selecionada {
+
+    background:
+        rgba(
+            255,
+            87,
+            0,
+            0.15
+        );
+
+    border-color:
+        #FF5700;
+
+    color:
+        #FF5700;
+}
+
+
+.item-camada.bloqueada {
+
+    cursor:
+        default;
+
+    opacity:
+        0.65;
+}
+
+
+.item-camada > ion-icon {
+
+    font-size:
+        18px;
+
+    flex-shrink:
+        0;
+}
+
+
+.nome-camada {
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+
+    flex:
+        1;
+
+    font-size:
+        12px;
+}
+
+
+.fundo-label {
+
+    color:
+        #888;
+
+    font-size:
+        10px;
+
+    flex-shrink:
+        0;
+}
+
+
+.nenhuma-camada {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        60px;
+
+    color:
+        #777;
+
+    font-size:
+        13px;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| FERRAMENTAS
+|--------------------------------------------------------------------------
+*/
+
+.ferramentas-container-fixo {
+
+    height:
+        56px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-around;
+
+    width:
+        100%;
+
+    background-color:
+        #1e1e1e;
+
+    position:
+        relative;
+
+    z-index:
+        40;
+}
+
+
+.tool-btn {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        2px;
+
+    width:
+        70px;
+
+    height:
+        56px;
+
+    background:
+        transparent;
+
+    border:
+        none;
+
+    color:
+        #ffffff;
+
+    cursor:
+        pointer;
+
+    font-size:
+        11px;
+}
+
+
+.tool-btn ion-icon {
+
+    font-size:
+        22px;
+}
+
+
+.tool-btn:hover {
+
+    color:
+        #FF5700;
+}
+
+
+.tool-btn.ativo {
+
+    color:
+        #FF5700;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
 
 @media (max-width: 600px) {
 
-    .aba-superior-texto {
-        min-height: 105px;
+    .editor-header {
 
-        padding: 10px;
-
-        overflow-x: auto;
+        padding:
+            0 8px;
     }
+
+
+    .tool-btn {
+
+        width:
+            60px;
+    }
+
+
+    .aba-superior-img {
+
+        max-height:
+            300px;
+    }
+
+
+    .botao-acao {
+
+        font-size:
+            13px;
+    }
+
+
+    .aba-superior-texto {
+
+        min-height:
+            105px;
+
+        padding:
+            10px;
+
+        overflow-x:
+            auto;
+    }
+
 
     .texto-controles {
-        gap: 10px;
 
-        min-width: max-content;
+        gap:
+            10px;
+
+        min-width:
+            max-content;
     }
+
 
     .controle-fonte select {
-        min-width: 125px;
+
+        min-width:
+            125px;
     }
+
 
     .cores-texto {
-        gap: 7px;
+
+        gap:
+            7px;
     }
+
 
     .cor-texto {
-        width: 27px;
 
-        height: 27px;
+        width:
+            27px;
+
+        height:
+            27px;
     }
+
 
     .botao-adicionar-cor {
-        width: 27px;
 
-        height: 27px;
+        width:
+            27px;
+
+        height:
+            27px;
     }
+
 
     .aba-superior-formas {
-        min-height: 130px;
 
-        gap: 12px;
+        min-height:
+            130px;
 
-        flex-direction: column;
+        gap:
+            12px;
 
-        overflow-y: auto;
+        flex-direction:
+            column;
+
+        overflow-y:
+            auto;
     }
+
 
     .formas-lista {
-        gap: 8px;
+
+        gap:
+            8px;
     }
+
 
     .forma-btn {
-        min-width: 65px;
 
-        min-height: 55px;
+        min-width:
+            65px;
 
-        padding: 6px 8px;
+        min-height:
+            55px;
 
-        font-size: 11px;
+        padding:
+            6px 8px;
+
+        font-size:
+            11px;
     }
+
 
     .forma-btn ion-icon {
-        font-size: 20px;
+
+        font-size:
+            20px;
     }
+
+
+    .aba-superior-camadas {
+
+        min-height:
+            200px;
+
+        max-height:
+            350px;
+
+        padding:
+            10px;
+    }
+
+
+    .camadas-topo {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        gap:
+            10px;
+    }
+
+
+    .camadas-titulo {
+
+        justify-content:
+            center;
+    }
+
+
+    .camadas-acoes {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+
+        width:
+            100%;
+    }
+
+
+    .camada-btn {
+
+        width:
+            100%;
+    }
+
+
+    .item-camada {
+
+        min-height:
+            40px;
+    }
+
 }
 </style>

@@ -45,18 +45,35 @@ export function useAmigos() {
     await amizadesApi.recusar(id)
     await carregarPendentes()
   }
+  async function buscarUsuario(id) {
+  erro.value = null
 
-  return {
-    resultadosBusca,
-    amigos,
-    pendentes,
-    carregando,
-    erro,
-    buscarPessoas,
-    enviarPedido,
-    carregarAmigos,
-    carregarPendentes,
-    aceitarPedido,
-    recusarPedido,
+  try {
+    const { data } = await amizadesApi.buscarUsuario(id)
+
+    return data
+  } catch (e) {
+    console.error('Erro ao buscar usuário:', e)
+
+    erro.value = 'Não foi possível carregar o perfil.'
+
+    throw e
   }
-} 
+}
+return {
+  resultadosBusca,
+  amigos,
+  pendentes,
+  carregando,
+  erro,
+
+  buscarPessoas,
+  buscarUsuario,
+
+  enviarPedido,
+  carregarAmigos,
+  carregarPendentes,
+  aceitarPedido,
+  recusarPedido,
+}
+}

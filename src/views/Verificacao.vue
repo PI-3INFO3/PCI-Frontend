@@ -70,7 +70,7 @@ function cancelarAutenticacao() {
 <template>
   <div class="verificacao-tela-cheia">
     
-    <img src="/logo-96x96.png" alt="SOUL Logo" class="logo-soul">
+    <img src="/icons/logo-96x96.png" alt="SOUL Logo" class="logo-soul">
 
     <ToastNotification
       :mensagem="mensagem"
