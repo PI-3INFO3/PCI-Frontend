@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import amizadesApi from '@/api/amizadesApi'
+import usuariosApi from '@/api/usuariosApi'
 
 export function useAmigos() {
   const resultadosBusca = ref([])
@@ -49,7 +50,7 @@ export function useAmigos() {
   erro.value = null
 
   try {
-    const { data } = await amizadesApi.buscarUsuario(id)
+    const { data } = await usuariosApi.obterPorId(id)
 
     return data
   } catch (e) {

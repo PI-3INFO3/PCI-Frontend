@@ -169,21 +169,16 @@ function inicialUsuario(usuario) {
     </div>
 
 
-    <!-- =====================================
-         ERRO
-    ====================================== -->
 
     <div
       v-if="erro && termo.trim()"
       class="mensagem-erro"
     >
+    
       {{ erro }}
     </div>
 
 
-    <!-- =====================================
-         RESULTADOS DA PESQUISA
-    ====================================== -->
 
     <section
       v-if="termo.trim()"
@@ -195,7 +190,6 @@ function inicialUsuario(usuario) {
       </span>
 
 
-      <!-- CARREGANDO -->
 
       <div
         v-if="carregando"
@@ -205,7 +199,6 @@ function inicialUsuario(usuario) {
       </div>
 
 
-      <!-- RESULTADOS -->
 
       <div
         v-else-if="resultadosBusca.length"
@@ -219,11 +212,9 @@ function inicialUsuario(usuario) {
           @click="abrirPerfil(usuario)"
         >
 
-          <!-- INFORMAÇÕES -->
 
           <div class="busca-info">
 
-            <!-- FOTO -->
 
             <img
               v-if="usuario.profile_photo?.url"
@@ -233,7 +224,6 @@ function inicialUsuario(usuario) {
             />
 
 
-            <!-- AVATAR SEM FOTO -->
 
             <div
               v-else
@@ -243,7 +233,6 @@ function inicialUsuario(usuario) {
             </div>
 
 
-            <!-- NOME E EMAIL -->
 
             <div class="usuario-info">
 
@@ -263,18 +252,12 @@ function inicialUsuario(usuario) {
           </div>
 
 
-          <!-- SETA -->
-
-          <span class="seta">
-            →
-          </span>
-
+        
         </div>
 
       </div>
 
 
-      <!-- NENHUM RESULTADO -->
 
       <div
         v-else
@@ -285,10 +268,6 @@ function inicialUsuario(usuario) {
 
     </section>
 
-
-    <!-- =====================================
-         LISTA DE AMIGOS
-    ====================================== -->
 
     <section
       v-else
@@ -359,35 +338,12 @@ function inicialUsuario(usuario) {
           </div>
 
 
-          <!-- SETA -->
-
-          <span class="seta">
-            →
-          </span>
-
         </div>
 
       </div>
 
     </section>
 
-
-    <!-- =====================================
-         BOTÃO +
-    ====================================== -->
-
-    <button
-      class="botao-flutuante"
-      type="button"
-      @click="termo = ''"
-    >
-      +
-    </button>
-
-
-    <!-- =====================================
-         FOOTER
-    ====================================== -->
 
     <FooterComponents />
 
@@ -397,9 +353,6 @@ function inicialUsuario(usuario) {
 
 <style scoped>
 
-/* ==========================================
-   CONTAINER
-========================================== */
 
 .lista-container {
   position: relative;
@@ -515,11 +468,6 @@ function inicialUsuario(usuario) {
   transition: 0.2s ease;
 }
 
-.busca-item:hover {
-  background: #292929;
-
-  border-color: #ff7500;
-}
 
 
 /* ==========================================
@@ -612,24 +560,16 @@ function inicialUsuario(usuario) {
 }
 
 
-/* ==========================================
-   SETA
-========================================== */
-
-.seta {
-  flex-shrink: 0;
-
-  margin-left: 8px;
-
-  color: #777;
-
-  font-size: 15px;
-
-  transition: 0.2s ease;
-}
 
 .busca-item:hover .seta,
 .item-amigo:hover .seta {
+  color: #ff7500;
+
+  transform: translateX(3px);
+}
+
+.busca-item:active .seta,
+.item-amigo:active .seta {
   color: #ff7500;
 
   transform: translateX(3px);
@@ -711,50 +651,6 @@ function inicialUsuario(usuario) {
 }
 
 
-/* ==========================================
-   BOTÃO FLUTUANTE
-========================================== */
-
-.botao-flutuante {
-  position: fixed;
-
-  right: 18px;
-  bottom: 70px;
-
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-  border-radius: 50%;
-
-  background: #ff6500;
-
-  color: white;
-
-  font-size: 28px;
-  font-weight: 300;
-
-  line-height: 1;
-
-  box-shadow: 0 2px 8px rgba(255, 101, 0, 0.35);
-
-  cursor: pointer;
-
-  z-index: 10;
-}
-
-.botao-flutuante:hover {
-  background: #ff781c;
-}
-
-.botao-flutuante:active {
-  transform: scale(0.95);
-}
 
 
 /* ==========================================

@@ -51,6 +51,7 @@ function inicio() {
     </div>
 
   </header>
+  
 </template>
 
 <style scoped>

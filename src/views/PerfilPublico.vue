@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAmigos } from '@/composables/useAmigos'
+import FooterComponent from '../components/FooterComponent.vue'
 
 const route = useRoute()
 
@@ -13,14 +14,12 @@ const {
 const usuario = ref(null)
 
 const carregando = ref(true)
-const adicionando = ref(false)
 const pedidoEnviado = ref(false)
 const erro = ref(null)
+const adicionando = ref(false)
+const mostrarConfirmacao = ref(false)
 
 
-// --------------------------------
-// CARREGAR PERFIL
-// --------------------------------PerfilPublico
 
 onMounted(async () => {
   try {
@@ -36,9 +35,23 @@ onMounted(async () => {
 })
 
 
-// --------------------------------
-// ADICIONAR USUÁRIO
-// --------------------------------
+function abrirConfirmacao() {
+  if (pedidoEnviado.value || adicionando.value) {
+    return
+  }
+
+  mostrarConfirmacao.value = true
+}
+
+
+function cancelarConfirmacao() {
+  if (adicionando.value) {
+    return
+  }
+
+  mostrarConfirmacao.value = false
+}
+
 
 async function adicionar() {
   if (!usuario.value) {
@@ -51,6 +64,7 @@ async function adicionar() {
     await enviarPedido(usuario.value.id)
 
     pedidoEnviado.value = true
+    mostrarConfirmacao.value = false
 
   } catch (e) {
     console.error('Erro ao adicionar usuário:', e)
@@ -60,10 +74,6 @@ async function adicionar() {
 }
 
 
-// --------------------------------
-// NOME
-// --------------------------------
-
 function nomeUsuario() {
   return (
     usuario.value?.name ||
@@ -72,10 +82,6 @@ function nomeUsuario() {
   )
 }
 
-
-// --------------------------------
-// INICIAL
-// --------------------------------
 
 function inicialUsuario() {
   return nomeUsuario()
@@ -89,7 +95,6 @@ function inicialUsuario() {
 
   <div class="perfil-container">
 
-    <!-- CARREGANDO -->
 
     <div
       v-if="carregando"
@@ -99,7 +104,6 @@ function inicialUsuario() {
     </div>
 
 
-    <!-- ERRO -->
 
     <div
       v-else-if="erro"
@@ -109,16 +113,11 @@ function inicialUsuario() {
     </div>
 
 
-    <!-- PERFIL -->
 
     <div
       v-else-if="usuario"
       class="perfil"
     >
-
-      <!-- =========================
-           INFORMAÇÕES DO USUÁRIO
-      ========================== -->
 
       <section class="perfil-header">
 
@@ -135,38 +134,89 @@ function inicialUsuario() {
         >
           {{ inicialUsuario() }}
         </div>
+                <div class="info">
+                    <span class="nome">{{ nomeUsuario() }}</span>
+                    <span class="email">{{ usuario.email }}</span>
+                </div>
 
+<button
+  class="btn-adicionar"
+  :disabled="adicionando || pedidoEnviado"
+  @click="abrirConfirmacao"
+>
+  <ion-icon
+    :name="
+      pedidoEnviado
+        ? 'checkmark-done-circle-outline'
+        : 'chatbubbles-outline'
+    "
+  />
+</button>
 
-        <h2>
-          {{ nomeUsuario() }}
-        </h2>
+<div
+  v-if="mostrarConfirmacao"
+  class="confirmacao-overlay"
+  @click.self="cancelarConfirmacao"
+>
+  <div class="confirmacao-card">
 
+    <div class="confirmacao-usuario">
 
-        <span class="email">
-          {{ usuario.email }}
+      <img
+        v-if="usuario.profile_photo?.url"
+        :src="usuario.profile_photo.url"
+        class="confirmacao-avatar"
+        alt=""
+      />
+
+      <div
+        v-else
+        class="confirmacao-avatar avatar-vazio"
+      >
+        {{ inicialUsuario() }}
+      </div>
+
+      <div class="confirmacao-info">
+        <strong>{{ nomeUsuario() }}</strong>
+        <span>{{ usuario.email }}</span>
+      </div>
+
+    </div>
+
+    <p class="confirmacao-texto">
+      Deseja adicionar esta pessoa?
+    </p>
+
+    <div class="confirmacao-acoes">
+
+      <button
+        class="btn-cancelar"
+        :disabled="adicionando"
+        @click="cancelarConfirmacao"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="btn-confirmar"
+        :disabled="adicionando"
+        @click="adicionar"
+      >
+        <ion-icon
+          v-if="adicionando"
+          name="hourglass-outline"
+        />
+
+        <span v-else>
+          Adicionar
         </span>
+      </button>
 
+    </div>
 
-        <!-- BOTÃO ADICIONAR -->
+  </div>
+</div>
 
-        <button
-          v-if="!pedidoEnviado"
-          class="btn-adicionar"
-          :disabled="adicionando"
-          @click="adicionar"
-        >
-          {{ adicionando ? 'Enviando...' : 'Adicionar' }}
-        </button>
-
-
-        <!-- PEDIDO ENVIADO -->
-
-        <span
-          v-else
-          class="pedido-enviado"
-        >
-          Pedido enviado
-        </span>
 
       </section>
 
@@ -224,7 +274,6 @@ function inicialUsuario() {
     </div>
 
 
-    <!-- USUÁRIO NÃO ENCONTRADO -->
 
     <div
       v-else
@@ -235,6 +284,7 @@ function inicialUsuario() {
 
   </div>
 
+<FooterComponent />
 </template>
 
 
@@ -252,13 +302,10 @@ function inicialUsuario() {
 }
 
 
-/* =========================
-   HEADER
-========================= */
 
 .perfil-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 
   padding: 20px 0;
@@ -266,8 +313,8 @@ function inicialUsuario() {
 
 
 .perfil-avatar {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
 
   margin-bottom: 12px;
 
@@ -303,31 +350,39 @@ function inicialUsuario() {
 
 .email {
   margin-top: 4px;
-
   color: var(--cor-texto-secundario);
-
-  font-size: 10px;
+  font-size: 13px;
 }
 
+.nome {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+
+.info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    margin-top: -20px;
+    overflow: hidden;
+}
 
 /* =========================
    ADICIONAR
 ========================= */
 
 .btn-adicionar {
-  margin-top: 16px;
 
-  padding: 7px 18px;
+  width: 20px;
+  height: 20px;
 
-  border: none;
-  border-radius: 6px;
+  margin-bottom: 12px;
 
-  background: #ff7500;
-  color: #fff;
+  border-radius: 50%;
 
-  font-size: 11px;
-
-  cursor: pointer;
+  object-fit: cover;
+ 
 }
 
 
@@ -348,6 +403,207 @@ function inicialUsuario() {
   color: var(--cor-texto-secundario);
 
   font-size: 11px;
+}
+.confirmacao-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  backdrop-filter: blur(3px);
+}
+
+
+.confirmacao-card {
+  width: 100%;
+  max-width: 320px;
+
+  padding: 18px;
+
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
+
+  background: var(--cor-fundo-secundaria);
+  color: var(--cor-texto);
+
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+
+  animation: aparecer 0.2s ease-out;
+}
+
+
+.confirmacao-usuario {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.confirmacao-avatar {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+}
+
+
+.confirmacao-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.confirmacao-info strong {
+  font-size: 13px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.confirmacao-info span {
+  color: var(--cor-texto-secundario);
+
+  font-size: 10px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.confirmacao-texto {
+  margin: 18px 0;
+
+  text-align: center;
+
+  color: var(--cor-texto-secundario);
+
+  font-size: 12px;
+}
+
+
+.confirmacao-acoes {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.confirmacao-acoes button {
+  flex: 1;
+
+  height: 34px;
+
+  border-radius: 8px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+}
+
+
+.btn-cancelar {
+  border: 1px solid var(--cor-borda);
+
+  background: transparent;
+
+  color: var(--cor-texto);
+}
+
+
+.btn-confirmar {
+  border: none;
+
+  background: #ff7500;
+
+  color: white;
+}
+
+
+.btn-confirmar:hover {
+  background: #ff861f;
+}
+
+
+.btn-confirmar:disabled,
+.btn-cancelar:disabled {
+  opacity: 0.6;
+
+  cursor: wait;
+}
+
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.btn-adicionar {
+  width: 34px;
+  height: 34px;
+
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: var(--cor-texto);
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s,
+    transform 0.2s;
+}
+
+
+.btn-adicionar ion-icon {
+  font-size: 24px;
+}
+
+
+.btn-adicionar:hover {
+  color: #ff7500;
+
+  transform: scale(1.08);
+}
+
+
+.btn-adicionar:disabled {
+  cursor: default;
 }
 
 

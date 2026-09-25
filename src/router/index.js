@@ -102,7 +102,7 @@ const router = createRouter({
 });
 
 const rotasPublicas = ['login', 'cadastro', 'tipodeusuario', 'verificar']
-const rotasSemLayout = ['login', 'cadastro', 'tipodeusuario', 'verificar', 'user', 'chat', 'amigos', 'criar']
+const rotasSemLayout = ['login','perfil-publico','cadastro', 'tipodeusuario', 'verificar', 'user', 'chat', 'amigos', 'criar']
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
