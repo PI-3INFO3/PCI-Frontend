@@ -232,10 +232,6 @@ function inicialUsuario() {
       </section>
 
 
-      <!-- =========================
-           PROJETOS
-      ========================== -->
-
       <section class="projetos">
 
         <h3>
@@ -377,11 +373,6 @@ function inicialUsuario() {
     margin-top: -20px;
     overflow: hidden;
 }
-
-/* =========================
-   ADICIONAR
-========================= */
-
 .btn-adicionar {
 
   width: 20px;
@@ -617,10 +608,6 @@ function inicialUsuario() {
 }
 
 
-/* =========================
-   PROJETOS
-========================= */
-
 .projetos {
   margin-top: 20px;
 }
@@ -686,10 +673,6 @@ function inicialUsuario() {
   font-size: 10px;
 }
 
-
-/* =========================
-   ESTADOS
-========================= */
 
 .estado {
   padding: 40px 10px;

@@ -509,11 +509,6 @@ function inicialUsuario(usuario) {
   text-overflow: ellipsis;
 }
 
-
-/* ==========================================
-   EMAIL
-========================================== */
-
 .email-usuario {
   overflow: hidden;
 
@@ -524,11 +519,6 @@ function inicialUsuario(usuario) {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
-
-/* ==========================================
-   AVATAR
-========================================== */
 
 .avatar {
   width: 34px;
@@ -575,10 +565,6 @@ function inicialUsuario(usuario) {
 }
 
 
-/* ==========================================
-   ESTADO BUSCA
-========================================== */
-
 .estado-busca {
   padding: 24px 10px;
 
@@ -590,15 +576,11 @@ function inicialUsuario(usuario) {
 }
 
 
-/* ==========================================
-   ERRO
-========================================== */
 
 .mensagem-erro {
   margin-bottom: 10px;
 
   padding: 8px;
-
   border-radius: 5px;
 
   background: rgba(255, 0, 0, 0.08);
@@ -609,9 +591,6 @@ function inicialUsuario(usuario) {
 }
 
 
-/* ==========================================
-   AMIGOS
-========================================== */
 
 .item-amigo {
   display: flex;
@@ -635,10 +614,6 @@ function inicialUsuario(usuario) {
 }
 
 
-/* ==========================================
-   SEM AMIGOS
-========================================== */
-
 .estado-amigos {
   padding: 30px 10px;
 
@@ -651,10 +626,6 @@ function inicialUsuario(usuario) {
 
 
 
-
-/* ==========================================
-   RESPONSIVO
-========================================== */
 
 @media (max-width: 400px) {
   .lista-container {
