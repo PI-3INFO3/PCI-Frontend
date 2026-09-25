@@ -6,6 +6,16 @@ import FooterComponent from '../components/FooterComponent.vue'
 
 const route = useRoute()
 
+function abrirPerfilUsuario() {
+  if (!props.outroUsuarioId) {
+    return
+  }
+
+  router.push(`/perfil/${props.outroUsuarioId}`)
+}
+
+
+
 const {
   buscarUsuario,
   enviarPedido
@@ -118,15 +128,16 @@ function inicialUsuario() {
       v-else-if="usuario"
       class="perfil"
     >
-
-      <section class="perfil-header">
-
+    <section class="perfil-header">
+        
         <img
           v-if="usuario.profile_photo?.url"
           :src="usuario.profile_photo.url"
           alt=""
           class="perfil-avatar"
         />
+
+
 
         <div
           v-else
@@ -310,7 +321,6 @@ function inicialUsuario() {
 
   padding: 20px 0;
 }
-
 
 .perfil-avatar {
   width: 50px;

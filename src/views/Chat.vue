@@ -39,9 +39,6 @@ let pressTimer = null
 const TEMPO_PRESSIONAR = 500
 
 
-// --------------------------------
-// CARREGAR CHAT
-// --------------------------------
 
 onMounted(async () => {
   try {
@@ -84,10 +81,6 @@ function abrirPerfilUsuario() {
   router.push(`/perfil/${props.outroUsuarioId}`)
 }
 
-
-// --------------------------------
-// MENU DAS MENSAGENS
-// --------------------------------
 
 function fecharMenuFora(evento) {
   if (!evento.target.closest('.balao-wrapper')) {
@@ -135,10 +128,6 @@ function cancelarEdicao() {
 }
 
 
-// --------------------------------
-// APAGAR
-// --------------------------------
-
 async function apagar(mensagem) {
   menuAbertoId.value = null
 
@@ -147,10 +136,6 @@ async function apagar(mensagem) {
   }
 }
 
-
-// --------------------------------
-// ENVIAR
-// --------------------------------
 
 async function enviar() {
   const texto = textoMensagem.value.trim()
@@ -200,9 +185,6 @@ async function enviar() {
         <ion-icon name="arrow-back-outline"></ion-icon>
       </button>
 
-
-      <!-- USUÁRIO
-           CLICAR AQUI ABRE O PERFIL -->
 
       <button
         class="usuario-chat"

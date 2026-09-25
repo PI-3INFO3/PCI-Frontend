@@ -273,7 +273,6 @@ function inicialUsuario(usuario) {
       v-else
       class="secao-amigos"
     >
-
       <span class="titulo-secao">
         Amigos
       </span>
