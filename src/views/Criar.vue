@@ -26,6 +26,11 @@ const router = useRouter()
 const route = useRoute()
 
 
+const sidebarAberta = ref(false)
+
+function abrirSidebar() { sidebarAberta.value = true }
+function fecharSidebar() { sidebarAberta.value = false }
+
 /*
 |--------------------------------------------------------------------------
 | CANVAS
@@ -3332,23 +3337,11 @@ onBeforeUnmount(() => {
         ></div>
 
 
-        <button
-            class="header-btn"
-        >
-            <ion-icon
-                name="people-outline"
-            ></ion-icon>
-        </button>
 
 
-        <button
-            class="header-btn"
-            @click="exeportadorDesing"
-        >
-            <ion-icon
-                name="download-outline"
-            ></ion-icon>
-        </button>
+       <button class="header-btn" @click="abrirSidebar">
+    <ion-icon name="ellipsis-vertical"></ion-icon>
+</button>
 
     </header>
 
@@ -4233,6 +4226,77 @@ onBeforeUnmount(() => {
 
     </footer>
 
+    <transition name="fade">
+    <div
+        v-if="sidebarAberta"
+        class="sidebar-overlay"
+        @click="fecharSidebar"
+    ></div>
+</transition>
+
+<transition name="slide-direita">
+    <aside v-if="sidebarAberta" class="sidebar-direita">
+
+        <div class="sidebar-topo">
+            <span class="sidebar-titulo">Opções</span>
+
+            <button class="header-btn" @click="fecharSidebar">
+                <ion-icon name="close-outline"></ion-icon>
+            </button>
+        </div>
+
+        <div class="sidebar-lista">
+
+        <button
+            class="header-btn"
+        >
+    
+            <ion-icon
+                name="people-outline"
+            ></ion-icon>
+
+        </button>       
+        
+
+        <button
+            class="header-btn"
+        >
+    
+            <ion-icon
+                name="star-outline"
+            ></ion-icon>
+
+        </button>       
+
+
+        <button
+            class="header-btn"
+        >
+    
+            <ion-icon
+                name="book-outline"
+            ></ion-icon>
+
+        </button>       
+    
+    
+
+        <button
+            class="header-btn"
+        >
+    
+            <ion-icon
+                name="bookmark-outline"
+            ></ion-icon>
+            
+
+        </button>       
+    
+    </div>
+    
+
+    </aside>
+</transition>
 </div>
 
 </template>
@@ -4245,6 +4309,64 @@ onBeforeUnmount(() => {
         border-box;
 }
 
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+}
+
+.sidebar-direita {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    max-width: 85vw;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    border-left: 1px solid #2d2d2d;
+    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+}
+
+.sidebar-topo {
+    flex: 0 0 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px 0 18px;
+    background-color: #FF5700;
+    color: white;
+}
+
+.sidebar-titulo {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.sidebar-lista {
+
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 14px;
+    overflow-y: auto;
+}
+
+.slide-direita-enter-active,
+.slide-direita-leave-active { transition: transform 0.25s ease; }
+
+.slide-direita-enter-from,
+.slide-direita-leave-to { transform: translateX(100%); }
+
+.fade-enter-active,
+.fade-leave-active { transition: opacity 0.25s ease; }
+
+.fade-enter-from,
+.fade-leave-to { opacity: 0; }
 
 .editor-interface {
 
