@@ -56,6 +56,7 @@ onMounted(async () => {
 
    
   </div>
+  <FooterComponents />
 </template>
 
 <style scoped>
@@ -64,7 +65,7 @@ onMounted(async () => {
 }
 .notificacoes-container {
   padding: 16px;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 h2 {
   margin-bottom: 16px;

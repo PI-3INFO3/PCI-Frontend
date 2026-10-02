@@ -144,14 +144,6 @@ function inicialUsuario(usuario) {
 <template>
   <div class="lista-container">
 
-    <!-- =====================================
-         CABEÇALHO
-    ====================================== -->
-
-    <div class="lista-topo">
-      <h2>Pesquisa de amigos - Pessoal</h2>
-    </div>
-
 
     <!-- =====================================
          CAMPO DE PESQUISA
@@ -503,7 +495,7 @@ function inicialUsuario(usuario) {
 
   color: var(--cor-texto);
 
-  font-size: 11px;
+  font-size: 15px;
 
   white-space: nowrap;
   text-overflow: ellipsis;

@@ -931,7 +931,7 @@ function adicionarTexto() {
 
     const textoEditavel =
         new fabric.IText(
-            'Seus',
+            'Seu texto',
             {
 
                 left:
@@ -3351,10 +3351,6 @@ onBeforeUnmount(() => {
         </button>
 
     </header>
-
-
-
-    <!-- CANVAS -->
 
     <main
         ref="canvasAreaRef"
