@@ -27,8 +27,43 @@ const route = useRoute()
 
 
 const sidebarAberta = ref(false)
+const opcaoSidebarAtiva = ref(null)
+const opcoesSidebar = {
+    pessoas: {
+        titulo: 'Pessoas',
+        descricao:
+            'Encontre pessoas e interaja com outros usuários dentro da plataforma.',
+    botao: 'Convidar'
+    },
 
-function abrirSidebar() { sidebarAberta.value = true }
+    favoritos: {
+        titulo: 'Favoritos',
+        descricao:
+            'Adicione seus modelos favoritos para encontrá-los facilmente depois.',
+    botao: 'Adicionar'
+    },
+
+    mpj: {
+        titulo: 'Meus Projetos',
+        descricao:
+            'Organize e acesse seus conteúdos e modelos mais importantes.',
+     botao: 'Adicionar'
+    },
+
+    prj: {
+        titulo: 'Projetos Em andamento',
+        descricao:
+            'Guarde conteúdos importantes para consultar novamente quando precisar terminar.',
+             botao: 'Adicionar'
+    }
+}
+function selecionarOpcaoSidebar(opcao) {
+
+    opcaoSidebarAtiva.value =
+        opcaoSidebarAtiva.value === opcao
+            ? null
+            : opcao
+}function abrirSidebar() { sidebarAberta.value = true }
 function fecharSidebar() { sidebarAberta.value = false }
 
 /*
@@ -4244,57 +4279,115 @@ onBeforeUnmount(() => {
                 <ion-icon name="close-outline"></ion-icon>
             </button>
         </div>
+<div class="sidebar-lista">
 
-        <div class="sidebar-lista">
+    <!-- PESSOAS -->
+    <button
+        class="header-btn"
+        :class="{
+            'opcao-ativa':
+                opcaoSidebarAtiva === 'pessoas'
+        }"
+        @click="
+            selecionarOpcaoSidebar('pessoas')
+        "
+    >
+
+        <ion-icon
+            name="people-outline"
+        ></ion-icon>
+
+    </button>
+
+
+    <!-- FAVORITOS -->
+    <button
+        class="header-btn"
+        :class="{
+            'opcao-ativa':
+                opcaoSidebarAtiva === 'favoritos'
+        }"
+        @click="
+            selecionarOpcaoSidebar('favoritos')
+        "
+    >
+
+        <ion-icon
+            name="star-outline"
+        ></ion-icon>
+
+    </button>
+
+
+    <!-- mpj -->
+    <button
+        class="header-btn"
+        :class="{
+            'opcao-ativa':
+                opcaoSidebarAtiva === 'mpj'
+        }"
+        @click="
+            selecionarOpcaoSidebar('mpj')
+        "
+    >
+
+        <ion-icon
+            name="book-outline"
+        ></ion-icon>
+
+    </button>
+
+
+    <button
+        class="header-btn"
+        :class="{
+            'opcao-ativa':
+                opcaoSidebarAtiva === 'prj'
+        }"
+        @click="
+            selecionarOpcaoSidebar('prj')
+        "
+    >
+
+        <ion-icon
+            name="bookmark-outline"
+        ></ion-icon>
+
+    </button>
+
+
+    <div
+        v-if="opcaoSidebarAtiva"
+        class="sidebar-descricao"
+    >
+
+        <h3>
+            {{
+                opcoesSidebar[
+                    opcaoSidebarAtiva
+                ].titulo
+            }}
+        </h3>
+
+
+        <p>
+            {{
+                opcoesSidebar[
+                    opcaoSidebarAtiva
+                ].descricao
+            }}
+        </p>
+
 
         <button
-            class="header-btn"
+            class="sidebar-botao-adicionar"
         >
-    
-            <ion-icon
-                name="people-outline"
-            ></ion-icon>
+        {{opcoesSidebar[opcaoSidebarAtiva].botao}}
+        </button>
 
-        </button>       
-        
-
-        <button
-            class="header-btn"
-        >
-    
-            <ion-icon
-                name="star-outline"
-            ></ion-icon>
-
-        </button>       
-
-
-        <button
-            class="header-btn"
-        >
-    
-            <ion-icon
-                name="book-outline"
-            ></ion-icon>
-
-        </button>       
-    
-    
-
-        <button
-            class="header-btn"
-        >
-    
-            <ion-icon
-                name="bookmark-outline"
-            ></ion-icon>
-            
-
-        </button>       
-    
     </div>
-    
 
+</div>
     </aside>
 </transition>
 </div>
@@ -4345,7 +4438,134 @@ onBeforeUnmount(() => {
     font-size: 16px;
     font-weight: 600;
 }
+.sidebar-descricao {
 
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 16px;
+
+    background:
+        #262626;
+
+    border:
+        1px solid #333;
+
+    border-radius:
+        10px;
+
+    color:
+        white;
+
+    animation:
+        aparecerDescricao 0.2s ease;
+}
+
+
+.sidebar-descricao h3 {
+
+    margin:
+        0 0 8px 0;
+
+    color:
+        #FF5700;
+
+    font-size:
+        15px;
+
+    font-weight:
+        600;
+}
+
+
+.sidebar-descricao p {
+
+    margin:
+        0;
+
+    color:
+        #cfcfcf;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+}
+
+
+.sidebar-botao-adicionar {
+
+    width:
+        100%;
+
+    margin-top:
+        16px;
+
+    padding:
+        10px;
+
+    border:
+        none;
+
+    border-radius:
+        7px;
+
+    background:
+        #FF5700;
+
+    color:
+        white;
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+
+    transition:
+        0.2s ease;
+}
+
+
+.sidebar-botao-adicionar:hover {
+
+    background:
+        #e64d00;
+}
+
+
+.opcao-ativa {
+
+    color:
+        #FF5700 !important;
+}
+
+
+@keyframes aparecerDescricao {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(-5px);
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+    }
+}
 .sidebar-lista {
 
     margin-top: 25px;
@@ -4354,6 +4574,7 @@ onBeforeUnmount(() => {
     gap: 16px;
     padding: 14px;
     overflow-y: auto;
+    align-items: center;
 }
 
 .slide-direita-enter-active,
@@ -5785,11 +6006,6 @@ onBeforeUnmount(() => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MOBILE
-|--------------------------------------------------------------------------
-*/
 
 @media (max-width: 600px) {
 
