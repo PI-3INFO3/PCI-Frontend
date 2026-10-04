@@ -147,8 +147,8 @@ const flagCategoria = {
 // rotas das páginas que já existem no site (ajuste se forem diferentes)
 const rotasCategoria = {
     favoritos: '/favoritos',
-    mpj: '/mpj',
-    prj: '/prj'
+    mpj: '/meus-projetos',
+    prj: '/projetoandamento'
 }
 
 
@@ -296,13 +296,6 @@ async function salvarNaCategoria() {
         salvandoProjeto.value = false
     }
 }
-
-
-/*
-|--------------------------------------------------------------------------
-| MODO VISUALIZAÇÃO (projeto de outra pessoa)
-|--------------------------------------------------------------------------
-*/
 
 function ativarModoVisualizacao() {
 

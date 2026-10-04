@@ -383,14 +383,14 @@ function inicialUsuario() {
 
 
 .email {
-  margin-top: 4px;
+  margin-top: 5px;
   color: var(--cor-texto-secundario);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .nome {
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 10px;
+  font-size: 18px;
 }
 
 
@@ -428,43 +428,29 @@ function inicialUsuario() {
 
 .pedido-enviado {
   margin-top: 16px;
-
   color: var(--cor-texto-secundario);
-
-  font-size: 11px;
+  font-size: 15px;
 }
 .confirmacao-overlay {
   position: fixed;
   inset: 0;
-
   z-index: 1000;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 20px;
-
   background: rgba(0, 0, 0, 0.45);
-
   backdrop-filter: blur(3px);
 }
-
-
 .confirmacao-card {
   width: 100%;
   max-width: 320px;
-
   padding: 18px;
-
   border: 1px solid var(--cor-borda);
   border-radius: 16px;
-
   background: var(--cor-fundo-secundaria);
   color: var(--cor-texto);
-
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-
   animation: aparecer 0.2s ease-out;
 }
 
@@ -472,47 +458,38 @@ function inicialUsuario() {
 .confirmacao-usuario {
   display: flex;
   align-items: center;
-
   gap: 12px;
 }
-
 
 .confirmacao-avatar {
   width: 46px;
   height: 46px;
-
   flex-shrink: 0;
-
   border-radius: 50%;
-
   object-fit: cover;
 }
 
 
 .confirmacao-info {
   min-width: 0;
-
   display: flex;
   flex-direction: column;
-
   gap: 3px;
 }
 
 
 .confirmacao-info strong {
-  font-size: 13px;
-
+  font-size: 18px;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-
 .confirmacao-info span {
   color: var(--cor-texto-secundario);
-
-  font-size: 10px;
-
+ font-weight: 600;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -521,49 +498,38 @@ function inicialUsuario() {
 
 .confirmacao-texto {
   margin: 18px 0;
-
   text-align: center;
-
   color: var(--cor-texto-secundario);
-
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 
 .confirmacao-acoes {
   display: flex;
-
   gap: 8px;
 }
 
 
 .confirmacao-acoes button {
   flex: 1;
-
   height: 34px;
-
   border-radius: 8px;
-
-  font-size: 11px;
-
+font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
 }
 
 
 .btn-cancelar {
   border: 1px solid var(--cor-borda);
-
   background: transparent;
-
   color: var(--cor-texto);
 }
 
-
 .btn-confirmar {
   border: none;
-
   background: #ff7500;
-
   color: white;
 }
 
@@ -576,7 +542,6 @@ function inicialUsuario() {
 .btn-confirmar:disabled,
 .btn-cancelar:disabled {
   opacity: 0.6;
-
   cursor: wait;
 }
 
@@ -643,30 +608,24 @@ function inicialUsuario() {
 
 .projetos h3 {
   margin: 0 0 14px;
-
   color: var(--cor-texto-secundario);
-
   font-size: 11px;
   font-weight: 500;
-
   text-transform: uppercase;
 }
 
 
 .projeto {
   display: flex;
-
   gap: 12px;
-
   margin-bottom: 14px;
-
   cursor: pointer;
 }
 
 
 .projeto-imagem {
-  width: 62px;
-  height: 42px;
+  width: 82px;
+  height: 52px;
 
   flex-shrink: 0;
   overflow: hidden;
@@ -695,22 +654,20 @@ function inicialUsuario() {
 
 
 .projeto-info strong {
-  font-size: 11px;
+  font-size: 18px;
 }
 
 
 .projeto-info small {
   color: var(--cor-texto-secundario);
 
-  font-size: 8px;
+  font-size: 14px;
 }
 
 
 .estado {
   padding: 40px 10px;
-
   text-align: center;
-
   color: var(--cor-texto-secundario);
 
   font-size: 11px;
