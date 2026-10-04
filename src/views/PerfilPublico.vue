@@ -1,20 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAmigos } from '@/composables/useAmigos'
+import designsApi from '@/api/designsApi'
 import FooterComponent from '../components/FooterComponent.vue'
 
 const route = useRoute()
-
-function abrirPerfilUsuario() {
-  if (!props.outroUsuarioId) {
-    return
-  }
-
-  router.push(`/perfil/${props.outroUsuarioId}`)
-}
-
-
+const router = useRouter()
 
 const {
   buscarUsuario,
@@ -22,6 +14,7 @@ const {
 } = useAmigos()
 
 const usuario = ref(null)
+const projetos = ref([])
 
 const carregando = ref(true)
 const pedidoEnviado = ref(false)
@@ -37,12 +30,46 @@ onMounted(async () => {
 
     usuario.value = await buscarUsuario(id)
 
+    // só os projetos que o usuário marcou como públicos
+    try {
+      const { data } = await designsApi.projetosPublicos(id)
+      projetos.value = data.results ?? data
+    } catch (e) {
+      console.error('Erro ao carregar projetos do perfil:', e)
+    }
+
   } catch (e) {
     erro.value = 'Não foi possível carregar o perfil.'
   } finally {
     carregando.value = false
   }
 })
+
+
+function formatarData(iso) {
+  if (!iso) {
+    return ''
+  }
+
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+}
+
+
+// abre o projeto no editor, só para visualizar
+function abrirProjeto(projeto) {
+  router.push({
+    path: '/criar', // troque pela rota real do editor
+    query: {
+      projeto: projeto.id,
+      titulo: projeto.name,
+      somenteLeitura: '1'
+    }
+  })
+}
 
 
 function abrirConfirmacao() {
@@ -235,42 +262,43 @@ function inicialUsuario() {
       <section class="projetos">
 
         <h3>
-          Projetos feitos pelo usuário
+          Projetos de {{ nomeUsuario() }}
         </h3>
 
 
         <div
-          v-if="!usuario.projetos?.length"
+          v-if="!projetos.length"
           class="sem-projetos"
         >
-          Nenhum projeto encontrado.
+          Nenhum projeto público.
         </div>
 
 
         <div
-          v-for="projeto in usuario.projetos"
+          v-for="projeto in projetos"
           :key="projeto.id"
           class="projeto"
+          @click="abrirProjeto(projeto)"
         >
 
           <div class="projeto-imagem">
-            <!-- imagem do projeto -->
+            <img
+              v-if="projeto.miniatura"
+              :src="projeto.miniatura"
+              :alt="projeto.name"
+            />
           </div>
 
 
           <div class="projeto-info">
 
             <strong>
-              {{ projeto.nome }}
+              {{ projeto.name }}
             </strong>
 
             <small>
-              {{ projeto.data }}
+              {{ formatarData(projeto.updated_at || projeto.created_at) }}
             </small>
-
-            <p>
-              {{ projeto.descricao }}
-            </p>
 
           </div>
 
@@ -631,6 +659,8 @@ function inicialUsuario() {
   gap: 12px;
 
   margin-bottom: 14px;
+
+  cursor: pointer;
 }
 
 
@@ -639,9 +669,20 @@ function inicialUsuario() {
   height: 42px;
 
   flex-shrink: 0;
+  overflow: hidden;
 
   border: 1px solid #ff7500;
   border-radius: 8px;
+}
+
+
+.projeto-imagem img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
 }
 
 
@@ -662,15 +703,6 @@ function inicialUsuario() {
   color: var(--cor-texto-secundario);
 
   font-size: 8px;
-}
-
-
-.projeto-info p {
-  margin: 0;
-
-  color: var(--cor-texto-secundario);
-
-  font-size: 10px;
 }
 
 

@@ -13,8 +13,7 @@ import * as fabric from 'fabric'
 
 import { removeBackground } from '@imgly/background-removal'
 
-import { useAuthStore } from '@/stores/auth'
-import designsApi from '@/api/designsApi'
+import { salvarProjeto, buscarProjeto } from '@/service/projetos'
 
 import '@fontsource/poppins'
 import '@fontsource/roboto'
@@ -27,7 +26,6 @@ import '@fontsource/pacifico'
 
 const router = useRouter()
 const route = useRoute()
-const auth = useAuthStore()
 
 
 /*
@@ -49,15 +47,6 @@ let fabricCanvas = null
 */
 
 const templateTitulo = route.query.titulo || 'Design'
-
-// nome que o usuário escolhe para o projeto
-const nomeProjeto = ref(route.query.titulo || '')
-
-// se o projeto aparece no perfil para outras pessoas
-const projetoPublico = ref(false)
-
-// modo visualização: projeto de outra pessoa, sem edição
-const somenteLeitura = ref(route.query.somenteLeitura === '1')
 
 const fonteImagemAtual = ref(route.query.img || null)
 
@@ -136,14 +125,6 @@ function selecionarOpcaoSidebar(opcao) {
 }
 
 
-// cada categoria da sidebar liga uma flag no design (backend)
-const flagCategoria = {
-    favoritos: 'importante',
-    mpj: 'meu_projeto',
-    prj: 'em_andamento'
-}
-
-
 // rotas das páginas que já existem no site (ajuste se forem diferentes)
 const rotasCategoria = {
     favoritos: '/favoritos',
@@ -189,8 +170,7 @@ async function salvarNaCategoria() {
     if (
         !fabricCanvas ||
         salvandoProjeto.value ||
-        !opcoesSidebar[categoria]?.salvar ||
-        somenteLeitura.value
+        !opcoesSidebar[categoria]?.salvar
     ) {
         return
     }
@@ -223,31 +203,21 @@ async function salvarNaCategoria() {
                 ? await blobParaDataUrl(urlOriginal)
                 : urlOriginal
 
-        if (!auth.user) {
-            await auth.fetchUser()
-        }
+        const projeto = {
 
-        if (!auth.user) {
-            mensagemSidebar.value = 'Faça login para salvar o projeto.'
-            return
-        }
+            id:
+                projetoAtualId.value ||
+                Date.now().toString(),
 
-        const nome = nomeProjeto.value.trim()
+            titulo:
+                templateTitulo,
 
-        if (!nome) {
-            mensagemSidebar.value = 'Dê um nome ao projeto antes de salvar.'
-            return
-        }
+            categoria,
 
-        const payload = {
+            fotoOriginal,
 
-            name: nome,
-
-            publico: projetoPublico.value,
-
-            usuario: auth.user.id,
-
-            canvas: json,
+            atualizadoEm:
+                new Date().toISOString(),
 
             miniatura:
                 fabricCanvas.toDataURL({
@@ -256,26 +226,13 @@ async function salvarNaCategoria() {
                     multiplier: 0.3
                 }),
 
-            // sem imagem o valor é null, mas o campo no Django não aceita null
-            foto_original: fotoOriginal || '',
-
-            // liga a categoria escolhida (importante, meu_projeto ou em_andamento)
-            [flagCategoria[categoria]]: true
+            canvas:
+                json
         }
 
-        if (projetoAtualId.value) {
+        await salvarProjeto(categoria, projeto)
 
-            await designsApi.atualizar(
-                projetoAtualId.value,
-                payload
-            )
-
-        } else {
-
-            const { data } = await designsApi.criar(payload)
-
-            projetoAtualId.value = data.id
-        }
+        projetoAtualId.value = projeto.id
 
         mensagemSidebar.value =
             `Salvo em ${opcoesSidebar[categoria].titulo}!`
@@ -298,157 +255,18 @@ async function salvarNaCategoria() {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MODO VISUALIZAÇÃO (projeto de outra pessoa)
-|--------------------------------------------------------------------------
-*/
-
-function ativarModoVisualizacao() {
-
-    if (!fabricCanvas) {
-        return
-    }
-
-    somenteLeitura.value = true
-
-    sidebarAberta.value = false
-
-    menuAtivoAcima.value = 'nenhum'
-
-    fabricCanvas.discardActiveObject()
-
-    fabricCanvas.getObjects().forEach(obj => {
-        obj.set({
-            selectable: false,
-            evented: false
-        })
-    })
-
-    fabricCanvas.selection = false
-
-    fabricCanvas.skipTargetFind = true
-
-    fabricCanvas.defaultCursor = 'grab'
-
-    // arrastar para mover a visão
-    let arrastando = false
-    let ultimoX = 0
-    let ultimoY = 0
-
-    fabricCanvas.on('mouse:down', (opcao) => {
-        arrastando = true
-        fabricCanvas.defaultCursor = 'grabbing'
-        ultimoX = opcao.e.clientX
-        ultimoY = opcao.e.clientY
-    })
-
-    fabricCanvas.on('mouse:move', (opcao) => {
-
-        if (!arrastando) {
-            return
-        }
-
-        const vpt = fabricCanvas.viewportTransform
-
-        vpt[4] += opcao.e.clientX - ultimoX
-        vpt[5] += opcao.e.clientY - ultimoY
-
-        ultimoX = opcao.e.clientX
-        ultimoY = opcao.e.clientY
-
-        fabricCanvas.requestRenderAll()
-    })
-
-    fabricCanvas.on('mouse:up', () => {
-        arrastando = false
-        fabricCanvas.defaultCursor = 'grab'
-    })
-
-    // roda do mouse para dar zoom
-    fabricCanvas.on('mouse:wheel', (opcao) => {
-
-        const zoom = Math.min(
-            5,
-            Math.max(0.5, fabricCanvas.getZoom() * 0.999 ** opcao.e.deltaY)
-        )
-
-        fabricCanvas.zoomToPoint(
-            new fabric.Point(opcao.e.offsetX, opcao.e.offsetY),
-            zoom
-        )
-
-        opcao.e.preventDefault()
-        opcao.e.stopPropagation()
-    })
-
-    // o rodapé some neste modo, então a área do canvas cresce
-    nextTick(redimensionarCanvas)
-
-    fabricCanvas.requestRenderAll()
-}
-
-
-function zoomVisualizacao(fator) {
-
-    if (!fabricCanvas) {
-        return
-    }
-
-    const zoom = Math.min(
-        5,
-        Math.max(0.5, fabricCanvas.getZoom() * fator)
-    )
-
-    fabricCanvas.zoomToPoint(
-        new fabric.Point(
-            fabricCanvas.getWidth() / 2,
-            fabricCanvas.getHeight() / 2
-        ),
-        zoom
-    )
-}
-
-
-function resetarVisualizacao() {
-
-    if (!fabricCanvas) {
-        return
-    }
-
-    fabricCanvas.setViewportTransform([1, 0, 0, 1, 0, 0])
-
-    fabricCanvas.requestRenderAll()
-}
-
-
-async function carregarProjetoSalvo(id) {
+async function carregarProjetoSalvo(categoria, id) {
 
     try {
 
-        const { data: projeto } = await designsApi.buscar(id)
+        const projeto = await buscarProjeto(categoria, id)
 
-        if (!projeto?.canvas) {
-            alert('Esse projeto ainda não tem conteúdo salvo.')
+        if (!projeto) {
+            alert('Projeto não encontrado.')
             return
         }
 
         await fabricCanvas.loadFromJSON(projeto.canvas)
-
-        if (projeto.name) {
-            nomeProjeto.value = projeto.name
-        }
-
-        projetoPublico.value = !!projeto.publico
-
-        if (!auth.user) {
-            await auth.fetchUser()
-        }
-
-        // projeto de outra pessoa: só visualização
-        if (projeto.usuario !== auth.user?.id) {
-            somenteLeitura.value = true
-        }
 
         // reencontra a imagem principal (o fundo bloqueado)
         const principal =
@@ -469,12 +287,8 @@ async function carregarProjetoSalvo(id) {
         }
 
         fotoOriginalBase.value =
-            projeto.foto_original ||
+            projeto.fotoOriginal ||
             fonteImagemAtual.value
-
-        if (somenteLeitura.value) {
-            ativarModoVisualizacao()
-        }
 
         atualizarCamadas()
 
@@ -855,9 +669,12 @@ async function inicializarCanvas() {
             selection: true
         })
 
-    if (route.query.projeto) {
+    if (route.query.projeto && route.query.categoria) {
 
-        await carregarProjetoSalvo(route.query.projeto)
+        await carregarProjetoSalvo(
+            route.query.categoria,
+            route.query.projeto
+        )
 
     } else if (fonteImagemAtual.value) {
 
@@ -1584,11 +1401,6 @@ function lidarComTeclado(evento) {
         return
     }
 
-    // modo visualização: nenhuma tecla edita o projeto
-    if (somenteLeitura.value) {
-        return
-    }
-
     if (
         evento.key !== 'Delete' &&
         evento.key !== 'Backspace'
@@ -2247,7 +2059,7 @@ function exeportadorDesing() {
 
     const link = document.createElement('a')
 
-    link.download = `${nomeProjeto.value.trim() || templateTitulo}.png`
+    link.download = `editado-${templateTitulo}.png`
 
     link.href = dataURL
 
@@ -2314,13 +2126,9 @@ onBeforeUnmount(() => {
             <ion-icon name="home-outline"></ion-icon>
         </button>
 
-        <div class="header-spacer">
-            <span v-if="somenteLeitura" class="badge-leitura">
-                {{ nomeProjeto || 'Projeto' }} · somente visualização
-            </span>
-        </div>
+        <div class="header-spacer"></div>
 
-        <button v-if="!somenteLeitura" class="header-btn" @click="abrirSidebar">
+        <button class="header-btn" @click="abrirSidebar">
             <ion-icon name="ellipsis-vertical"></ion-icon>
         </button>
 
@@ -2332,22 +2140,6 @@ onBeforeUnmount(() => {
     <main ref="canvasAreaRef" class="canvas-area">
 
         <canvas ref="canvasRef"></canvas>
-
-        <div v-if="somenteLeitura" class="controles-zoom">
-
-            <button @click="zoomVisualizacao(1.25)" title="Aproximar">
-                <ion-icon name="add-outline"></ion-icon>
-            </button>
-
-            <button @click="zoomVisualizacao(0.8)" title="Afastar">
-                <ion-icon name="remove-outline"></ion-icon>
-            </button>
-
-            <button @click="resetarVisualizacao" title="Voltar ao tamanho original">
-                <ion-icon name="scan-outline"></ion-icon>
-            </button>
-
-        </div>
 
         <div v-if="modoSelecaoArea" class="aviso-selecao">
             Desenhe um retângulo ao redor do objeto que você quer extrair
@@ -2362,7 +2154,7 @@ onBeforeUnmount(() => {
 
     <!-- FOOTER -->
 
-    <footer v-if="!somenteLeitura" class="editor-footer">
+    <footer class="editor-footer">
 
 
         <!-- PAINEL TEXTO -->
@@ -2785,23 +2577,6 @@ onBeforeUnmount(() => {
                     <h3>{{ opcoesSidebar[opcaoSidebarAtiva].titulo }}</h3>
 
                     <p>{{ opcoesSidebar[opcaoSidebarAtiva].descricao }}</p>
-
-                    <input
-                        v-if="opcoesSidebar[opcaoSidebarAtiva].salvar"
-                        v-model="nomeProjeto"
-                        type="text"
-                        maxlength="60"
-                        class="sidebar-input-nome"
-                        placeholder="Nome do projeto"
-                    />
-
-                    <label
-                        v-if="opcoesSidebar[opcaoSidebarAtiva].salvar"
-                        class="sidebar-publico"
-                    >
-                        <input v-model="projetoPublico" type="checkbox" />
-                        <span>Mostrar no meu perfil</span>
-                    </label>
 
                     <button
                         v-if="opcoesSidebar[opcaoSidebarAtiva].salvar"
@@ -3543,80 +3318,6 @@ onBeforeUnmount(() => {
 
 .sidebar-botao-secundario:hover {
     background: rgba(255, 87, 0, 0.12);
-}
-
-.sidebar-input-nome {
-    width: 100%;
-    margin-top: 12px;
-    padding: 9px 10px;
-    border: 1px solid #555;
-    border-radius: 7px;
-    background: #111;
-    color: white;
-    font-size: 13px;
-    outline: none;
-}
-
-.sidebar-input-nome:focus {
-    border-color: #FF5700;
-}
-
-.header-spacer {
-    min-width: 0;
-    text-align: center;
-}
-
-.badge-leitura {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: white;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.controles-zoom {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    z-index: 15;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.controles-zoom button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid #FF5700;
-    border-radius: 50%;
-    background: rgba(30, 30, 30, 0.9);
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.controles-zoom button:hover {
-    background: rgba(255, 87, 0, 0.25);
-}
-
-.sidebar-publico {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-    color: #cfcfcf;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.sidebar-publico input {
-    accent-color: #FF5700;
-    cursor: pointer;
 }
 
 .sidebar-descricao .sidebar-mensagem {

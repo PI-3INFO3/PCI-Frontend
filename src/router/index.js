@@ -15,13 +15,18 @@ import Favoritos from '../views/Favoritos.vue';
 import Designs from '../views/Designs.vue';
 import ProjetoAndamento from '../views/ProjetoAndamento.vue';
 import MeusProjetos from '../views/MeusProjetos.vue';
-import PerfilPublico from '../views/PerfilPublico.vue';
+import ListaProjetos from '@/views/ListaProjetos.vue'
 const routes = [
   {
     path: '/user',
     name: 'user',
     component: UserView
   },
+  {
+    path: '/projetos/:categoria',
+    component: ListaProjetos,
+    props: true
+},
   {
     path: '/verificar',
     name: 'verificar',

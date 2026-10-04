@@ -54,7 +54,9 @@ color: var(--cor-texto);
   background:var(--cor-fundo-secundaria); ;
   box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
   border-top-left-radius:20px;
-  border-top-right-radius:20px
+  border-top-right-radius:20px;
+  z-index: 10000;
+
 
 }
 .navbar li{
