@@ -1,18 +1,8 @@
 <script setup>
-import {
-    ref,
-    computed,
-    onMounted,
-    onBeforeUnmount,
-    nextTick
-} from 'vue'
-
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-
 import * as fabric from 'fabric'
-
 import { removeBackground } from '@imgly/background-removal'
-
 import { useAuthStore } from '@/stores/auth'
 import designsApi from '@/api/designsApi'
 
@@ -24,56 +14,23 @@ import '@fontsource/bebas-neue'
 import '@fontsource/lato'
 import '@fontsource/pacifico'
 
-
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
-
-
-/*
-|--------------------------------------------------------------------------
-| CANVAS
-|--------------------------------------------------------------------------
-*/
 
 const canvasRef = ref(null)
 const canvasAreaRef = ref(null)
 
 let fabricCanvas = null
 
-
-/*
-|--------------------------------------------------------------------------
-| PROJETO
-|--------------------------------------------------------------------------
-*/
-
 const templateTitulo = route.query.titulo || 'Design'
-
-// nome que o usuário escolhe para o projeto
 const nomeProjeto = ref(route.query.titulo || '')
-
-// se o projeto aparece no perfil para outras pessoas
 const projetoPublico = ref(false)
-
-// modo visualização: projeto de outra pessoa, sem edição
 const somenteLeitura = ref(route.query.somenteLeitura === '1')
-
 const fonteImagemAtual = ref(route.query.img || null)
-
 const imagemPrincipal = ref(null)
-
 const fotoOriginalBase = ref(route.query.img || null)
-
-// se o editor foi aberto a partir de um projeto salvo, reaproveita o id
 const projetoAtualId = ref(route.query.projeto || null)
-
-
-/*
-|--------------------------------------------------------------------------
-| SIDEBAR (três pontinhos)
-|--------------------------------------------------------------------------
-*/
 
 const sidebarAberta = ref(false)
 const opcaoSidebarAtiva = ref(null)
@@ -83,77 +40,56 @@ const mensagemSidebar = ref('')
 const opcoesSidebar = {
     pessoas: {
         titulo: 'Pessoas',
-        descricao:
-            'Encontre pessoas e interaja com outros usuários dentro da plataforma.',
+        descricao: 'Encontre pessoas e interaja com outros usuários dentro da plataforma.',
         botao: 'Convidar',
         salvar: false
     },
-
     favoritos: {
         titulo: 'Favoritos',
-        descricao:
-            'Adicione seus modelos favoritos para encontrá-los facilmente depois.',
+        descricao: 'Adicione seus modelos favoritos para encontrá-los facilmente depois.',
         botao: 'Salvar nos favoritos',
         salvar: true
     },
-
     mpj: {
         titulo: 'Meus Projetos',
-        descricao:
-            'Organize e acesse seus conteúdos e modelos mais importantes.',
+        descricao: 'Organize e acesse seus conteúdos e modelos mais importantes.',
         botao: 'Salvar em Meus Projetos',
         salvar: true
     },
-
     prj: {
         titulo: 'Projetos Em andamento',
-        descricao:
-            'Guarde conteúdos importantes para consultar novamente quando precisar terminar.',
+        descricao: 'Guarde conteúdos importantes para consultar novamente quando precisar terminar.',
         botao: 'Salvar em andamento',
         salvar: true
     }
 }
 
-
 function abrirSidebar() {
     sidebarAberta.value = true
 }
-
 
 function fecharSidebar() {
     sidebarAberta.value = false
 }
 
-
 function selecionarOpcaoSidebar(opcao) {
-
     mensagemSidebar.value = ''
-
-    opcaoSidebarAtiva.value =
-        opcaoSidebarAtiva.value === opcao
-            ? null
-            : opcao
+    opcaoSidebarAtiva.value = opcaoSidebarAtiva.value === opcao ? null : opcao
 }
 
-
-// cada categoria da sidebar liga uma flag no design (backend)
 const flagCategoria = {
     favoritos: 'importante',
     mpj: 'meu_projeto',
     prj: 'em_andamento'
 }
 
-
-// rotas das páginas que já existem no site (ajuste se forem diferentes)
 const rotasCategoria = {
     favoritos: '/favoritos',
     mpj: '/meus-projetos',
     prj: '/projetoandamento'
 }
 
-
 function verSalvos() {
-
     const rota = rotasCategoria[opcaoSidebarAtiva.value]
 
     if (!rota) {
@@ -163,15 +99,11 @@ function verSalvos() {
     router.push(rota)
 }
 
-
-// blob: URLs morrem ao recarregar a página, então viram data URL
 async function blobParaDataUrl(url) {
-
     const resposta = await fetch(url)
     const blob = await resposta.blob()
 
     return new Promise((resolve, reject) => {
-
         const leitor = new FileReader()
 
         leitor.onload = () => resolve(leitor.result)
@@ -181,9 +113,7 @@ async function blobParaDataUrl(url) {
     })
 }
 
-
 async function salvarNaCategoria() {
-
     const categoria = opcaoSidebarAtiva.value
 
     if (
@@ -199,18 +129,12 @@ async function salvarNaCategoria() {
     mensagemSidebar.value = ''
 
     try {
-
         fabricCanvas.discardActiveObject()
         fabricCanvas.requestRenderAll()
 
-        const json =
-            fabricCanvas.toObject([
-                'nomeCamada',
-                'tipoCamada'
-            ])
+        const json = fabricCanvas.toObject(['nomeCamada', 'tipoCamada'])
 
         for (const obj of json.objects) {
-
             if (obj.src && obj.src.startsWith('blob:')) {
                 obj.src = await blobParaDataUrl(obj.src)
             }
@@ -240,91 +164,58 @@ async function salvarNaCategoria() {
         }
 
         const payload = {
-
             name: nome,
-
             publico: projetoPublico.value,
-
             usuario: auth.user.id,
-
             canvas: json,
-
-            miniatura:
-                fabricCanvas.toDataURL({
-                    format: 'jpeg',
-                    quality: 0.6,
-                    multiplier: 0.3
-                }),
-
-            // sem imagem o valor é null, mas o campo no Django não aceita null
+            miniatura: fabricCanvas.toDataURL({
+                format: 'jpeg',
+                quality: 0.6,
+                multiplier: 0.3
+            }),
             foto_original: fotoOriginal || '',
-
-            // liga a categoria escolhida (importante, meu_projeto ou em_andamento)
             [flagCategoria[categoria]]: true
         }
 
         if (projetoAtualId.value) {
-
-            await designsApi.atualizar(
-                projetoAtualId.value,
-                payload
-            )
-
+            await designsApi.atualizar(projetoAtualId.value, payload)
         } else {
-
             const { data } = await designsApi.criar(payload)
-
             projetoAtualId.value = data.id
         }
 
-        mensagemSidebar.value =
-            `Salvo em ${opcoesSidebar[categoria].titulo}!`
+        mensagemSidebar.value = `Salvo em ${opcoesSidebar[categoria].titulo}!`
 
         setTimeout(() => {
             mensagemSidebar.value = ''
         }, 2500)
-
     } catch (erro) {
-
         console.error('Erro ao salvar projeto:', erro)
-
-        mensagemSidebar.value =
-            'Não foi possível salvar o projeto.'
-
+        mensagemSidebar.value = 'Não foi possível salvar o projeto.'
     } finally {
-
         salvandoProjeto.value = false
     }
 }
 
 function ativarModoVisualizacao() {
-
     if (!fabricCanvas) {
         return
     }
 
     somenteLeitura.value = true
-
     sidebarAberta.value = false
-
     menuAtivoAcima.value = 'nenhum'
 
     fabricCanvas.discardActiveObject()
 
     fabricCanvas.getObjects().forEach(obj => {
-        obj.set({
-            selectable: false,
-            evented: false
-        })
+        obj.set({ selectable: false, evented: false })
     })
 
     fabricCanvas.selection = false
-
     fabricCanvas.skipTargetFind = true
-
     fabricCanvas.defaultCursor = 'grab'
 
-    // arrastar para mover a visão
     let arrastando = false
     let ultimoX = 0
     let ultimoY = 0
@@ -337,7 +228,6 @@ function ativarModoVisualizacao() {
     })
 
     fabricCanvas.on('mouse:move', (opcao) => {
-
         if (!arrastando) {
             return
         }
@@ -358,9 +248,7 @@ function ativarModoVisualizacao() {
         fabricCanvas.defaultCursor = 'grab'
     })
 
-    // roda do mouse para dar zoom
     fabricCanvas.on('mouse:wheel', (opcao) => {
-
         const zoom = Math.min(
             5,
             Math.max(0.5, fabricCanvas.getZoom() * 0.999 ** opcao.e.deltaY)
@@ -375,50 +263,35 @@ function ativarModoVisualizacao() {
         opcao.e.stopPropagation()
     })
 
-    // o rodapé some neste modo, então a área do canvas cresce
     nextTick(redimensionarCanvas)
 
     fabricCanvas.requestRenderAll()
 }
 
-
 function zoomVisualizacao(fator) {
-
     if (!fabricCanvas) {
         return
     }
 
-    const zoom = Math.min(
-        5,
-        Math.max(0.5, fabricCanvas.getZoom() * fator)
-    )
+    const zoom = Math.min(5, Math.max(0.5, fabricCanvas.getZoom() * fator))
 
     fabricCanvas.zoomToPoint(
-        new fabric.Point(
-            fabricCanvas.getWidth() / 2,
-            fabricCanvas.getHeight() / 2
-        ),
+        new fabric.Point(fabricCanvas.getWidth() / 2, fabricCanvas.getHeight() / 2),
         zoom
     )
 }
 
-
 function resetarVisualizacao() {
-
     if (!fabricCanvas) {
         return
     }
 
     fabricCanvas.setViewportTransform([1, 0, 0, 1, 0, 0])
-
     fabricCanvas.requestRenderAll()
 }
 
-
 async function carregarProjetoSalvo(id) {
-
     try {
-
         const { data: projeto } = await designsApi.buscar(id)
 
         if (!projeto?.canvas) {
@@ -438,109 +311,51 @@ async function carregarProjetoSalvo(id) {
             await auth.fetchUser()
         }
 
-        // projeto de outra pessoa: só visualização
         if (projeto.usuario !== auth.user?.id) {
             somenteLeitura.value = true
         }
 
-        // reencontra a imagem principal (o fundo bloqueado)
-        const principal =
-            fabricCanvas
-                .getObjects()
-                .find(obj => obj.nomeCamada === 'Imagem principal')
+        const principal = fabricCanvas
+            .getObjects()
+            .find(obj => obj.nomeCamada === 'Imagem principal')
 
         if (principal) {
-
-            principal.set({
-                selectable: false,
-                evented: false
-            })
+            principal.set({ selectable: false, evented: false })
 
             imagemPrincipal.value = principal
-
             fonteImagemAtual.value = principal.getSrc()
         }
 
-        fotoOriginalBase.value =
-            projeto.foto_original ||
-            fonteImagemAtual.value
+        fotoOriginalBase.value = projeto.foto_original || fonteImagemAtual.value
 
         if (somenteLeitura.value) {
             ativarModoVisualizacao()
         }
 
         atualizarCamadas()
-
         fabricCanvas.requestRenderAll()
-
     } catch (erro) {
-
         console.error('Erro ao carregar projeto:', erro)
-
         alert('Não foi possível abrir esse projeto.')
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| REMOÇÃO DE FUNDO
-|--------------------------------------------------------------------------
-*/
-
 const removendoFundo = ref(false)
 const progressoRemocao = ref(0)
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAÇÃO DE OBJETO
-|--------------------------------------------------------------------------
-*/
-
 const extraindoObjeto = ref(false)
 const progressoExtracao = ref(0)
-
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAÇÃO DE ÁREA
-|--------------------------------------------------------------------------
-*/
 
 const modoSelecaoArea = ref(false)
 const extraindoArea = ref(false)
 const progressoArea = ref(0)
 
-
-/*
-|--------------------------------------------------------------------------
-| REMENDO
-|--------------------------------------------------------------------------
-*/
-
 const corRemendo = ref('#FFFFFF')
-
-
-/*
-|--------------------------------------------------------------------------
-| MENU
-|--------------------------------------------------------------------------
-*/
 
 const menuAtivoAcima = ref('nenhum')
 
-
-/*
-|--------------------------------------------------------------------------
-| TEXTO
-|--------------------------------------------------------------------------
-*/
-
 const tamanhoFonte = ref(30)
-
 const corTexto = ref('#ffffff')
-
 const fonteSelecionada = ref('Poppins')
 
 const fontesDisponiveis = [
@@ -558,11 +373,7 @@ const fontesDisponiveis = [
     'Courier New'
 ]
 
-const coresTexto = ref([
-    '#ffffff',
-    '#FF5700',
-    '#111111'
-])
+const coresTexto = ref(['#ffffff', '#FF5700', '#111111'])
 
 const quantidadeMaximaCoresMobile = 3
 const quantidadeMaximaCoresDesktop = 5
@@ -570,32 +381,23 @@ const quantidadeMaximaCoresDesktop = 5
 const ehMobile = ref(window.innerWidth <= 600)
 
 const coresVisiveis = computed(() => {
-
-    const limite =
-        ehMobile.value
-            ? quantidadeMaximaCoresMobile
-            : quantidadeMaximaCoresDesktop
+    const limite = ehMobile.value
+        ? quantidadeMaximaCoresMobile
+        : quantidadeMaximaCoresDesktop
 
     return coresTexto.value.slice(0, limite)
 })
-
 
 function verificarTamanhoTela() {
     ehMobile.value = window.innerWidth <= 600
 }
 
-
 function ehTexto(objeto) {
     return (
         objeto &&
-        (
-            objeto.type === 'i-text' ||
-            objeto.type === 'text' ||
-            objeto.type === 'textbox'
-        )
+        (objeto.type === 'i-text' || objeto.type === 'text' || objeto.type === 'textbox')
     )
 }
-
 
 function ehForma(objeto) {
     return (
@@ -609,85 +411,54 @@ function ehForma(objeto) {
     )
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| PALETA DE CORES
-|--------------------------------------------------------------------------
-*/
-
 function adicionarCorTexto() {
-
-    const limiteAtual =
-        ehMobile.value
-            ? quantidadeMaximaCoresMobile
-            : quantidadeMaximaCoresDesktop
+    const limiteAtual = ehMobile.value
+        ? quantidadeMaximaCoresMobile
+        : quantidadeMaximaCoresDesktop
 
     if (coresTexto.value.length >= limiteAtual) {
-
         alert(
             ehMobile.value
                 ? 'No celular você pode ter até 3 cores na paleta.'
                 : 'No computador você pode ter até 5 cores na paleta.'
         )
-
         return
     }
 
     const novaCor = '#FFFFFF'
 
     coresTexto.value.push(novaCor)
-
     corTexto.value = novaCor
 
     atualizarAtributosTexto()
 }
 
-
 function alterarCorDaPaleta(index, cor) {
-
     if (!cor) {
         return
     }
 
     coresTexto.value[index] = cor
-
     corTexto.value = cor
 
     atualizarAtributosTexto()
 }
 
-
 function removerCorTexto(index) {
-
     if (coresTexto.value.length <= 1) {
-
         alert('Você precisa manter pelo menos uma cor.')
-
         return
     }
 
     coresTexto.value.splice(index, 1)
 
-    corTexto.value =
-        coresTexto.value[
-            Math.min(index, coresTexto.value.length - 1)
-        ]
+    corTexto.value = coresTexto.value[Math.min(index, coresTexto.value.length - 1)]
 
     atualizarAtributosTexto()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| IMAGEM
-|--------------------------------------------------------------------------
-*/
-
 function carregarImagem(url) {
-
     return new Promise((resolve, reject) => {
-
         if (!url) {
             reject(new Error('URL da imagem não informada.'))
             return
@@ -698,58 +469,37 @@ function carregarImagem(url) {
         imgElemento.onload = () => resolve(imgElemento)
 
         imgElemento.onerror = () => {
-            reject(
-                new Error(
-                    `Não foi possível carregar a imagem: ${url}`
-                )
-            )
+            reject(new Error(`Não foi possível carregar a imagem: ${url}`))
         }
 
         imgElemento.crossOrigin = 'anonymous'
-
         imgElemento.src = url
     })
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| SUBSTITUIR IMAGEM PRINCIPAL
-|--------------------------------------------------------------------------
-*/
-
-async function substituirImagemPrincipal(
-    novaUrl,
-    manterTransform = false
-) {
-
+async function substituirImagemPrincipal(novaUrl, manterTransform = false) {
     if (!fabricCanvas || !novaUrl) {
-
         console.warn('Canvas ou URL da imagem não disponível.')
-
         return
     }
 
     const imagemAnterior = imagemPrincipal.value
 
     try {
-
         const imgElemento = await carregarImagem(novaUrl)
 
-        const novaImg =
-            new fabric.FabricImage(imgElemento, {
-                borderColor: '#FF5700',
-                cornerColor: '#FF5700',
-                cornerSize: 10,
-                transparentCorners: false,
-                selectable: false,
-                evented: false,
-                nomeCamada: 'Imagem principal',
-                tipoCamada: 'imagem'
-            })
+        const novaImg = new fabric.FabricImage(imgElemento, {
+            borderColor: '#FF5700',
+            cornerColor: '#FF5700',
+            cornerSize: 10,
+            transparentCorners: false,
+            selectable: false,
+            evented: false,
+            nomeCamada: 'Imagem principal',
+            tipoCamada: 'imagem'
+        })
 
         if (manterTransform && imagemAnterior) {
-
             novaImg.set({
                 left: imagemAnterior.left,
                 top: imagemAnterior.top,
@@ -759,26 +509,16 @@ async function substituirImagemPrincipal(
                 originX: imagemAnterior.originX,
                 originY: imagemAnterior.originY
             })
-
         } else {
-
             const larguraCanvas = fabricCanvas.getWidth()
             const alturaCanvas = fabricCanvas.getHeight()
 
-            const escalaLargura =
-                (larguraCanvas * 0.85) / imgElemento.width
+            const escalaLargura = (larguraCanvas * 0.85) / imgElemento.width
+            const escalaAltura = (alturaCanvas * 0.60) / imgElemento.height
 
-            const escalaAltura =
-                (alturaCanvas * 0.60) / imgElemento.height
+            const escalaPerfeita = Math.min(escalaLargura, escalaAltura)
 
-            const escalaPerfeita =
-                Math.min(escalaLargura, escalaAltura)
-
-            novaImg.set({
-                scaleX: escalaPerfeita,
-                scaleY: escalaPerfeita
-            })
-
+            novaImg.set({ scaleX: escalaPerfeita, scaleY: escalaPerfeita })
             novaImg.setCoords()
 
             fabricCanvas.centerObject(novaImg)
@@ -789,7 +529,6 @@ async function substituirImagemPrincipal(
         }
 
         fabricCanvas.add(novaImg)
-
         fabricCanvas.sendObjectToBack(novaImg)
 
         novaImg.setCoords()
@@ -797,35 +536,19 @@ async function substituirImagemPrincipal(
         imagemPrincipal.value = novaImg
 
         atualizarCamadas()
-
         fabricCanvas.requestRenderAll()
-
     } catch (erro) {
-
         console.error('Erro ao carregar imagem:', erro)
 
-        alert(
-            'Não foi possível carregar essa imagem. ' +
-            'Tente usar PNG, JPG ou WEBP.'
-        )
+        alert('Não foi possível carregar essa imagem. Tente usar PNG, JPG ou WEBP.')
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| INICIALIZAR CANVAS
-|--------------------------------------------------------------------------
-*/
-
 async function inicializarCanvas() {
-
     await nextTick()
 
     if (!canvasRef.value || !canvasAreaRef.value) {
-
         console.error('Elementos do canvas não encontrados.')
-
         return
     }
 
@@ -833,39 +556,28 @@ async function inicializarCanvas() {
     const alturaDisponivel = canvasAreaRef.value.clientHeight
 
     if (larguraDisponivel <= 0 || alturaDisponivel <= 0) {
-
         console.error('Área do canvas possui tamanho inválido.')
-
         return
     }
 
-    fabricCanvas =
-        new fabric.Canvas(canvasRef.value, {
-            width: larguraDisponivel,
-            height: alturaDisponivel,
-            backgroundColor: '#262626',
-            preserveObjectStacking: true,
-            selection: true
-        })
+    fabricCanvas = new fabric.Canvas(canvasRef.value, {
+        width: larguraDisponivel,
+        height: alturaDisponivel,
+        backgroundColor: '#262626',
+        preserveObjectStacking: true,
+        selection: true
+    })
 
     if (route.query.projeto) {
-
         await carregarProjetoSalvo(route.query.projeto)
-
     } else if (fonteImagemAtual.value) {
-
-        await substituirImagemPrincipal(
-            fonteImagemAtual.value,
-            false
-        )
+        await substituirImagemPrincipal(fonteImagemAtual.value, false)
     }
 
     fabricCanvas.on('selection:created', lidarComSelecao)
-
     fabricCanvas.on('selection:updated', lidarComSelecao)
 
     fabricCanvas.on('selection:cleared', () => {
-
         if (!modoSelecaoArea.value) {
             menuAtivoAcima.value = 'nenhum'
         }
@@ -874,29 +586,17 @@ async function inicializarCanvas() {
     })
 
     fabricCanvas.on('object:added', atualizarCamadas)
-
     fabricCanvas.on('object:removed', atualizarCamadas)
-
     fabricCanvas.on('object:modified', atualizarCamadas)
 
     window.addEventListener('keydown', lidarComTeclado)
-
     window.addEventListener('resize', redimensionarCanvas)
-
     window.addEventListener('resize', verificarTamanhoTela)
 
     atualizarCamadas()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| REDIMENSIONAR CANVAS
-|--------------------------------------------------------------------------
-*/
-
 function redimensionarCanvas() {
-
     if (!fabricCanvas || !canvasAreaRef.value) {
         return
     }
@@ -908,23 +608,11 @@ function redimensionarCanvas() {
         return
     }
 
-    fabricCanvas.setDimensions({
-        width: largura,
-        height: altura
-    })
-
+    fabricCanvas.setDimensions({ width: largura, height: altura })
     fabricCanvas.requestRenderAll()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| SELEÇÃO
-|--------------------------------------------------------------------------
-*/
-
 function lidarComSelecao(evento) {
-
     const objetoAtivo = evento?.selected?.[0]
 
     if (!objetoAtivo) {
@@ -932,26 +620,19 @@ function lidarComSelecao(evento) {
     }
 
     if (ehTexto(objetoAtivo)) {
-
         menuAtivoAcima.value = 'texto'
-
         tamanhoFonte.value = objetoAtivo.fontSize || 30
-
         corTexto.value = objetoAtivo.fill || '#ffffff'
-
         fonteSelecionada.value = objetoAtivo.fontFamily || 'Poppins'
 
         atualizarCamadas()
-
         return
     }
 
     if (ehForma(objetoAtivo)) {
-
         menuAtivoAcima.value = 'formas'
 
         atualizarCamadas()
-
         return
     }
 
@@ -960,7 +641,6 @@ function lidarComSelecao(evento) {
     }
 
     if (!modoSelecaoArea.value) {
-
         if (objetoAtivo.type !== 'image') {
             menuAtivoAcima.value = 'nenhum'
         }
@@ -969,19 +649,9 @@ function lidarComSelecao(evento) {
     atualizarCamadas()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| FOOTER
-|--------------------------------------------------------------------------
-*/
-
 function clicarTextoNoFooter() {
-
     if (menuAtivoAcima.value === 'texto') {
-
         menuAtivoAcima.value = 'nenhum'
-
         return
     }
 
@@ -994,94 +664,57 @@ function clicarTextoNoFooter() {
     }
 }
 
-
 function clicarImagesNoFooter() {
-
-    menuAtivoAcima.value =
-        menuAtivoAcima.value === 'images'
-            ? 'nenhum'
-            : 'images'
+    menuAtivoAcima.value = menuAtivoAcima.value === 'images' ? 'nenhum' : 'images'
 }
-
 
 function clicarFormasNoFooter() {
-
-    menuAtivoAcima.value =
-        menuAtivoAcima.value === 'formas'
-            ? 'nenhum'
-            : 'formas'
+    menuAtivoAcima.value = menuAtivoAcima.value === 'formas' ? 'nenhum' : 'formas'
 }
 
-
 function clicarCamadasNoFooter() {
-
-    menuAtivoAcima.value =
-        menuAtivoAcima.value === 'camadas'
-            ? 'nenhum'
-            : 'camadas'
+    menuAtivoAcima.value = menuAtivoAcima.value === 'camadas' ? 'nenhum' : 'camadas'
 
     atualizarCamadas()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| ADICIONAR TEXTO
-|--------------------------------------------------------------------------
-*/
-
 function adicionarTexto() {
-
     if (!fabricCanvas) {
         return
     }
 
-    const textoEditavel =
-        new fabric.IText('Seu texto', {
-            left: fabricCanvas.getWidth() / 3,
-            top: fabricCanvas.getHeight() / 1.5,
-            fontFamily: fonteSelecionada.value,
-            fontSize: tamanhoFonte.value,
-            fill: corTexto.value,
-            fontWeight: 'bold',
-            borderColor: '#FF5700',
-            cornerColor: '#FF5700',
-            cornerSize: 10,
-            transparentCorners: false,
-            selectable: true,
-            evented: true,
-            nomeCamada: 'Texto',
-            tipoCamada: 'texto'
-        })
+    const textoEditavel = new fabric.IText('Seu texto', {
+        left: fabricCanvas.getWidth() / 3,
+        top: fabricCanvas.getHeight() / 1.5,
+        fontFamily: fonteSelecionada.value,
+        fontSize: tamanhoFonte.value,
+        fill: corTexto.value,
+        fontWeight: 'bold',
+        borderColor: '#FF5700',
+        cornerColor: '#FF5700',
+        cornerSize: 10,
+        transparentCorners: false,
+        selectable: true,
+        evented: true,
+        nomeCamada: 'Texto',
+        tipoCamada: 'texto'
+    })
 
     fabricCanvas.add(textoEditavel)
-
     fabricCanvas.setActiveObject(textoEditavel)
-
     fabricCanvas.bringObjectToFront(textoEditavel)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| TEXTO (atributos)
-|--------------------------------------------------------------------------
-*/
-
 function mudarCorTextoPredefinida(cor) {
-
     corTexto.value = cor
 
     atualizarAtributosTexto()
 }
 
-
 function mudarFonteTexto() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1093,15 +726,12 @@ function mudarFonteTexto() {
     }
 
     objetoAtivo.set({ fontFamily: fonteSelecionada.value })
-
     objetoAtivo.setCoords()
 
     fabricCanvas.requestRenderAll()
 }
 
-
 function atualizarAtributosTexto() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1109,7 +739,6 @@ function atualizarAtributosTexto() {
     const objetoAtivo = fabricCanvas.getActiveObject()
 
     if (ehTexto(objetoAtivo)) {
-
         objetoAtivo.set({
             fontSize: parseInt(tamanhoFonte.value) || 30,
             fill: corTexto.value,
@@ -1122,15 +751,7 @@ function atualizarAtributosTexto() {
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| FORMAS
-|--------------------------------------------------------------------------
-*/
-
 function configuracaoForma(cor = '#FF5700') {
-
     return {
         fill: cor,
         stroke: '#FF5700',
@@ -1144,23 +765,16 @@ function configuracaoForma(cor = '#FF5700') {
     }
 }
 
-
 function adicionarForma(forma) {
-
     fabricCanvas.add(forma)
-
     fabricCanvas.setActiveObject(forma)
-
     fabricCanvas.bringObjectToFront(forma)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
 function adicionarRetangulo() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1178,9 +792,7 @@ function adicionarRetangulo() {
     )
 }
 
-
 function adicionarCirculo() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1197,9 +809,7 @@ function adicionarCirculo() {
     )
 }
 
-
 function adicionarTriangulo() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1218,29 +828,13 @@ function adicionarTriangulo() {
     )
 }
 
-
-function criarPontosEstrela(
-    centroX,
-    centroY,
-    raioExterno,
-    raioInterno,
-    quantidadePontas = 5
-) {
-
+function criarPontosEstrela(centroX, centroY, raioExterno, raioInterno, quantidadePontas = 5) {
     const pontos = []
-
     const totalPontos = quantidadePontas * 2
 
     for (let i = 0; i < totalPontos; i++) {
-
-        const angulo =
-            -Math.PI / 2 +
-            (Math.PI * 2 * i) / totalPontos
-
-        const raio =
-            i % 2 === 0
-                ? raioExterno
-                : raioInterno
+        const angulo = -Math.PI / 2 + (Math.PI * 2 * i) / totalPontos
+        const raio = i % 2 === 0 ? raioExterno : raioInterno
 
         pontos.push({
             x: centroX + Math.cos(angulo) * raio,
@@ -1251,9 +845,7 @@ function criarPontosEstrela(
     return pontos
 }
 
-
 function adicionarEstrela() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1274,9 +866,7 @@ function adicionarEstrela() {
     )
 }
 
-
 function alterarCorForma(cor) {
-
     if (!fabricCanvas) {
         return
     }
@@ -1288,136 +878,88 @@ function alterarCorForma(cor) {
     }
 
     objetoAtivo.set({ fill: cor })
-
     objetoAtivo.setCoords()
 
     fabricCanvas.requestRenderAll()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| CAMADAS
-|--------------------------------------------------------------------------
-*/
-
 const camadas = ref([])
 
-
 function nomeAutomaticoCamada(objeto, index) {
-
     if (objeto.nomeCamada) {
         return objeto.nomeCamada
     }
 
     if (ehTexto(objeto)) {
-
-        return objeto.text
-            ? `Texto: ${objeto.text.substring(0, 20)}`
-            : 'Texto'
+        return objeto.text ? `Texto: ${objeto.text.substring(0, 20)}` : 'Texto'
     }
 
     if (objeto.type === 'rect') return 'Retângulo'
-
     if (objeto.type === 'circle') return 'Círculo'
-
     if (objeto.type === 'triangle') return 'Triângulo'
-
     if (objeto.type === 'polygon') return 'Forma'
 
     if (objeto.type === 'image') {
-
-        if (objeto === imagemPrincipal.value) {
-            return 'Imagem principal'
-        }
-
-        return 'Imagem recortada'
+        return objeto === imagemPrincipal.value ? 'Imagem principal' : 'Imagem recortada'
     }
 
     return `Elemento ${index + 1}`
 }
 
-
 function iconeDaCamada(objeto) {
-
     if (ehTexto(objeto)) return 'text-outline'
-
     if (objeto.type === 'circle') return 'ellipse-outline'
-
     if (objeto.type === 'triangle') return 'triangle-outline'
-
     if (objeto.type === 'rect') return 'square-outline'
-
     if (objeto.type === 'polygon') return 'star-outline'
-
     if (objeto.type === 'image') return 'image-outline'
 
     return 'layers-outline'
 }
 
-
 function atualizarCamadas() {
-
     if (!fabricCanvas) {
         return
     }
 
-    camadas.value =
-        fabricCanvas
-            .getObjects()
-            .map((objeto, index) => ({
-                objeto,
-                index,
-                nome: nomeAutomaticoCamada(objeto, index),
-                icone: iconeDaCamada(objeto)
-            }))
-            .reverse()
+    camadas.value = fabricCanvas
+        .getObjects()
+        .map((objeto, index) => ({
+            objeto,
+            index,
+            nome: nomeAutomaticoCamada(objeto, index),
+            icone: iconeDaCamada(objeto)
+        }))
+        .reverse()
 }
 
-
 function selecionarCamada(camada) {
-
     if (!fabricCanvas || !camada?.objeto) {
         return
     }
 
     const objeto = camada.objeto
 
-    // a imagem principal é o fundo e não pode ser selecionada
     if (objeto === imagemPrincipal.value) {
         return
     }
 
     fabricCanvas.setActiveObject(objeto)
-
     objeto.setCoords()
-
     fabricCanvas.requestRenderAll()
 
     if (ehTexto(objeto)) {
-
         menuAtivoAcima.value = 'texto'
-
     } else if (ehForma(objeto)) {
-
         menuAtivoAcima.value = 'formas'
     }
 }
-
 
 function estaSelecionado(objeto) {
     return fabricCanvas?.getActiveObject() === objeto
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| ORDEM DAS CAMADAS
-|--------------------------------------------------------------------------
-*/
-
 function obterObjetoSelecionado() {
-
     if (!fabricCanvas) {
         return null
     }
@@ -1425,18 +967,14 @@ function obterObjetoSelecionado() {
     const objeto = fabricCanvas.getActiveObject()
 
     if (!objeto) {
-
         alert('Selecione um elemento primeiro.')
-
         return null
     }
 
     return objeto
 }
 
-
 function trazerParaFrente() {
-
     const objeto = obterObjetoSelecionado()
 
     if (!objeto) {
@@ -1444,30 +982,21 @@ function trazerParaFrente() {
     }
 
     fabricCanvas.bringObjectForward(objeto)
-
     fabricCanvas.setActiveObject(objeto)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
 function enviarParaTras() {
-
     const objeto = obterObjetoSelecionado()
 
-    if (!objeto) {
-        return
-    }
-
-    if (objeto === imagemPrincipal.value) {
+    if (!objeto || objeto === imagemPrincipal.value) {
         return
     }
 
     fabricCanvas.sendObjectBackwards(objeto)
 
-    // garante que a imagem principal continue como fundo
     if (imagemPrincipal.value) {
         fabricCanvas.sendObjectToBack(imagemPrincipal.value)
     }
@@ -1475,13 +1004,10 @@ function enviarParaTras() {
     fabricCanvas.setActiveObject(objeto)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
 function trazerParaTopo() {
-
     const objeto = obterObjetoSelecionado()
 
     if (!objeto) {
@@ -1489,103 +1015,62 @@ function trazerParaTopo() {
     }
 
     fabricCanvas.bringObjectToFront(objeto)
-
     fabricCanvas.setActiveObject(objeto)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
 function enviarParaFundo() {
-
     const objeto = obterObjetoSelecionado()
 
-    if (!objeto) {
-        return
-    }
-
-    if (objeto === imagemPrincipal.value) {
+    if (!objeto || objeto === imagemPrincipal.value) {
         return
     }
 
     fabricCanvas.sendObjectToBack(objeto)
 
-    // mantém a imagem original como fundo absoluto
-    if (
-        imagemPrincipal.value &&
-        imagemPrincipal.value !== objeto
-    ) {
+    if (imagemPrincipal.value && imagemPrincipal.value !== objeto) {
         fabricCanvas.sendObjectToBack(imagemPrincipal.value)
     }
 
     fabricCanvas.setActiveObject(objeto)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXCLUIR
-|--------------------------------------------------------------------------
-*/
-
 function deletarSelecionado() {
-
     if (!fabricCanvas) {
         return
     }
 
     const objetoAtivo = fabricCanvas.getActiveObject()
 
-    if (!objetoAtivo) {
-        return
-    }
-
-    if (objetoAtivo === imagemPrincipal.value) {
+    if (!objetoAtivo || objetoAtivo === imagemPrincipal.value) {
         return
     }
 
     fabricCanvas.remove(objetoAtivo)
-
     fabricCanvas.discardActiveObject()
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 
     menuAtivoAcima.value = 'nenhum'
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| TECLADO
-|--------------------------------------------------------------------------
-*/
-
 function lidarComTeclado(evento) {
-
     if (evento.key === 'Escape' && sidebarAberta.value) {
-
         fecharSidebar()
-
         return
     }
 
-    // modo visualização: nenhuma tecla edita o projeto
     if (somenteLeitura.value) {
         return
     }
 
-    if (
-        evento.key !== 'Delete' &&
-        evento.key !== 'Backspace'
-    ) {
+    if (evento.key !== 'Delete' && evento.key !== 'Backspace') {
         return
     }
 
@@ -1598,45 +1083,23 @@ function lidarComTeclado(evento) {
     deletarSelecionado()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| REMOVER FUNDO
-|--------------------------------------------------------------------------
-*/
-
 async function removerFundo() {
-
     if (!fonteImagemAtual.value || removendoFundo.value) {
         return
     }
 
     removendoFundo.value = true
-
     progressoRemocao.value = 0
 
     try {
-
-        const blob =
-            await removeBackground(fonteImagemAtual.value, {
-
-                output: {
-                    format: 'image/png',
-                    quality: 0.9
-                },
-
-                progress: (chave, atual, total) => {
-
-                    if (total > 0) {
-
-                        progressoRemocao.value =
-                            Math.min(
-                                100,
-                                Math.round((atual / total) * 100)
-                            )
-                    }
+        const blob = await removeBackground(fonteImagemAtual.value, {
+            output: { format: 'image/png', quality: 0.9 },
+            progress: (chave, atual, total) => {
+                if (total > 0) {
+                    progressoRemocao.value = Math.min(100, Math.round((atual / total) * 100))
                 }
-            })
+            }
+        })
 
         if (!blob) {
             throw new Error('A IA não retornou uma imagem.')
@@ -1649,63 +1112,36 @@ async function removerFundo() {
         await substituirImagemPrincipal(cutoutUrl, true)
 
         fabricCanvas?.requestRenderAll()
-
     } catch (erro) {
-
         console.error('Falha ao remover fundo:', erro)
 
         alert(
             'Não foi possível remover o fundo dessa imagem. ' +
             'Verifique sua conexão e tente novamente.'
         )
-
     } finally {
-
         removendoFundo.value = false
-
         progressoRemocao.value = 0
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR OBJETO FLUTUANTE
-|--------------------------------------------------------------------------
-*/
-
 async function extrairObjetoFlutuante() {
-
     if (!fotoOriginalBase.value || extraindoObjeto.value) {
         return
     }
 
     extraindoObjeto.value = true
-
     progressoExtracao.value = 0
 
     try {
-
-        const blob =
-            await removeBackground(fotoOriginalBase.value, {
-
-                output: {
-                    format: 'image/png',
-                    quality: 0.9
-                },
-
-                progress: (chave, atual, total) => {
-
-                    if (total > 0) {
-
-                        progressoExtracao.value =
-                            Math.min(
-                                100,
-                                Math.round((atual / total) * 100)
-                            )
-                    }
+        const blob = await removeBackground(fotoOriginalBase.value, {
+            output: { format: 'image/png', quality: 0.9 },
+            progress: (chave, atual, total) => {
+                if (total > 0) {
+                    progressoExtracao.value = Math.min(100, Math.round((atual / total) * 100))
                 }
-            })
+            }
+        })
 
         if (!blob) {
             throw new Error('A IA não retornou uma imagem.')
@@ -1715,20 +1151,18 @@ async function extrairObjetoFlutuante() {
 
         const imgElemento = await carregarImagem(cutoutUrl)
 
-        const novoObjeto =
-            new fabric.FabricImage(imgElemento, {
-                borderColor: '#FF5700',
-                cornerColor: '#FF5700',
-                cornerSize: 10,
-                transparentCorners: false,
-                selectable: true,
-                evented: true,
-                nomeCamada: 'Objeto recortado',
-                tipoCamada: 'imagem'
-            })
+        const novoObjeto = new fabric.FabricImage(imgElemento, {
+            borderColor: '#FF5700',
+            cornerColor: '#FF5700',
+            cornerSize: 10,
+            transparentCorners: false,
+            selectable: true,
+            evented: true,
+            nomeCamada: 'Objeto recortado',
+            tipoCamada: 'imagem'
+        })
 
         if (imagemPrincipal.value) {
-
             novoObjeto.set({
                 left: imagemPrincipal.value.left,
                 top: imagemPrincipal.value.top,
@@ -1743,77 +1177,50 @@ async function extrairObjetoFlutuante() {
         novoObjeto.setCoords()
 
         fabricCanvas.add(novoObjeto)
-
         fabricCanvas.bringObjectToFront(novoObjeto)
-
         fabricCanvas.setActiveObject(novoObjeto)
 
         atualizarCamadas()
-
         fabricCanvas.requestRenderAll()
-
     } catch (erro) {
-
         console.error('Falha ao extrair objeto:', erro)
 
         alert(
             'Não foi possível extrair um objeto dessa imagem. ' +
             'Verifique sua conexão e tente novamente.'
         )
-
     } finally {
-
         extraindoObjeto.value = false
-
         progressoExtracao.value = 0
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| SELEÇÃO DE ÁREA
-|--------------------------------------------------------------------------
-*/
-
 let selecaoRect = null
-
 let selecaoInicio = null
 
-
 function ativarModoSelecaoArea() {
-
     if (!fabricCanvas || !imagemPrincipal.value) {
-
         alert('Carregue uma imagem primeiro.')
-
         return
     }
 
     modoSelecaoArea.value = true
-
     menuAtivoAcima.value = 'nenhum'
 
     fabricCanvas.discardActiveObject()
 
     fabricCanvas.selection = false
-
     fabricCanvas.skipTargetFind = true
-
     fabricCanvas.defaultCursor = 'crosshair'
 
     fabricCanvas.requestRenderAll()
 
     fabricCanvas.on('mouse:down', iniciarSelecaoArea)
-
     fabricCanvas.on('mouse:move', atualizarSelecaoArea)
-
     fabricCanvas.on('mouse:up', finalizarSelecaoArea)
 }
 
-
 function desativarModoSelecaoArea() {
-
     if (!fabricCanvas) {
         return
     }
@@ -1821,21 +1228,15 @@ function desativarModoSelecaoArea() {
     modoSelecaoArea.value = false
 
     fabricCanvas.selection = true
-
     fabricCanvas.skipTargetFind = false
-
     fabricCanvas.defaultCursor = 'default'
 
     fabricCanvas.off('mouse:down', iniciarSelecaoArea)
-
     fabricCanvas.off('mouse:move', atualizarSelecaoArea)
-
     fabricCanvas.off('mouse:up', finalizarSelecaoArea)
 
     if (selecaoRect) {
-
         fabricCanvas.remove(selecaoRect)
-
         selecaoRect = null
     }
 
@@ -1844,9 +1245,7 @@ function desativarModoSelecaoArea() {
     fabricCanvas.requestRenderAll()
 }
 
-
 function iniciarSelecaoArea(evento) {
-
     if (!fabricCanvas || !modoSelecaoArea.value) {
         return
     }
@@ -1854,39 +1253,30 @@ function iniciarSelecaoArea(evento) {
     const pointer = evento.scenePoint
 
     if (!pointer) {
-
         console.warn('Não foi possível obter a posição do mouse.')
-
         return
     }
 
-    selecaoInicio = {
-        x: pointer.x,
-        y: pointer.y
-    }
+    selecaoInicio = { x: pointer.x, y: pointer.y }
 
-    selecaoRect =
-        new fabric.Rect({
-            left: pointer.x,
-            top: pointer.y,
-            width: 0,
-            height: 0,
-            fill: 'rgba(255, 87, 0, 0.15)',
-            stroke: '#FF5700',
-            strokeDashArray: [6, 4],
-            strokeWidth: 2,
-            selectable: false,
-            evented: false
-        })
+    selecaoRect = new fabric.Rect({
+        left: pointer.x,
+        top: pointer.y,
+        width: 0,
+        height: 0,
+        fill: 'rgba(255, 87, 0, 0.15)',
+        stroke: '#FF5700',
+        strokeDashArray: [6, 4],
+        strokeWidth: 2,
+        selectable: false,
+        evented: false
+    })
 
     fabricCanvas.add(selecaoRect)
-
     fabricCanvas.requestRenderAll()
 }
 
-
 function atualizarSelecaoArea(evento) {
-
     if (!selecaoRect || !selecaoInicio || !fabricCanvas) {
         return
     }
@@ -1898,7 +1288,6 @@ function atualizarSelecaoArea(evento) {
     }
 
     const largura = pointer.x - selecaoInicio.x
-
     const altura = pointer.y - selecaoInicio.y
 
     selecaoRect.set({
@@ -1913,9 +1302,7 @@ function atualizarSelecaoArea(evento) {
     fabricCanvas.requestRenderAll()
 }
 
-
 async function finalizarSelecaoArea() {
-
     if (!selecaoRect) {
         return
     }
@@ -1929,25 +1316,14 @@ async function finalizarSelecaoArea() {
 
     desativarModoSelecaoArea()
 
-    if (
-        areaSelecionada.width < 15 ||
-        areaSelecionada.height < 15
-    ) {
+    if (areaSelecionada.width < 15 || areaSelecionada.height < 15) {
         return
     }
 
     await extrairObjetoDaArea(areaSelecionada)
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR ÁREA
-|--------------------------------------------------------------------------
-*/
-
 async function extrairObjetoDaArea(area) {
-
     if (!fotoOriginalBase.value || !imagemPrincipal.value) {
         return
     }
@@ -1957,29 +1333,21 @@ async function extrairObjetoDaArea(area) {
     }
 
     extraindoArea.value = true
-
     progressoArea.value = 0
 
     try {
-
         const base = imagemPrincipal.value
 
         const relX = (area.left - base.left) / base.scaleX
-
         const relY = (area.top - base.top) / base.scaleY
-
         const relW = area.width / base.scaleX
-
         const relH = area.height / base.scaleY
 
         const imgOriginal = await carregarImagem(fotoOriginalBase.value)
 
         const cropX = Math.max(0, relX)
-
         const cropY = Math.max(0, relY)
-
         const cropW = Math.min(relW, imgOriginal.width - cropX)
-
         const cropH = Math.min(relH, imgOriginal.height - cropY)
 
         if (cropW <= 0 || cropH <= 0) {
@@ -1989,7 +1357,6 @@ async function extrairObjetoDaArea(area) {
         const canvasTemp = document.createElement('canvas')
 
         canvasTemp.width = Math.round(cropW)
-
         canvasTemp.height = Math.round(cropH)
 
         const ctx = canvasTemp.getContext('2d')
@@ -2010,10 +1377,9 @@ async function extrairObjetoDaArea(area) {
             canvasTemp.height
         )
 
-        const recorteBlob =
-            await new Promise((resolve) => {
-                canvasTemp.toBlob(resolve, 'image/png')
-            })
+        const recorteBlob = await new Promise((resolve) => {
+            canvasTemp.toBlob(resolve, 'image/png')
+        })
 
         if (!recorteBlob) {
             throw new Error('Não foi possível recortar a área.')
@@ -2022,138 +1388,92 @@ async function extrairObjetoDaArea(area) {
         let blobFinal = recorteBlob
 
         try {
-
-            const blobLimpo =
-                await removeBackground(recorteBlob, {
-
-                    output: {
-                        format: 'image/png',
-                        quality: 0.9
-                    },
-
-                    progress: (chave, atual, total) => {
-
-                        if (total > 0) {
-
-                            progressoArea.value =
-                                Math.min(
-                                    100,
-                                    Math.round((atual / total) * 100)
-                                )
-                        }
+            const blobLimpo = await removeBackground(recorteBlob, {
+                output: { format: 'image/png', quality: 0.9 },
+                progress: (chave, atual, total) => {
+                    if (total > 0) {
+                        progressoArea.value = Math.min(100, Math.round((atual / total) * 100))
                     }
-                })
+                }
+            })
 
             if (blobLimpo) {
                 blobFinal = blobLimpo
             }
-
         } catch (erroIA) {
-
-            console.warn(
-                'IA não conseguiu limpar essa área, usando recorte simples:',
-                erroIA
-            )
+            console.warn('IA não conseguiu limpar essa área, usando recorte simples:', erroIA)
         }
 
         const urlFinal = URL.createObjectURL(blobFinal)
 
         const imgFinal = await carregarImagem(urlFinal)
 
-        const novoObjeto =
-            new fabric.FabricImage(imgFinal, {
-                left: area.left,
-                top: area.top,
-                scaleX: base.scaleX,
-                scaleY: base.scaleY,
-                borderColor: '#FF5700',
-                cornerColor: '#FF5700',
-                cornerSize: 10,
-                transparentCorners: false,
-                selectable: true,
-                evented: true,
-                nomeCamada: 'Área recortada',
-                tipoCamada: 'imagem'
-            })
+        const novoObjeto = new fabric.FabricImage(imgFinal, {
+            left: area.left,
+            top: area.top,
+            scaleX: base.scaleX,
+            scaleY: base.scaleY,
+            borderColor: '#FF5700',
+            cornerColor: '#FF5700',
+            cornerSize: 10,
+            transparentCorners: false,
+            selectable: true,
+            evented: true,
+            nomeCamada: 'Área recortada',
+            tipoCamada: 'imagem'
+        })
 
         novoObjeto.setCoords()
 
         fabricCanvas.add(novoObjeto)
-
         fabricCanvas.bringObjectToFront(novoObjeto)
-
         fabricCanvas.setActiveObject(novoObjeto)
 
         atualizarCamadas()
-
         fabricCanvas.requestRenderAll()
-
     } catch (erro) {
-
         console.error('Falha ao extrair área:', erro)
 
         alert(
             'Não foi possível extrair essa área. ' +
             'Tente selecionar uma região maior ou com um objeto mais definido.'
         )
-
     } finally {
-
         extraindoArea.value = false
-
         progressoArea.value = 0
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| REMENDO
-|--------------------------------------------------------------------------
-*/
-
 function adicionarRemendo() {
-
     if (!fabricCanvas) {
         return
     }
 
-    const remendo =
-        new fabric.Rect({
-            left: fabricCanvas.getWidth() / 2,
-            top: fabricCanvas.getHeight() / 2,
-            originX: 'center',
-            originY: 'center',
-            fill: corRemendo.value,
-            width: 80,
-            height: 80,
-            borderColor: '#FF5700',
-            cornerColor: '#FF5700',
-            cornerSize: 10,
-            selectable: true,
-            evented: true,
-            nomeCamada: 'Remendo',
-            tipoCamada: 'forma'
-        })
+    const remendo = new fabric.Rect({
+        left: fabricCanvas.getWidth() / 2,
+        top: fabricCanvas.getHeight() / 2,
+        originX: 'center',
+        originY: 'center',
+        fill: corRemendo.value,
+        width: 80,
+        height: 80,
+        borderColor: '#FF5700',
+        cornerColor: '#FF5700',
+        cornerSize: 10,
+        selectable: true,
+        evented: true,
+        nomeCamada: 'Remendo',
+        tipoCamada: 'forma'
+    })
 
     fabricCanvas.add(remendo)
-
     fabricCanvas.setActiveObject(remendo)
 
     atualizarCamadas()
-
     fabricCanvas.requestRenderAll()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| TROCAR IMAGEM
-|--------------------------------------------------------------------------
-*/
-
 async function trocarImagemPrincipal(evento) {
-
     const file = evento?.target?.files?.[0]
 
     if (!file) {
@@ -2161,7 +1481,6 @@ async function trocarImagemPrincipal(evento) {
     }
 
     if (!file.type.startsWith('image/')) {
-
         alert('Selecione uma imagem PNG, JPG ou WEBP.')
 
         evento.target.value = ''
@@ -2170,116 +1489,70 @@ async function trocarImagemPrincipal(evento) {
     }
 
     try {
-
         const novaUrl = URL.createObjectURL(file)
 
         fonteImagemAtual.value = novaUrl
-
         fotoOriginalBase.value = novaUrl
 
         await substituirImagemPrincipal(novaUrl, false)
-
     } catch (erro) {
-
         console.error('Erro ao trocar imagem:', erro)
 
         alert('Não foi possível trocar a imagem.')
-
     } finally {
-
         if (evento?.target) {
             evento.target.value = ''
         }
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| FUNDO
-|--------------------------------------------------------------------------
-*/
-
 function trocarCorFundo(cor) {
-
     if (!fabricCanvas) {
         return
     }
 
-    fabricCanvas.backgroundColor =
-        cor === 'transparent'
-            ? 'rgba(0,0,0,0)'
-            : cor
+    fabricCanvas.backgroundColor = cor === 'transparent' ? 'rgba(0,0,0,0)' : cor
 
     fabricCanvas.requestRenderAll()
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXPORTAR
-|--------------------------------------------------------------------------
-*/
-
 function exeportadorDesing() {
-
     if (!fabricCanvas) {
         return
     }
 
     fabricCanvas.discardActiveObject()
-
     fabricCanvas.requestRenderAll()
 
-    const dataURL =
-        fabricCanvas.toDataURL({
-            format: 'png',
-            quality: 1,
-            multiplier: 1
-        })
+    const dataURL = fabricCanvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        multiplier: 1
+    })
 
     const link = document.createElement('a')
 
     link.download = `${nomeProjeto.value.trim() || templateTitulo}.png`
-
     link.href = dataURL
 
     document.body.appendChild(link)
-
     link.click()
-
     document.body.removeChild(link)
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| CICLO DE VIDA
-|--------------------------------------------------------------------------
-*/
-
 onMounted(() => {
-
     inicializarCanvas()
-
     verificarTamanhoTela()
 })
 
-
 onBeforeUnmount(() => {
-
     window.removeEventListener('keydown', lidarComTeclado)
-
     window.removeEventListener('resize', redimensionarCanvas)
-
     window.removeEventListener('resize', verificarTamanhoTela)
 
     if (fabricCanvas) {
-
         fabricCanvas.off('mouse:down', iniciarSelecaoArea)
-
         fabricCanvas.off('mouse:move', atualizarSelecaoArea)
-
         fabricCanvas.off('mouse:up', finalizarSelecaoArea)
 
         fabricCanvas.dispose()
@@ -2289,16 +1562,10 @@ onBeforeUnmount(() => {
 })
 </script>
 
-
 <template>
-
 <div class="editor-interface">
 
-
-    <!-- HEADER -->
-
     <header class="editor-header">
-
         <button class="header-btn" @click="router.push('/')">
             <ion-icon name="arrow-back"></ion-icon>
         </button>
@@ -2316,18 +1583,12 @@ onBeforeUnmount(() => {
         <button v-if="!somenteLeitura" class="header-btn" @click="abrirSidebar">
             <ion-icon name="ellipsis-vertical"></ion-icon>
         </button>
-
     </header>
 
-
-    <!-- CANVAS -->
-
     <main ref="canvasAreaRef" class="canvas-area">
-
         <canvas ref="canvasRef"></canvas>
 
         <div v-if="somenteLeitura" class="controles-zoom">
-
             <button @click="zoomVisualizacao(1.25)" title="Aproximar">
                 <ion-icon name="add-outline"></ion-icon>
             </button>
@@ -2339,7 +1600,6 @@ onBeforeUnmount(() => {
             <button @click="resetarVisualizacao" title="Voltar ao tamanho original">
                 <ion-icon name="scan-outline"></ion-icon>
             </button>
-
         </div>
 
         <div v-if="modoSelecaoArea" class="aviso-selecao">
@@ -2349,32 +1609,19 @@ onBeforeUnmount(() => {
         <div v-if="extraindoArea" class="aviso-selecao">
             Extraindo... {{ progressoArea }}%
         </div>
-
     </main>
 
-
-    <!-- FOOTER -->
-
     <footer v-if="!somenteLeitura" class="editor-footer">
-
-
-        <!-- PAINEL TEXTO -->
 
         <div
             v-if="menuAtivoAcima === 'texto'"
             class="painel-flutuante aba-superior-texto"
         >
-
             <div class="texto-controles">
-
                 <label class="controle-fonte">
-
                     <span>Fonte</span>
 
-                    <select
-                        v-model="fonteSelecionada"
-                        @change="mudarFonteTexto"
-                    >
+                    <select v-model="fonteSelecionada" @change="mudarFonteTexto">
                         <option
                             v-for="fonte in fontesDisponiveis"
                             :key="fonte"
@@ -2383,12 +1630,9 @@ onBeforeUnmount(() => {
                             {{ fonte }}
                         </option>
                     </select>
-
                 </label>
 
-
                 <label class="controle-tamanho">
-
                     <span>Tamanho</span>
 
                     <input
@@ -2398,22 +1642,15 @@ onBeforeUnmount(() => {
                         max="200"
                         @input="atualizarAtributosTexto"
                     />
-
                 </label>
 
-
                 <div class="cores-texto">
-
                     <div
                         v-for="(cor, index) in coresVisiveis"
                         :key="`${cor}-${index}`"
                         class="cor-personalizada"
                     >
-
-                        <label
-                            class="cor-texto"
-                            :style="{ backgroundColor: cor }"
-                        >
+                        <label class="cor-texto" :style="{ backgroundColor: cor }">
                             <input
                                 type="color"
                                 :value="cor"
@@ -2428,32 +1665,20 @@ onBeforeUnmount(() => {
                         >
                             ×
                         </button>
-
                     </div>
 
-                    <button
-                        class="botao-adicionar-cor"
-                        @click="adicionarCorTexto"
-                    >
+                    <button class="botao-adicionar-cor" @click="adicionarCorTexto">
                         +
                     </button>
-
                 </div>
-
             </div>
-
         </div>
-
-
-        <!-- PAINEL IMAGENS -->
 
         <div
             v-if="menuAtivoAcima === 'images'"
             class="painel-flutuante aba-superior-img"
         >
-
             <div class="img-secao">
-
                 <button
                     class="botao-acao"
                     :disabled="extraindoObjeto"
@@ -2461,13 +1686,8 @@ onBeforeUnmount(() => {
                 >
                     <ion-icon name="copy-outline"></ion-icon>
 
-                    <span v-if="!extraindoObjeto">
-                        Extrair objeto (manter fundo)
-                    </span>
-
-                    <span v-else>
-                        Extraindo... {{ progressoExtracao }}%
-                    </span>
+                    <span v-if="!extraindoObjeto">Extrair objeto (manter fundo)</span>
+                    <span v-else>Extraindo... {{ progressoExtracao }}%</span>
                 </button>
 
                 <button class="botao-acao" @click="ativarModoSelecaoArea">
@@ -2486,69 +1706,37 @@ onBeforeUnmount(() => {
                         @change="trocarImagemPrincipal"
                     />
                 </label>
-
             </div>
 
-
             <div class="img-secao">
-
                 <span class="label-fonte">Cobrir buraco</span>
 
                 <div class="remendo-controles">
-
-                    <input
-                        v-model="corRemendo"
-                        type="color"
-                        class="seletor-cor"
-                    />
+                    <input v-model="corRemendo" type="color" class="seletor-cor" />
 
                     <button class="botao-acao" @click="adicionarRemendo">
                         <ion-icon name="square-outline"></ion-icon>
                         <span>Adicionar remendo</span>
                     </button>
-
                 </div>
-
             </div>
 
-
             <div class="img-secao">
-
                 <span class="label-fonte">Fundo do canvas</span>
 
                 <div class="cores-predefinidas">
-
-                    <button
-                        class="circulo-cor branco"
-                        @click="trocarCorFundo('#ffffff')"
-                    ></button>
-
-                    <button
-                        class="circulo-cor escuro"
-                        @click="trocarCorFundo('#111111')"
-                    ></button>
-
-                    <button
-                        class="circulo-cor transp-borda"
-                        @click="trocarCorFundo('transparent')"
-                    ></button>
-
+                    <button class="circulo-cor branco" @click="trocarCorFundo('#ffffff')"></button>
+                    <button class="circulo-cor escuro" @click="trocarCorFundo('#111111')"></button>
+                    <button class="circulo-cor transp-borda" @click="trocarCorFundo('transparent')"></button>
                 </div>
-
             </div>
-
         </div>
-
-
-        <!-- PAINEL FORMAS -->
 
         <div
             v-if="menuAtivoAcima === 'formas'"
             class="painel-flutuante aba-superior-formas"
         >
-
             <div class="formas-lista">
-
                 <button class="forma-btn" @click="adicionarRetangulo">
                     <ion-icon name="square-outline"></ion-icon>
                     <span>Retângulo</span>
@@ -2568,11 +1756,9 @@ onBeforeUnmount(() => {
                     <ion-icon name="star-outline"></ion-icon>
                     <span>Estrela</span>
                 </button>
-
             </div>
 
             <div class="cor-forma-controle">
-
                 <span>Cor</span>
 
                 <input
@@ -2581,28 +1767,20 @@ onBeforeUnmount(() => {
                     class="seletor-cor-forma"
                     @input="alterarCorForma($event.target.value)"
                 />
-
             </div>
-
         </div>
-
-
-        <!-- PAINEL CAMADAS -->
 
         <div
             v-if="menuAtivoAcima === 'camadas'"
             class="painel-flutuante aba-superior-camadas"
         >
-
             <div class="camadas-topo">
-
                 <div class="camadas-titulo">
                     <ion-icon name="layers-outline"></ion-icon>
                     <span>Camadas</span>
                 </div>
 
                 <div class="camadas-acoes">
-
                     <button class="camada-btn" @click="trazerParaFrente">
                         <ion-icon name="chevron-up-outline"></ion-icon>
                         <span>Frente</span>
@@ -2622,14 +1800,10 @@ onBeforeUnmount(() => {
                         <ion-icon name="arrow-down-outline"></ion-icon>
                         <span>Fundo</span>
                     </button>
-
                 </div>
-
             </div>
 
-
             <div v-if="camadas.length" class="lista-camadas">
-
                 <button
                     v-for="camada in camadas"
                     :key="camada.objeto.__uid || camada.index"
@@ -2644,27 +1818,16 @@ onBeforeUnmount(() => {
 
                     <span class="nome-camada">{{ camada.nome }}</span>
 
-                    <span
-                        v-if="camada.objeto === imagemPrincipal"
-                        class="fundo-label"
-                    >
+                    <span v-if="camada.objeto === imagemPrincipal" class="fundo-label">
                         Fundo
                     </span>
                 </button>
-
             </div>
 
-            <div v-else class="nenhuma-camada">
-                Nenhuma camada
-            </div>
-
+            <div v-else class="nenhuma-camada">Nenhuma camada</div>
         </div>
 
-
-        <!-- FERRAMENTAS -->
-
         <div class="ferramentas-container-fixo">
-
             <button
                 class="tool-btn"
                 :class="{ ativo: menuAtivoAcima === 'texto' }"
@@ -2705,38 +1868,25 @@ onBeforeUnmount(() => {
                 <ion-icon name="trash-outline"></ion-icon>
                 <span>Excluir</span>
             </button>
-
         </div>
 
     </footer>
 
-
-    <!-- SIDEBAR DIREITA -->
-
     <transition name="fade">
-        <div
-            v-if="sidebarAberta"
-            class="sidebar-overlay"
-            @click="fecharSidebar"
-        ></div>
+        <div v-if="sidebarAberta" class="sidebar-overlay" @click="fecharSidebar"></div>
     </transition>
 
     <transition name="slide-direita">
         <aside v-if="sidebarAberta" class="sidebar-direita">
-
             <div class="sidebar-topo">
-
                 <span class="sidebar-titulo">Opções</span>
 
                 <button class="header-btn" @click="fecharSidebar">
                     <ion-icon name="close-outline"></ion-icon>
                 </button>
-
             </div>
 
-
             <div class="sidebar-lista">
-
                 <button
                     class="header-btn"
                     :class="{ 'opcao-ativa': opcaoSidebarAtiva === 'pessoas' }"
@@ -2769,12 +1919,7 @@ onBeforeUnmount(() => {
                     <ion-icon name="bookmark-outline"></ion-icon>
                 </button>
 
-
-                <div
-                    v-if="opcaoSidebarAtiva"
-                    class="sidebar-descricao"
-                >
-
+                <div v-if="opcaoSidebarAtiva" class="sidebar-descricao">
                     <h3>{{ opcoesSidebar[opcaoSidebarAtiva].titulo }}</h3>
 
                     <p>{{ opcoesSidebar[opcaoSidebarAtiva].descricao }}</p>
@@ -2802,11 +1947,7 @@ onBeforeUnmount(() => {
                         :disabled="salvandoProjeto"
                         @click="salvarNaCategoria"
                     >
-                        {{
-                            salvandoProjeto
-                                ? 'Salvando...'
-                                : opcoesSidebar[opcaoSidebarAtiva].botao
-                        }}
+                        {{ salvandoProjeto ? 'Salvando...' : opcoesSidebar[opcaoSidebarAtiva].botao }}
                     </button>
 
                     <button
@@ -2820,25 +1961,18 @@ onBeforeUnmount(() => {
                     <p v-if="mensagemSidebar" class="sidebar-mensagem">
                         {{ mensagemSidebar }}
                     </p>
-
                 </div>
-
             </div>
-
         </aside>
     </transition>
 
 </div>
-
 </template>
 
-
 <style scoped>
-
 * {
     box-sizing: border-box;
 }
-
 
 .editor-interface {
     display: flex;
@@ -2848,9 +1982,6 @@ onBeforeUnmount(() => {
     overflow: hidden;
     font-family: system-ui, sans-serif;
 }
-
-
-/* ---------- HEADER ---------- */
 
 .editor-header {
     flex: 0 0 50px;
@@ -2879,10 +2010,19 @@ onBeforeUnmount(() => {
 
 .header-spacer {
     flex: 1;
+    min-width: 0;
+    text-align: center;
 }
 
-
-/* ---------- CANVAS ---------- */
+.badge-leitura {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
 
 .canvas-area {
     position: relative;
@@ -2900,9 +2040,6 @@ onBeforeUnmount(() => {
     display: block;
 }
 
-
-/* ---------- AVISOS ---------- */
-
 .aviso-selecao {
     position: absolute;
     top: 12px;
@@ -2919,8 +2056,33 @@ onBeforeUnmount(() => {
     pointer-events: none;
 }
 
+.controles-zoom {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
-/* ---------- FOOTER ---------- */
+.controles-zoom button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #FF5700;
+    border-radius: 50%;
+    background: rgba(30, 30, 30, 0.9);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.controles-zoom button:hover {
+    background: rgba(255, 87, 0, 0.25);
+}
 
 .editor-footer {
     position: relative;
@@ -2928,9 +2090,6 @@ onBeforeUnmount(() => {
     width: 100%;
     z-index: 20;
 }
-
-
-/* ---------- PAINÉIS ---------- */
 
 .painel-flutuante {
     position: absolute;
@@ -2940,9 +2099,6 @@ onBeforeUnmount(() => {
     z-index: 30;
     box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.35);
 }
-
-
-/* ---------- TEXTO ---------- */
 
 .aba-superior-texto {
     min-height: 76px;
@@ -3060,9 +2216,6 @@ onBeforeUnmount(() => {
     flex-shrink: 0;
 }
 
-
-/* ---------- IMAGENS ---------- */
-
 .aba-superior-img {
     max-height: 340px;
     overflow-y: auto;
@@ -3172,9 +2325,6 @@ onBeforeUnmount(() => {
     background-position: 0 0, 0 4px, 4px -4px, -4px 0;
 }
 
-
-/* ---------- FORMAS ---------- */
-
 .aba-superior-formas {
     min-height: 110px;
     display: flex;
@@ -3238,9 +2388,6 @@ onBeforeUnmount(() => {
     background: transparent;
     cursor: pointer;
 }
-
-
-/* ---------- CAMADAS ---------- */
 
 .aba-superior-camadas {
     min-height: 180px;
@@ -3379,9 +2526,6 @@ onBeforeUnmount(() => {
     font-size: 13px;
 }
 
-
-/* ---------- FERRAMENTAS ---------- */
-
 .ferramentas-container-fixo {
     height: 56px;
     display: flex;
@@ -3419,9 +2563,6 @@ onBeforeUnmount(() => {
 .tool-btn.ativo {
     color: #FF5700;
 }
-
-
-/* ---------- SIDEBAR DIREITA ---------- */
 
 .sidebar-overlay {
     position: fixed;
@@ -3499,6 +2640,37 @@ onBeforeUnmount(() => {
     line-height: 1.5;
 }
 
+.sidebar-input-nome {
+    width: 100%;
+    margin-top: 12px;
+    padding: 9px 10px;
+    border: 1px solid #555;
+    border-radius: 7px;
+    background: #111;
+    color: white;
+    font-size: 13px;
+    outline: none;
+}
+
+.sidebar-input-nome:focus {
+    border-color: #FF5700;
+}
+
+.sidebar-publico {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    color: #cfcfcf;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.sidebar-publico input {
+    accent-color: #FF5700;
+    cursor: pointer;
+}
+
 .sidebar-botao-adicionar {
     width: 100%;
     margin-top: 16px;
@@ -3536,80 +2708,6 @@ onBeforeUnmount(() => {
 
 .sidebar-botao-secundario:hover {
     background: rgba(255, 87, 0, 0.12);
-}
-
-.sidebar-input-nome {
-    width: 100%;
-    margin-top: 12px;
-    padding: 9px 10px;
-    border: 1px solid #555;
-    border-radius: 7px;
-    background: #111;
-    color: white;
-    font-size: 13px;
-    outline: none;
-}
-
-.sidebar-input-nome:focus {
-    border-color: #FF5700;
-}
-
-.header-spacer {
-    min-width: 0;
-    text-align: center;
-}
-
-.badge-leitura {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: white;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.controles-zoom {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    z-index: 15;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.controles-zoom button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid #FF5700;
-    border-radius: 50%;
-    background: rgba(30, 30, 30, 0.9);
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.controles-zoom button:hover {
-    background: rgba(255, 87, 0, 0.25);
-}
-
-.sidebar-publico {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-    color: #cfcfcf;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.sidebar-publico input {
-    accent-color: #FF5700;
-    cursor: pointer;
 }
 
 .sidebar-descricao .sidebar-mensagem {
@@ -3651,11 +2749,7 @@ onBeforeUnmount(() => {
     opacity: 0;
 }
 
-
-/* ---------- MOBILE ---------- */
-
 @media (max-width: 600px) {
-
     .editor-header {
         padding: 0 8px;
     }

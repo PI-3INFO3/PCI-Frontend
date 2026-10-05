@@ -75,18 +75,14 @@ async function removerFavorito(projeto) {
             <div v-for="n in 4" :key="n" class="projeto-skeleton"></div>
         </div>
 
-        <!-- ERRO -->
         <div v-else-if="erro" class="estado">
             {{ erro }}
         </div>
-
-        <!-- NENHUM FAVORITO -->
         <div v-else-if="!projetos.length" class="estado">
             <ion-icon name="star-outline"></ion-icon>
             <p>Você ainda não possui projetos favoritos.</p>
         </div>
 
-        <!-- FAVORITOS -->
         <div v-else class="projetos-lista">
 
             <div
