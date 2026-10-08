@@ -2,33 +2,36 @@ import apiClient from "./config";
 
 const designsApi = {
   meusDesigns(usuarioId) {
-    return apiClient.get('/desings/', { params: { usuario: usuarioId } });
+    return apiClient.get('/designs/', { params: { usuario: usuarioId } });
   },
   meusProjetosImportantes(usuarioId) {
-    return apiClient.get('/desings/', { params: { usuario: usuarioId, importante: true } });
+    return apiClient.get('/designs/', { params: { usuario: usuarioId, importante: true } });
   },
   marcarImportante(id, valor) {
-    return apiClient.patch(`/desings/${id}/`, { importante: valor });
+    return apiClient.patch(`/designs/${id}/`, { importante: valor });
   },
 
+  criarVazio() {
+    return apiClient.post('/designs/', { name: 'Novo Design' });
+  },
   uploadArquivo(arquivo) {
     const formData = new FormData();
     formData.append('file', arquivo);
-    return apiClient.post('/desings/upload/', formData, {
+    return apiClient.post('/designs/upload/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
   obterDesign(id) {
-    return apiClient.get(`/desings/${id}/`);
+    return apiClient.get(`/designs/${id}/`);
   },
   salvarElementos(id, elementos) {
-    return apiClient.patch(`/desings/${id}/save-elements/`, { elements: elementos });
+    return apiClient.patch(`/designs/${id}/save-elements/`, { elements: elementos });
   },
   obterHistorico(id) {
-    return apiClient.get(`/desings/${id}/history/`);
+    return apiClient.get(`/designs/${id}/history/`);
   },
   reordenarCamadas(id, elementIds) {
-    return apiClient.patch(`/desings/${id}/reorder-elements/`, { element_ids: elementIds });
+    return apiClient.patch(`/designs/${id}/reorder-elements/`, { element_ids: elementIds });
   },
 };
 

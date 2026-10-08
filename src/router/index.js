@@ -38,7 +38,7 @@ const routes = [
     component: CadastroViews
   },
   {
-    path: '/criar',
+    path: '/criar/:id?',
     name: 'criar',
     component: Criar
   },
