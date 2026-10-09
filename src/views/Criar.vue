@@ -23,6 +23,8 @@ let resizeObserver = null
 let timerSalvamento = null
 let carregandoDesign = false
 let salvamentoPendente = false
+let canvasLoadGeneration = 0
+let trocandoPagina = false
 
 
 const designId = ref(route.params.id || null)
@@ -651,7 +653,16 @@ async function popularCanvasComDesign(
     data,
     indicePagina = 0
 ) {
-    if (!fabricCanvas) return
+    const canvasDaCarga = fabricCanvas
+
+    if (!canvasDaCarga) return
+
+    // Cada carregamento recebe uma geração. Se a tela for desmontada
+    // ou outro carregamento começar, o anterior será cancelado com segurança.
+    const geracaoDaCarga = ++canvasLoadGeneration
+    const cargaAindaAtiva = () =>
+        fabricCanvas === canvasDaCarga &&
+        canvasLoadGeneration === geracaoDaCarga
 
     carregandoDesign = true
 
@@ -687,7 +698,6 @@ async function popularCanvasComDesign(
             ]
         }
 
-        // Corrige metadados antigos sem alterar coordenadas ou lógica das camadas.
         listaPaginas = listaPaginas.map(normalizarDimensoesPagina)
 
         paginas.value = listaPaginas
@@ -708,11 +718,12 @@ async function popularCanvasComDesign(
         fundoDocumento.value =
             pagina?.background_color || '#FFFFFF'
 
-        fabricCanvas.discardActiveObject()
-        fabricCanvas.clear()
+        if (!cargaAindaAtiva()) return
 
-        // A página é o canvas nativo; a área externa do palco permanece escura.
-        fabricCanvas.backgroundColor = fundoDocumento.value || '#FFFFFF'
+        canvasDaCarga.discardActiveObject()
+        canvasDaCarga.clear()
+        canvasDaCarga.backgroundColor = fundoDocumento.value || '#FFFFFF'
+
         atualizarRecorteDaPagina()
         adicionarFundoPagina()
         ajustarVisualizacaoCanvas()
@@ -731,6 +742,7 @@ async function popularCanvasComDesign(
                 console.warn('[CAMADAS] Registro repetido ignorado pelo id:', id)
                 return false
             }
+
             if (clientId && clientIdsVistos.has(clientId)) {
                 console.warn('[CAMADAS] Registro repetido ignorado pelo client_id:', clientId)
                 return false
@@ -746,14 +758,30 @@ async function popularCanvasComDesign(
         )
 
         for (const elemento of elementos) {
+            // Não continua carregando imagens para um canvas que já foi
+            // desmontado ou substituído enquanto a operação assíncrona aguardava.
+            if (!cargaAindaAtiva()) return
+
             try {
-                const objeto =
-                    await criarObjetoDeElemento(elemento)
+                const objeto = await criarObjetoDeElemento(elemento)
+
+                // criarObjetoDeElemento pode aguardar o download de uma imagem.
+                // Verifica novamente antes de usar o canvas após esse await.
+                if (!cargaAindaAtiva()) {
+                    if (objeto && typeof objeto.dispose === 'function') {
+                        objeto.dispose()
+                    }
+                    return
+                }
 
                 if (objeto) {
-                    fabricCanvas.add(objeto)
+                    canvasDaCarga.add(objeto)
                 }
             } catch (erro) {
+                // Um cancelamento durante o carregamento não é uma falha
+                // de elemento e não deve gerar dezenas de mensagens no console.
+                if (!cargaAindaAtiva()) return
+
                 console.error(
                     `[EDITOR] Falha ao carregar elemento ${elemento.id}`,
                     erro
@@ -761,15 +789,23 @@ async function popularCanvasComDesign(
             }
         }
 
-        // Espera o layout terminar e recalcula a escala visual do wrapper
-        // depois de carregar a página e seus elementos.
         await nextTick()
         await new Promise(resolve => requestAnimationFrame(resolve))
+
+        // O componente pode ter sido desmontado durante o próximo frame.
+        if (!cargaAindaAtiva()) return
+
         ajustarVisualizacaoCanvas()
-        fabricCanvas.requestRenderAll()
+
+        if (!cargaAindaAtiva()) return
+
+        canvasDaCarga.requestRenderAll()
         atualizarListaCamadas()
     } finally {
-        carregandoDesign = false
+        // Uma carga antiga não pode liberar o estado de uma carga mais nova.
+        if (canvasLoadGeneration === geracaoDaCarga) {
+            carregandoDesign = false
+        }
     }
 }
 
@@ -1672,26 +1708,38 @@ async function trocarPagina(indice) {
         indice < 0 ||
         indice >= paginas.value.length ||
         indice === paginaAtualIndex.value ||
-        salvando.value
+        salvando.value ||
+        carregandoDesign ||
+        trocandoPagina ||
+        !fabricCanvas
     ) {
         return
     }
 
-    if (timerSalvamento) {
-        clearTimeout(timerSalvamento)
-        timerSalvamento = null
+    trocandoPagina = true
+
+    try {
+        if (timerSalvamento) {
+            clearTimeout(timerSalvamento)
+            timerSalvamento = null
+        }
+
+        salvamentoPendente = false
+
+        if (designId.value && fabricCanvas) {
+            await salvarDesign()
+        }
+
+        // O canvas pode ser desmontado enquanto salvarDesign aguarda a API.
+        if (!fabricCanvas) return
+
+        await popularCanvasComDesign(
+            design.value,
+            indice
+        )
+    } finally {
+        trocandoPagina = false
     }
-
-    salvamentoPendente = false
-
-    if (designId.value && fabricCanvas) {
-        await salvarDesign()
-    }
-
-    await popularCanvasComDesign(
-        design.value,
-        indice
-    )
 }
 
 function irParaPaginaAnterior() {
@@ -1812,6 +1860,11 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+    // Cancela qualquer carregamento que esteja aguardando imagens ou o próximo frame.
+    canvasLoadGeneration += 1
+    carregandoDesign = false
+    trocandoPagina = false
+
     window.removeEventListener(
         'keydown',
         lidarComTeclado
