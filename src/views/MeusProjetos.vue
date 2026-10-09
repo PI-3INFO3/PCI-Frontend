@@ -2,8 +2,31 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import designsApi from "@/api/designsApi";
-import FooterComponents from "../components/FooterComponent.vue";
-import HeaderComponet from "../components/HeaderComponent.vue";
+import DesignCard from "@/components/DesignCard.vue";
+
+function atualizarProjeto(projetoAtualizado) {
+  if (!projetoAtualizado.importante) {
+    removerProjeto(projetoAtualizado.id);
+    return;
+  }
+
+  const indice = projetos.value.findIndex(
+    (projeto) => projeto.id === projetoAtualizado.id
+  );
+
+  if (indice !== -1) {
+    projetos.value[indice] = {
+      ...projetos.value[indice],
+      ...projetoAtualizado,
+    };
+  }
+}
+
+function removerProjeto(id) {
+  projetos.value = projetos.value.filter(
+    (projeto) => projeto.id !== id
+  );
+}
 
 const auth = useAuthStore();
 const projetos = ref([]);
@@ -40,16 +63,8 @@ async function desmarcarImportante(projeto) {
     <div v-else-if="!projetos.length" class="sem-projetos"></div>
 
     <div v-else class="projetos-lista">
-      <div class="projeto-card" v-for="projeto in projetos" :key="projeto.id">
-        <button
-          class="btn-estrela ativa"
-          @click="desmarcarImportante(projeto)"
-          title="Remover dos importantes"
-        >
-          <ion-icon name="star"></ion-icon>
-        </button>
-        <span class="projeto-nome">{{ projeto.name }}</span>
-      </div>
+      <DesignCard v-for="projeto in projetos" :key="projeto.id" :design="projeto" :show-favorite="true"
+        :show-rename="true" :show-delete="true" @updated="atualizarProjeto" @removed="removerProjeto" />
     </div>
   </div>
 </template>
@@ -60,21 +75,25 @@ async function desmarcarImportante(projeto) {
   padding: 16px;
   padding-bottom: 100px;
 }
+
 h2 {
   margin-left: 10px;
   margin-bottom: 16px;
   color: var(--cor-texto);
 }
+
 .sem-projetos {
   color: var(--cor-texto-secundario);
   font-size: 14px;
   line-height: 1.5;
 }
+
 .projetos-lista {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
+
 .projeto-card {
   position: relative;
   background: var(--cor-card);
@@ -87,6 +106,7 @@ h2 {
   color: var(--cor-texto);
   font-weight: 600;
 }
+
 .btn-estrela {
   position: absolute;
   top: 8px;
@@ -96,25 +116,27 @@ h2 {
   font-size: 18px;
   cursor: pointer;
 }
+
 .btn-estrela.ativa {
   color: #ff7500;
 }
+
 .projeto-skeleton {
   height: 100px;
   border-radius: 12px;
-  background: linear-gradient(
-    90deg,
-    var(--cor-fundo-secundaria) 25%,
-    var(--cor-borda) 50%,
-    var(--cor-fundo-secundaria) 75%
-  );
+  background: linear-gradient(90deg,
+      var(--cor-fundo-secundaria) 25%,
+      var(--cor-borda) 50%,
+      var(--cor-fundo-secundaria) 75%);
   background-size: 200% 100%;
   animation: pulso 1.4s ease-in-out infinite;
 }
+
 @keyframes pulso {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
