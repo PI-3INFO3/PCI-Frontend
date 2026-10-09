@@ -3,121 +3,159 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import designsApi from "@/api/designsApi";
+import DesignCard from "@/components/DesignCard.vue";
 
 const auth = useAuthStore();
 const router = useRouter();
+
 const designs = ref([]);
 const carregando = ref(true);
+const erro = ref("");
 
-onMounted(async () => {
-  if (!auth.user) {
-    await auth.fetchUser();
-  }
-  const { data } = await designsApi.meusDesigns(auth.user.id);
-  designs.value = data.results ?? data;
-  carregando.value = false;
-});
+async function carregarDesigns() {
+  carregando.value = true;
+  erro.value = "";
 
-async function alternarImportante(design) {
-  const novoValor = !design.importante;
-  design.importante = novoValor; // atualiza a tela na hora
   try {
-    await designsApi.marcarImportante(design.id, novoValor);
-  } catch (e) {
-    design.importante = !novoValor; // desfaz se der erro
+    if (!auth.user) {
+      await auth.fetchUser();
+    }
+
+    if (!auth.user?.id) {
+      erro.value = "Não foi possível identificar o usuário.";
+      return;
+    }
+
+    const { data } = await designsApi.meusDesigns(auth.user.id);
+
+    designs.value = Array.isArray(data)
+      ? data
+      : data.results ?? [];
+  } catch (error) {
+    console.error("Erro ao carregar designs:", error);
+    erro.value = "Não foi possível carregar seus designs.";
+  } finally {
+    carregando.value = false;
   }
+}
+
+function atualizarDesign(designAtualizado) {
+  const indice = designs.value.findIndex(
+    (design) => design.id === designAtualizado.id
+  );
+
+  if (indice !== -1) {
+    designs.value[indice] = {
+      ...designs.value[indice],
+      ...designAtualizado,
+    };
+  }
+}
+
+function removerDesign(id) {
+  designs.value = designs.value.filter(
+    (design) => design.id !== id
+  );
 }
 
 function abrirDesign(design) {
-  router.push(`/criar/${design.id}`)
+  router.push(`/criar/${design.id}`);
 }
+
+onMounted(carregarDesigns);
 </script>
 
 <template>
-  <div class="designs-container">
+  <main class="designs-container">
     <h2>Meus Designs</h2>
 
+    <p v-if="erro" class="mensagem-erro">
+      {{ erro }}
+    </p>
+
     <div v-if="carregando" class="designs-lista">
-      <div class="design-skeleton" v-for="n in 4" :key="n"></div>
+      <div
+        v-for="n in 4"
+        :key="n"
+        class="design-skeleton"
+      ></div>
     </div>
 
-    <div v-else-if="!designs.length" class="sem-designs">
+    <div
+      v-else-if="!designs.length"
+      class="sem-designs"
+    >
       Você ainda não criou nenhum design.
     </div>
 
     <div v-else class="designs-lista">
-      <div class="design-card" v-for="design in designs" :key="design.id" @click="abrirDesign(design)">
-        <button class="btn-estrela" :class="{ ativa: design.importante }" @click.stop="alternarImportante(design)"
-          title="Marcar como importante">
-          <ion-icon :name="design.importante ? 'star' : 'star-outline'"></ion-icon>
-        </button>
-        <span class="design-nome">{{ design.name }}</span>
-      </div>
+      <DesignCard
+        v-for="design in designs"
+        :key="design.id"
+        :design="design"
+        :show-favorite="true"
+        :show-rename="true"
+        :show-delete="true"
+        @updated="atualizarDesign"
+        @removed="removerDesign"
+        @open="abrirDesign"
+      />
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
 .designs-container {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  min-width: 0;
   padding: 16px;
-  padding-bottom: 100px;
+  padding-bottom: calc(125px + env(safe-area-inset-bottom, 0px));
+  overflow-x: clip;
 }
 
 h2 {
-  margin-bottom: 16px;
+  margin: 0 0 16px;
   color: var(--cor-texto);
+  font-size: 22px;
+}
+
+.designs-lista {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 220px), 1fr)
+  );
+  align-items: start;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .sem-designs {
   color: var(--cor-texto-secundario);
   font-size: 14px;
+  line-height: 1.5;
 }
 
-.designs-lista {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-h2 {
-  margin-left: 0px;
-}
-
-.design-card {
-  position: relative;
-  background: var(--cor-card);
-  border: 1px solid var(--cor-borda);
-  border-radius: 12px;
-  padding: 16px;
-  height: 100px;
-  display: flex;
-  align-items: flex-end;
-  color: var(--cor-texto);
-  font-weight: 600;
-}
-
-.btn-estrela {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: var(--cor-texto-secundario);
-  cursor: pointer;
-}
-
-.btn-estrela.ativa {
-  color: #ff7500;
+.mensagem-erro {
+  color: #c62828;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .design-skeleton {
-  height: 100px;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   border-radius: 12px;
-  background: linear-gradient(90deg,
-      var(--cor-fundo-secundaria) 25%,
-      var(--cor-borda) 50%,
-      var(--cor-fundo-secundaria) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--cor-fundo-secundaria) 25%,
+    var(--cor-borda) 50%,
+    var(--cor-fundo-secundaria) 75%
+  );
   background-size: 200% 100%;
   animation: pulso 1.4s ease-in-out infinite;
 }
@@ -129,6 +167,24 @@ h2 {
 
   100% {
     background-position: -200% 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .designs-container {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .designs-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .design-skeleton {
+    animation: none;
   }
 }
 </style>
