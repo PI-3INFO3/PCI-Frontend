@@ -62,17 +62,6 @@ async function alternarImportante(design) {
   }
 }
 
-// mostra ou esconde o projeto no perfil para outras pessoas
-async function alternarPublico(design) {
-  const novoValor = !design.publico;
-  design.publico = novoValor; // atualiza a tela na hora
-  try {
-    await designsApi.atualizar(design.id, { publico: novoValor });
-  } catch (e) {
-    design.publico = !novoValor; // desfaz se der erro
-  }
-}
-
 function pedirConfirmacao(design) {
   erroApagar.value = null;
   designParaApagar.value = design;
@@ -136,17 +125,6 @@ async function confirmarExclusao() {
         />
 
         <div class="design-acoes">
-          <button
-            class="btn-acao btn-publico"
-            :class="{ ativa: design.publico }"
-            @click.stop="alternarPublico(design)"
-            :title="design.publico ? 'Visível no seu perfil' : 'Oculto do seu perfil'"
-          >
-            <ion-icon
-              :name="design.publico ? 'eye' : 'eye-off-outline'"
-            ></ion-icon>
-          </button>
-
           <button
             class="btn-acao btn-estrela"
             :class="{ ativa: design.importante }"
@@ -301,8 +279,7 @@ h2 {
   display: flex;
 }
 
-.btn-estrela.ativa,
-.btn-publico.ativa {
+.btn-estrela.ativa {
   color: #ff7500;
 }
 
@@ -332,7 +309,6 @@ h2 {
   }
 }
 
-/* ---------- CONFIRMAÇÃO ---------- */
 
 .confirmacao-overlay {
   position: fixed;
@@ -358,20 +334,21 @@ h2 {
 }
 
 .confirmacao-titulo {
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .confirmacao-texto {
   margin: 12px 0 0;
   color: var(--cor-texto-secundario);
-  font-size: 12px;
+  font-size: 20px;
   line-height: 1.5;
 }
 
 .confirmacao-erro {
   margin: 10px 0 0;
   color: #ff5555;
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .confirmacao-acoes {
@@ -384,7 +361,8 @@ h2 {
   flex: 1;
   height: 34px;
   border-radius: 8px;
-  font-size: 12px;
+  font-weight: 500;
+  font-size: 15px;
   cursor: pointer;
 }
 
