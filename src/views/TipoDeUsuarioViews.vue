@@ -183,7 +183,7 @@ button:active {
 }
 
 button:disabled {
-  background: #e3e3e3e3;
+  background: transparent;
   cursor: not-allowed;
   opacity: 0.7;
 }
