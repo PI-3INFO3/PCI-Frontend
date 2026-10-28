@@ -36,6 +36,7 @@ function irParaCadastro() {
 </script>
 
 <template>
+  <section class="pagina">
   <div class="login-container">
     <img
       src="/icons/logo-96x96.png"
@@ -106,6 +107,7 @@ function irParaCadastro() {
       </a>
     </p>
   </div>
+  </section>
 </template>
 
 <style scoped>
@@ -113,20 +115,41 @@ function irParaCadastro() {
   cursor: pointer;
 }
 
+.pagina {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #111111;
+  box-sizing: border-box;
+}
+
 .login-container {
+  width: 100%;
   max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
-  background-color: #fff;
-  color: #000;
+  margin: auto;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+  
 }
 
 img {
   display: block;
   margin: 0 auto 20px auto;
 }
-
+ 
 form {
   display: flex;
   flex-direction: column;
@@ -252,4 +275,36 @@ a {
 a:active {
   text-underline-position: under;
 }
+
+
+@media (max-width: 480px) {
+  .pagina {
+    padding: 1rem;
+    background: #ffffff; 
+  }
+  .login-container {
+    border: none;
+    box-shadow: none; 
+  }
+  .botao {
+    max-width: 100%; 
+  }
+
+}
+
+@media (max-width: 480px) {
+  .pagina, .login-container {
+    padding: 1rem;
+    background: #ffffff; 
+    position: relative;
+    min-height: 100vh;
+  }
+  
+  .login-container, form {
+    border: none;
+    box-shadow: none; 
+    padding: 0;
+  }
+}
+
 </style>
