@@ -87,6 +87,7 @@ function fecharMenu() {
 .sidebar h2 {
   color: var(--cor-texto);
   margin-bottom: 15px;
+  
 }
 
 .sidebar-logo{

@@ -1,5 +1,6 @@
+
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
@@ -9,138 +10,188 @@ const auth = useAuthStore()
 const senhaAtual = ref('')
 const senha = ref('')
 const confirmarSenha = ref('')
-
 const ativo = ref('')
+
 const mostrarSenhaAtual = ref(false)
 const mostrarSenha = ref(false)
 const mostrarConfirmarSenha = ref(false)
 
-const tema = ref('Claro')
+const tema = ref(
+  localStorage.getItem('tema') === 'claro' ? 'claro' : 'escuro'
+)
+const nome = computed({
+  get: () => auth.user?.name || auth.user?.nome || '',
+  set: (valor) => {
+    if (auth.user) {
+      auth.user.name = valor
+    }
+  }
+})
 
 const expandido = ref(false)
 const visualizadorAberto = ref(false)
 const inputFoto = ref(null)
 
 function inicio() {
-    router.push("/")
+  router.push('/')
 }
-
 onMounted(async () => {
+  if (auth.isAuthenticated && !auth.user) {
     await auth.fetchUser()
-    tema.value = auth.user?.theme || 'Claro' 
+  }
+
+  // A preferência salva no navegador tem prioridade.
+  const temaSalvo = localStorage.getItem('tema')
+
+  if (temaSalvo === 'claro' || temaSalvo === 'escuro') {
+    tema.value = temaSalvo
+  } else {
+    // Usa o tema da conta somente se não houver preferência local.
+    const temaDaConta = auth.user?.theme
+
+    tema.value =
+      temaDaConta === 'Claro' || temaDaConta === 'claro'
+        ? 'claro'
+        : 'escuro'
+
+    localStorage.setItem('tema', tema.value)
+  }
+
+  document.documentElement.setAttribute('data-theme', tema.value)
 })
 
-const nome = computed({
-    get: () => auth.user?.name || '',
-    set: (value) => {
-        auth.user.name = value
-    }
-})
 
 const email = computed(() => auth.user?.email || '')
 
-const tipoUsuario = computed(() =>
-    auth.user?.user_type || 'personal'
+const tipoUsuario = computed(
+  () => auth.user?.user_type || 'personal'
 )
 
-const fotoPerfil = computed(() =>
-    auth.user?.profile_photo?.url || ''
+const fotoPerfil = computed(
+  () => auth.user?.profile_photo?.url || ''
 )
+
 function acionarInputFoto() {
-    inputFoto.value?.click()
+  inputFoto.value?.click()
 }
 
 async function trocarFoto(event) {
-    const file = event.target.files[0]
-    if (!file) return
+  const file = event.target.files?.[0]
+  if (!file) return
 
-    try {
-        const response = await auth.uploadPhoto(file)
-        const attachment_key = response.data.attachment_key
+  try {
+    const response = await auth.uploadPhoto(file)
+    const attachment_key = response.data.attachment_key
 
-        await auth.updateUser({
-            profile_photo_attachment_key: attachment_key
-        })
+    await auth.updateUser({
+      profile_photo_attachment_key: attachment_key
+    })
 
-        await auth.fetchUser()
-    } catch (err) {
-        console.error(err)
-        alert('Erro ao atualizar foto')
-    }
+    await auth.fetchUser()
+  } catch (err) {
+    console.error(err)
+    alert('Erro ao atualizar foto')
+  } finally {
+    event.target.value = ''
+  }
 }
 
+async function alternarTema() {
+  const temaAnterior = tema.value
+  const proximoTema = temaAnterior === 'escuro' ? 'claro' : 'escuro'
+
+  tema.value = proximoTema
+  document.documentElement.setAttribute('data-theme', proximoTema)
+
+  localStorage.setItem('tema', proximoTema)
+
+  try {
+    await auth.setTheme(
+      proximoTema === 'claro' ? 'Claro' : 'Escuro'
+    )
+  } catch (err) {
+    console.error('Não foi possível salvar o tema na conta:', err)
+  }
+}
+
+
 function alternarExpansao() {
-    expandido.value = !expandido.value
-    gerenciadorScroll()
+  expandido.value = !expandido.value
+  gerenciadorScroll()
 }
 
 function abrirVisualizadorFoto() {
-    if (!fotoPerfil.value) return
-    visualizadorAberto.value = true
-    gerenciadorScroll()
+  if (!fotoPerfil.value) return
+
+  visualizadorAberto.value = true
+  gerenciadorScroll()
 }
 
 function fecharVisualizadorFoto() {
-    visualizadorAberto.value = false
-    gerenciadorScroll()
+  visualizadorAberto.value = false
+  gerenciadorScroll()
 }
 
 function gerenciadorScroll() {
-    document.body.style.overflow =
-        expandido.value || visualizadorAberto.value ? 'hidden' : ''
+  document.body.style.overflow =
+    expandido.value || visualizadorAberto.value
+      ? 'hidden'
+      : ''
 }
 
 async function salvarAlteracoes() {
-    const querTrocarSenha = senha.value || confirmarSenha.value || senhaAtual.value
+  const querTrocarSenha =
+    senha.value || confirmarSenha.value || senhaAtual.value
+
+  if (querTrocarSenha) {
+    if (!senhaAtual.value) {
+      alert('Informe a senha atual para trocar a senha.')
+      return
+    }
+
+    if (senha.value !== confirmarSenha.value) {
+      alert('As senhas não coincidem!')
+      return
+    }
+  }
+
+  try {
+    await auth.updateUser({
+      name: auth.user.name,
+      user_type: auth.user.user_type
+    })
 
     if (querTrocarSenha) {
-        if (!senhaAtual.value) {
-            alert('Informe a senha atual para trocar a senha.')
-            return
-        }
-        if (senha.value !== confirmarSenha.value) {
-            alert('As senhas não coincidem!')
-            return
-        }
+      await auth.changePassword(
+        senhaAtual.value,
+        senha.value
+      )
     }
 
-    try {
-        await auth.updateUser({
-            name: auth.user.name,
-            user_type: auth.user.user_type,
-        })
+    senhaAtual.value = ''
+    senha.value = ''
+    confirmarSenha.value = ''
+    expandido.value = false
 
-        if (querTrocarSenha) {
-            await auth.changePassword(senhaAtual.value, senha.value)
-        }
+    gerenciadorScroll()
 
-        senhaAtual.value = ''
-        senha.value = ''
-        confirmarSenha.value = ''
-        expandido.value = false
+    await auth.fetchUser()
+  } catch (err) {
+    const msg =
+      err.response?.data?.current_password?.[0] ??
+      err.response?.data?.new_password?.[0] ??
+      'Erro ao atualizar usuário'
 
-        await auth.fetchUser()
-
-    } catch (err) {
-        const msg = err.response?.data?.current_password?.[0]
-            ?? err.response?.data?.new_password?.[0]
-            ?? 'Erro ao atualizar usuário'
-        alert(msg)
-        console.error(err)
-    }
-}
-
-async function trocarTema() {
-    const novoTema = tema.value === 'Claro' ? 'Escuro' : 'Claro'
-    tema.value = novoTema
-    await auth.setTheme(novoTema)
+    alert(msg)
+    console.error(err)
+  }
 }
 
 function sairConta() {
-    if (confirm('Deseja realmente sair da conta?')) {
-        auth.logout()
-        router.push('/login')
-    }
+  if (confirm('Deseja realmente sair da conta?')) {
+    auth.logout()
+    router.push('/login')
+  }
 }
 </script>
 
@@ -177,23 +228,43 @@ function sairConta() {
 
         <div class="opcoes">
             <ul>
-                <!--    <li @click="abrirConfiguracoes">
-                    <div class="lado-esquerdo">
-                        <ion-icon class="icon" name="settings-outline"></ion-icon>
-                        Configurações
-                    </div>
-                    <ion-icon class='tema-conf' name="chevron-forward-outline"></ion-icon>
-                </li> -->
-                <li @click="trocarTema">
-                    <div class="lado-esquerdo">
-                        <ion-icon class="icon" name="sunny-outline"></ion-icon>
-                        Tema
-                    </div>
-                    <span class="tema-conf">{{ tema }}</span>
-                </li>
+              
+                    
+<button
+  type="button"
+  class="alternar-tema"
+  @click="alternarTema"
+  :aria-label="
+    tema === 'escuro'
+      ? 'Ativar tema claro'
+      : 'Ativar tema escuro'
+  "
+  :aria-pressed="tema === 'escuro'"
+>
+  <ion-icon
+    :name="
+      tema === 'escuro'
+        ? 'moon-outline'
+        : 'sunny-outline'
+    "
+  ></ion-icon>
+
+  <span>
+    {{ tema === 'escuro' ? 'Tema escuro' : 'Tema claro' }}
+  </span>
+
+  <span
+    class="interruptor"
+    :class="{ ativo: tema === 'escuro' }"
+  >
+    <span class="interruptor-circulo"></span>
+  </span>
+</button>
+
+                
                 <li class="sair" @click="sairConta">
                     <div class="lado-esquerdo">
-                        <ion-icon class="icon" name="log-out-outline"></ion-icon>
+                        <ion-icon class="icon" name="close-circle-outline"></ion-icon>
                         Sair da conta
                     </div>
                 </li>
@@ -288,9 +359,73 @@ function sairConta() {
     </div>
 </template>
 <style scoped>
-* {
-    -webkit-tap-highlight-color: transparent;
-    box-sizing: border-box;
+
+.alternar-tema {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 95%;
+  margin-left: 10px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-fundo-secundaria);
+  color: var(--cor-texto);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.alternar-tema:hover {
+  border-color: var(--cor-borda, #ff6b00);
+  background: var(--cor-primaria);
+}
+
+.alternar-tema > ion-icon {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  color: var(--cor-primaria);
+}
+
+.alternar-tema > span:nth-child(2) {
+  flex: 1;
+}
+
+.interruptor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 42px;
+  height: 24px;
+  padding: 3px;
+  border-radius: 30px;
+  background: #ff5100;
+  transition: background 0.25s ease;
+}
+
+.interruptor.ativo {
+  background: #ff5100;
+}
+
+.interruptor-circulo {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateX(0);
+  transition: transform 0.25s ease;
+}
+
+.interruptor.ativo .interruptor-circulo {
+  transform: translateX(18px);
+}
+
+.alternar-tema:focus-visible {
+  outline: 2px solid var(--cor-primaria);
+  outline-offset: 3px;
 }
 
 .pagina {
