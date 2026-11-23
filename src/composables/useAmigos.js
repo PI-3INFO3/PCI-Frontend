@@ -12,7 +12,7 @@ export function useAmigos() {
     carregando.value = true
     erro.value = null
     try {
-      const { data } = await amizadesApi.buscarPessoas(termo)
+      const data = (await amizadesApi.buscarPessoas(termo)).data;
       resultadosBusca.value = data
     } catch (e) {
       erro.value = 'Não foi possível buscar pessoas.'
@@ -26,12 +26,12 @@ export function useAmigos() {
   }
 
   async function carregarAmigos() {
-    const { data } = await amizadesApi.listarAmigos()
+    const data = (await amizadesApi.listarAmigos()).data;
     amigos.value = data
   }
 
   async function carregarPendentes() {
-    const { data } = await amizadesApi.listarPendentes()
+    const data = (await amizadesApi.listarPendentes()).data;
     pendentes.value = data
   }
 
@@ -59,4 +59,4 @@ export function useAmigos() {
     aceitarPedido,
     recusarPedido,
   }
-} 
+}

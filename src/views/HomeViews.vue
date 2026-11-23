@@ -8,7 +8,7 @@ const modelos = ref([]);
 const carregando = ref(true);
 
 onMounted(async () => {
-  const { data } = await modelosApi.listar();
+  const data = (await modelosApi.listar()).data;
   modelos.value = data.results ?? data;
   carregando.value = false;
 });

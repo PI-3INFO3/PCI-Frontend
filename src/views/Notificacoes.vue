@@ -4,8 +4,11 @@ import { useAmigos } from "@/composables/useAmigos";
 import NotificacoesSkeleton from "@/components/skeleton/NotificacoesSkeleton.vue";
 import FooterComponents from "../components/FooterComponent.vue";
 
-const { pendentes, carregarPendentes, aceitarPedido, recusarPedido } =
-  useAmigos();
+const amizades = useAmigos();
+const pendentes = amizades.pendentes;
+const carregarPendentes = amizades.carregarPendentes;
+const aceitarPedido = amizades.aceitarPedido;
+const recusarPedido = amizades.recusarPedido;
 const carregando = ref(true);
 
 onMounted(async () => {

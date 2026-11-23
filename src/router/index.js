@@ -16,7 +16,8 @@ import Designs from '../views/Designs.vue';
 import ProjetoAndamento from '../views/ProjetoAndamento.vue';
 import MeusProjetos from '../views/MeusProjetos.vue';
 
-const routes = [
+function criarRotas() {
+  return [
   {
     path: '/user',
     name: 'user',
@@ -89,6 +90,9 @@ const routes = [
     component: HomeViews
   }
 ];
+}
+
+const routes = criarRotas();
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -109,7 +113,13 @@ router.beforeEach(async (to) => {
     return { name: 'login' };
   }
 
-  if (rotasPublicas.includes(to.name) && to.name !== 'tipodeusuario' && to.name !== 'verificar' && authStore.isAuthenticated) {
+  const rotaPublicaProtegida = (
+    rotasPublicas.includes(to.name) &&
+    to.name !== 'tipodeusuario' &&
+    to.name !== 'verificar' &&
+    authStore.isAuthenticated
+  )
+  if (rotaPublicaProtegida) {
     return { name: 'home' };
   }
 });
