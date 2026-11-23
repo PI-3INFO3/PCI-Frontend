@@ -163,9 +163,11 @@ export function registrarFuncoesCriarEditorManterFundoNoFundo(editorContext) {
       // serão transferidos quando o usuário navegar até eles.
       let pagina = editorContext.paginaAtual.value;
       if (pagina?.id && !Array.isArray(pagina.elements)) {
-        const {
-          data: paginaCompleta
-        } = await editorContext.designsApi.obterPagina(editorContext.designId.value, pagina.id);
+        const respostaPagina = await editorContext.designsApi.obterPagina(
+          editorContext.designId.value,
+          pagina.id
+        );
+        const paginaCompleta = respostaPagina.data;
         if (!cargaAindaAtiva()) return;
         editorContext.paginas.value[editorContext.paginaAtualIndex.value] = (
           editorContext.normalizarDimensoesPagina(paginaCompleta)
