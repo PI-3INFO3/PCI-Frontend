@@ -24,8 +24,7 @@ async function carregarFavoritos() {
       return;
     }
 
-    const { data } =
-      await designsApi.meusProjetosImportantes(auth.user.id);
+    const data = (await designsApi.meusProjetosImportantes(auth.user.id)).data;
 
     const lista = Array.isArray(data)
       ? data

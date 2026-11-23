@@ -1,0 +1,250 @@
+.aba-superior-texto,
+.aba-superior-img,
+.aba-superior-formas,
+.aba-superior-camadas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 56px;
+  z-index: 30;
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #2d2d2d;
+  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.35);
+}
+.aba-superior-texto {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  overflow-x: auto;
+}
+.aba-superior-texto select,
+.aba-superior-texto input[type="number"] {
+  flex: 0 0 auto;
+  height: 34px;
+  padding: 6px 9px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #111;
+  color: #fff;
+  outline: none;
+}
+.aba-superior-texto select {
+  min-width: 150px;
+}
+.aba-superior-texto input[type="number"] {
+  width: 70px;
+}
+.aba-superior-texto input[type="color"] {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #111;
+  cursor: pointer;
+}
+.controle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+}
+.controle-btn:hover,
+.controle-btn.ativo {
+  border-color: #ff5700;
+  background: rgba(255, 87, 0, 0.15);
+  color: #ff5700;
+}
+.cor-btn {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #555;
+  cursor: pointer;
+}
+.cor-btn:hover {
+  transform: scale(1.08);
+}
+.controle-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px dashed #777;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+.aba-superior-img {
+  min-height: 90px;
+  max-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.opcao-imagem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 190px;
+  padding: 12px 16px;
+  border: 1px solid #ff5700;
+  border-radius: 10px;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+.opcao-imagem:hover {
+  background: rgba(255, 87, 0, 0.1);
+}
+.opcao-imagem ion-icon {
+  color: #ff5700;
+  font-size: 20px;
+}
+.aba-superior-formas {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px 16px;
+  overflow-x: auto;
+}
+.forma-visual {
+  flex: 0 0 58px;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 1px solid #555;
+  border-radius: 9px;
+  background: #272727;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+}
+.forma-visual:hover {
+  border-color: #ff5700;
+  background: rgba(255, 87, 0, 0.1);
+  transform: translateY(-1px);
+}
+.forma-visual svg {
+  display: block;
+  width: 36px;
+  height: 36px;
+  fill: #ff5700;
+  stroke: #ff5700;
+  stroke-width: 2;
+}
+.seletor-cor-forma {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+.aba-superior-camadas {
+  min-height: 120px;
+  max-height: 350px;
+  padding: 10px 16px;
+  overflow-y: auto;
+}
+.camadas-vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+  color: #777;
+  font-size: 13px;
+  text-align: center;
+}
+.camada-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #272727;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.camada-item + .camada-item {
+  margin-top: 4px;
+}
+.camada-item:hover {
+  background: #303030;
+  border-color: #555;
+}
+.camada-item.ativa {
+  background: rgba(255, 87, 0, 0.15);
+  border-color: #ff5700;
+}
+.camada-thumb {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #1a1a1a;
+}
+.camada-thumb img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.camada-thumb ion-icon {
+  color: #777;
+  font-size: 17px;
+}
+.camada-nome {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: #fff;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.camada-acoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}

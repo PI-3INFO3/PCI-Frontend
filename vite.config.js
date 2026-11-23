@@ -46,10 +46,6 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^http:\/\/(localhost|127\.0\.0\.1):8000\/api\/.*/i,
-            handler: "NetworkOnly",
-          },
-          {
             urlPattern: /^https:\/\/unpkg\.com\/ionicons@.*/i,
             handler: "CacheFirst",
             options: {
@@ -62,15 +58,10 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: ({ url }) =>
-              /\/api\//.test(url.pathname) &&
-              !/\/api\/(token|registro)\//.test(url.pathname),
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache",
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
+            // Nunca manter respostas autenticadas (slides, fotos, tokens)
+            // em cache persistente compartilhado pelo navegador/PWA.
+            urlPattern: ({ url }) => /\/api\//.test(url.pathname),
+            handler: "NetworkOnly",
           },
         ],
       },
@@ -103,7 +94,7 @@ export default defineConfig({
           },
         ],
       },
-      devOptions: { enabled: true },
+      devOptions: { enabled: false },
     }),
     vueDevTools(),
   ],

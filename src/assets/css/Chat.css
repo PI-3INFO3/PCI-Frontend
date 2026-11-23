@@ -1,0 +1,187 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  padding: 12px;
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+.chat-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 12px;
+}
+.chat-topo-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.chat-topo-avatar-vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-fundo-secundaria);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
+  font-size: 15px;
+  font-weight: 600;
+}
+.chat-topo-nome {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+.chat-mensagens {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.balao-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 75%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.wrapper-minha {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.wrapper-outro {
+  align-self: flex-start;
+}
+.balao {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.btn-voltar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--cor-texto);
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background .15s ease;
+}
+.btn-voltar:hover {
+  background: var(--cor-fundo-secundaria);
+}
+.btn-voltar:active {
+  background: var(--cor-borda);
+}
+.balao-minha {
+  background: rgba(255, 117, 0, 0.15);
+  border: 1px solid #FF7500;
+  color: var(--cor-texto);
+}
+.balao-outro {
+  background: var(--cor-fundo-secundaria);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+}
+/* Três pontinhos: escondido por padrão, só aparece com mouse (hover) */
+.btn-menu {
+  background: none;
+  border: none;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .balao-wrapper:hover .btn-menu {
+    opacity: 1;
+  }
+}
+/* Menu suspenso */
+.menu-msg {
+  position: absolute;
+  top: 100%;
+  margin-top: 4px;
+  z-index: 20;
+  background: var(--cor-fundo-secundaria);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  min-width: 130px;
+}
+.menu-minha {
+  right: 0;
+}
+.menu-outro {
+  left: 0;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--cor-texto);
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+.menu-item:active {
+  background: var(--cor-borda);
+}
+.menu-apagar {
+  color: #e74c3c;
+}
+.chat-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.btn-cancelar-edicao {
+  background: none;
+  border: none;
+  color: var(--cor-texto-secundario);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+}
+.chat-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-fundo-secundaria);
+  color: var(--cor-texto);
+}
+.chat-enviar {
+  background: #FF7500;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  font-size: 18px;
+}

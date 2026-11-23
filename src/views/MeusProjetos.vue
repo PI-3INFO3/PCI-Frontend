@@ -36,7 +36,7 @@ onMounted(async () => {
   if (!auth.user) {
     await auth.fetchUser();
   }
-  const { data } = await designsApi.meusProjetosImportantes(auth.user.id);
+  const data = (await designsApi.meusProjetosImportantes(auth.user.id)).data;
   projetos.value = data.results ?? data;
   carregando.value = false;
 });

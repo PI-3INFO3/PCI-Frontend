@@ -1,0 +1,97 @@
+.btn-tipo {
+  background-color: #f12a17;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  width: 100%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.btn-confirmar {
+  background-color: #ff5100;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  width: 100%;
+  max-width: 250px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(255, 81, 0, 0.3);
+  cursor: pointer;
+  margin: 6vw;
+}
+.modal-close {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  background: transparent;
+  z-index: 999;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 10px;
+}
+.modal-body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 20, 42, 0.95);
+}
+.blur-bg {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px) opacity(.15);
+  z-index: -1;
+}
+.card-image-modal img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+  z-index: 2;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+.modal-title {
+  margin: 0;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+.deslizar-enter-active,
+.deslizar-leave-active {
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.deslizar-enter-from,
+.deslizar-leave-to {
+  transform: translateY(100%);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

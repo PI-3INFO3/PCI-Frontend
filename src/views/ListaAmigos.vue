@@ -9,8 +9,12 @@ const router = useRouter();
 const auth = useAuthStore();
 const meuId = computed(() => auth.user?.id);
 
-const { amigos, resultadosBusca, carregarAmigos, buscarPessoas, enviarPedido } =
-  useAmigos();
+const amizades = useAmigos();
+const amigos = amizades.amigos;
+const resultadosBusca = amizades.resultadosBusca;
+const carregarAmigos = amizades.carregarAmigos;
+const buscarPessoas = amizades.buscarPessoas;
+const enviarPedido = amizades.enviarPedido;
 const termo = ref("");
 const enviados = ref(new Set());
 

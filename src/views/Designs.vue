@@ -17,20 +17,14 @@ async function carregarDesigns() {
   erro.value = "";
 
   try {
-    if (!auth.user) {
-      await auth.fetchUser();
-    }
+    const resposta = await designsApi.meusDesigns();
+    const dados = resposta.data;
 
-    if (!auth.user?.id) {
-      erro.value = "Não foi possível identificar o usuário.";
-      return;
-    }
+    designs.value = Array.isArray(dados)
+      ? dados
+      : (dados.results ?? []);
 
-    const { data } = await designsApi.meusDesigns(auth.user.id);
-
-    designs.value = Array.isArray(data)
-      ? data
-      : data.results ?? [];
+    console.log("Designs recebidos:", designs.value);
   } catch (error) {
     console.error("Erro ao carregar designs:", error);
     erro.value = "Não foi possível carregar seus designs.";

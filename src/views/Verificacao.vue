@@ -80,7 +80,8 @@ function cancelarAutenticacao() {
     />
     
     <p class="texto-informativo">
-      Autenticação de dois fatores. Enviamos um código para o seu E-mail. Insira-o abaixo. Insira o código de verificação.
+      Autenticação de dois fatores. Enviamos um código para o seu E-mail.
+      Insira-o abaixo. Insira o código de verificação.
     </p>
 
     <div v-if="errorMessage" class="error-feedback">{{ errorMessage }}</div>
