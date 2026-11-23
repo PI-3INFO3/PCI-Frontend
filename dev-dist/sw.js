@@ -67,7 +67,7 @@ if (!self.define) {
     });
   };
 }
-define(['./workbox-e1512638'], (function (workbox) { 'use strict';
+define(['./workbox-cc1d1889'], (function (workbox) { 'use strict';
 
   self.skipWaiting();
   workbox.clientsClaim();
@@ -81,7 +81,7 @@ define(['./workbox-e1512638'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "index.html",
-    "revision": "0.4rp3f3j80gg"
+    "revision": "0.78oi4bdvg0o"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
@@ -106,7 +106,6 @@ define(['./workbox-e1512638'], (function (workbox) { 'use strict';
       statuses: [0, 200]
     })]
   }), 'GET');
-  workbox.registerRoute(/^http:\/\/(localhost|127\.0\.0\.1):8000\/api\/.*/i, new workbox.NetworkOnly(), 'GET');
   workbox.registerRoute(/^https:\/\/unpkg\.com\/ionicons@.*/i, new workbox.CacheFirst({
     "cacheName": "ionicons-cache",
     plugins: [new workbox.ExpirationPlugin({
@@ -118,14 +117,6 @@ define(['./workbox-e1512638'], (function (workbox) { 'use strict';
   }), 'GET');
   workbox.registerRoute(({
     url
-  }) => /\/api\//.test(url.pathname) && !/\/api\/(token|registro)\//.test(url.pathname), new workbox.NetworkFirst({
-    "cacheName": "api-cache",
-    plugins: [new workbox.ExpirationPlugin({
-      maxEntries: 50,
-      maxAgeSeconds: 86400
-    }), new workbox.CacheableResponsePlugin({
-      statuses: [0, 200]
-    })]
-  }), 'GET');
+  }) => /\/api\//.test(url.pathname), new workbox.NetworkOnly(), 'GET');
 
 }));

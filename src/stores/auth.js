@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import authApi from "../api/authApi";
 import { setTokens, clearTokens, getToken } from "../api/config";
 
-export const useAuthStore = defineStore("auth", () => {
+function criarEstadoAutenticacao() {
   const user = ref(null);
   const loading = ref(false);
   const error = ref(null);
@@ -35,8 +35,9 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = null;
 
     try {
-      const { data } = await authApi.login(email, password);
-      const { access, refresh } = data;
+      const data = (await authApi.login(email, password)).data;
+      const access = data.access;
+      const refresh = data.refresh;
 
       accessToken.value = access;
       refreshToken.value = refresh;
@@ -98,7 +99,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function updateUser(payload) {
-    const { data } = await authApi.updateMe(payload);
+    const data = (await authApi.updateMe(payload)).data;
     user.value = data;
   }
 
@@ -126,7 +127,7 @@ export const useAuthStore = defineStore("auth", () => {
       throw new Error('E-mail não encontrado para verificação.');
     }
 
-    const { data } = await authApi.verifyEmail(email, codigo);
+    const data = (await authApi.verifyEmail(email, codigo)).data;
 
     // A verificação já retorna os tokens: faz login automaticamente aqui
     accessToken.value = data.access;
@@ -164,4 +165,6 @@ export const useAuthStore = defineStore("auth", () => {
     verify2FA,
     resend2FACode,
   };
-});
+}
+
+export const useAuthStore = defineStore("auth", criarEstadoAutenticacao);

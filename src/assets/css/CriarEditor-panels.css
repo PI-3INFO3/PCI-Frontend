@@ -1,0 +1,91 @@
+.camada-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #ff5700;
+  border-radius: 6px;
+  background: transparent;
+  color: #ff5700;
+  cursor: pointer;
+}
+.camada-btn:hover:not(:disabled) {
+  background: rgba(255, 87, 0, 0.15);
+}
+.camada-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.ferramentas-container-fixo {
+  position: relative;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 56px;
+  background-color: #1e1e1e;
+  border-top: 1px solid #2d2d2d;
+}
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 70px;
+  height: 56px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 11px;
+}
+.tool-btn ion-icon {
+  font-size: 22px;
+}
+.tool-btn:hover,
+.tool-btn.ativo {
+  color: #ff5700;
+}
+@media (max-width: 600px) {
+  .editor-header {
+    padding: 0 8px;
+  }
+  .controle-paginas {
+    gap: 0;
+    margin-right: 4px;
+  }
+  .contador-paginas {
+    min-width: 38px;
+    font-size: 12px;
+  }
+  .tool-btn {
+    width: 60px;
+  }
+  .aba-superior-texto {
+    min-height: 105px;
+    padding: 10px;
+    overflow-x: auto;
+  }
+  .aba-superior-texto select {
+    min-width: 125px;
+  }
+  .aba-superior-formas {
+    min-height: 120px;
+    gap: 10px;
+    padding: 12px;
+  }
+  .forma-visual {
+    flex-basis: 52px;
+    width: 52px;
+    height: 52px;
+  }
+  .aba-superior-camadas {
+    max-height: 330px;
+    padding: 10px;
+  }
+}

@@ -7,7 +7,7 @@ export function useChat(outroUsuarioId) {
   let intervalo = null
 
   async function carregarMensagens() {
-    const { data } = await mensagensApi.listarConversa(outroUsuarioId)
+    const data = (await mensagensApi.listarConversa(outroUsuarioId)).data;
     mensagens.value = data.results ?? data
   }
 
